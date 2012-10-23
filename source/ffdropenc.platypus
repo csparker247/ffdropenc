@@ -38,7 +38,7 @@
 		<string>fold</string>
 	</array>
 	<key>IconPath</key>
-	<string>/Applications/Platypus.app/Contents/Resources/PlatypusDefault.icns</string>
+	<string>/Applications/Platypus.app/Contents/Resources/PlatypusInstaller.icns</string>
 	<key>Identifier</key>
 	<string>org.theoaktreeboy.ffdropenc</string>
 	<key>Interpreter</key>

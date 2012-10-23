@@ -1,0 +1,14 @@
+Web Encoder To-Do List
+
+Profiles
+- High Res Deliverable
+- Vimeo 1080p
+- YouTube 1080p
+- iPad 2
+- webm (libvpx)
+
+Functions
+- Select multiple output types
+- More accurate progress bar
+- File list/What is encoding/What is left to encode
+- Multi-process
