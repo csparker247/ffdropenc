@@ -1,7 +1,7 @@
 #!/bin/sh
 PATH=$PATH:./bin
 
-# Web Encoder - ffmpeg - v1.2
+# ffdropenc
 # This is a droplet to encode videos for upload to YouTube and Vimeo.
 # This droplet is based off the Bluray Encoding Droplet. It uses ffmpeg as its transcoder.
 
@@ -25,13 +25,17 @@ do
 		shift
 done	
 
+# Setup qtfaststart
+
+qtfaststart="bin/qtfaststart/qtfaststart"
+
 # Setup Platypus counter
 count=0
 args=${#filelist[@]}
 # For accurate multi-output counter: PROG=($count/($args*${#enc_sets[@]}))*100.000
 
 # Ask for encoding settings
-enc_sets=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "Web Encoder Droplet 1.1" --text "Select output type." --height 150 --items "Vimeo 720p HD" "Vimeo 1080p HD" "YouTube 1080p HD (Standard)" "YouTube 1080p HD (Professional)"`)
+enc_sets=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "ffdropenc" --text "Select output type." --height 150 --items "Vimeo 720p HD" "Vimeo 1080p HD" "YouTube 1080p HD (Standard)" "YouTube 1080p HD (Professional)"`)
 	
 # Check for start approval and call the appropriate encoder
 if [ "${enc_sets[0]}" = "0" ]; then

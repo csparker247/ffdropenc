@@ -15,6 +15,7 @@ import tempfile
 
 # Add parent directory to sys.path so that running from dev environment works
 sys.path.append(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
+sys.path.append((os.path.dirname(__file__), '..', 'lib'))
 
 from optparse import OptionParser
 from qtfaststart import VERSION

@@ -20,7 +20,7 @@ for (( i=0; i<${args}; i++ ));
 				echo PROGRESS:"$PROG"
 				
 			echo Moving moov atom.	
-			qtfaststart "$YOUFILE"
+			"$qtfaststart" "$YOUFILE"
 				# Progress update
 				count=$(echo "scale=3; $count+0.2" | bc)
 				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)

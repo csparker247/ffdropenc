@@ -19,7 +19,7 @@ for (( i=0; i<${args}; i++ ));
 				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
 				echo PROGRESS:"$PROG"
 			echo Moving moov atom.	
-			qtfaststart "$VIMFILE"
+			"$qtfaststart" "$VIMFILE"
 				# Progress update
 				count=$(echo "scale=3; $count+0.5" | bc)
 				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
