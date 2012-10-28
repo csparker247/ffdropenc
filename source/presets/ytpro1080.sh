@@ -1,5 +1,4 @@
 #!/bin/sh
-PATH=$PATH:./bin
 
 # optname YouTube 1080p HD (Professional)
 
@@ -16,14 +15,14 @@ for (( i=1; i<=${args}; i++ ));
 				
 		# YouTube Pass
 			echo "Encoding 1st Pass, YouTube 1080p HD (Professional) Version of $INFILE"
-			ffmpeg -i "${filelist[$i]}" -pass 1 -passlogfile "$TWOPASS" -c:v libx264 -b:v 45M -maxrate 55M -bufsize 3M -pix_fmt yuv420p -s 1920x1080 -an -y "$YOUFILE" 2>"$YERRLOG"1
+			ffmpeg -i "${filelist[$i]}" -pass 1 -passlogfile "$TWOPASS" -c:v libx264 -b:v 45M -maxrate 55M -bufsize 3M -pix_fmt yuv420p -vf scale=1920:-1 -an -y "$YOUFILE" 2>"$YERRLOG"1
 				# Progress update
 				count=$(echo "scale=3; $count+0.4" | bc)
 				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
 				echo PROGRESS:"$PROG"
 				
 			echo "Encoding 2nd Pass, YouTube 1080p HD (Professional) Version of $INFILE"
-			ffmpeg -i "${filelist[$i]}" -pass 2 "$TWOPASS" -c:v libx264 -b:v 45M -maxrate 55M -bufsize 3M -pix_fmt yuv420p -s 1920x1080 -c:a libfaac -profile:a aac_low -b:a 320k -ar 48k -y "$YOUFILE" 2>"$YERRLOG"2
+			ffmpeg -i "${filelist[$i]}" -pass 2 "$TWOPASS" -c:v libx264 -b:v 45M -maxrate 55M -bufsize 3M -pix_fmt yuv420p -vf scale=1920:-1 -c:a libfaac -profile:a aac_low -b:a 320k -ar 48k -y "$YOUFILE" 2>"$YERRLOG"2
 				# Progress update
 				count=$(echo "scale=3; $count+0.4" | bc)
 				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)

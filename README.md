@@ -3,6 +3,13 @@ ffdropenc
 
 An OSX droplet to batch encode video files for web upload. It is built off shell scripts, ffmpeg, x264, qtfaststart, cocoaDialog, and Platypus.
 
+**Latest updates**
+
+* 10.28.2012 - Fixed qtfaststart issue. Fixed scaling issues. Encoding options build from presets folder, making implementation of new encoding options a lot easier. Added support for Bluray 1080p streams (via x264).
+
+**Known Issues**
+
+* ffmpeg needs to be recompiled with libvpx support
 
 **Instructions**
 
@@ -30,25 +37,3 @@ Platypus - http://sveinbjorn.org/platypus
 * Add bundled resources: /bin, /presets, and exts.db
 * Select app icon (I prefer HDD icon)
 * Click Create 
-
-**Known Issues**
-
-* qtfaststart will not run on OSX 10.7 (Lion)
-* ffmpeg needs to be recompiled with libvpx support
-
-
-**Change Log**
-
-v1.2
- * New: Presets for Vimeo 1080p HD, YouTube 1080p (Standard), and YouTube 1080p (Professional)
- * Fixed: Droplet asking for Output Type if launched without files
-
-v1.1
- * Preliminary work for selecting encoding settings. Should be much easier to implement new encoding options in the future.
- * Added drop down settings selector via CocoaDialog.
- * Droplet now runs on OSX 10.6+
-
-v1.0
- * Initial Release
- * Encodes for Vimeo HD.
- * Preliminary work for future support of YouTube HD.
