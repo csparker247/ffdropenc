@@ -1,8 +1,10 @@
 #!/bin/sh
 PATH=$PATH:./bin
 
-# Encode each file for Vimeo
-for (( i=0; i<${args}; i++ ));
+# optname YouTube 1080p HD (Standard)
+
+# Encode each file for YouTube
+for (( i=1; i<=${args}; i++ ));
 	do
 		# Remove the extension and make filenames for logs and output.
 			INFILE="$(basename "${filelist[$i]}")"
