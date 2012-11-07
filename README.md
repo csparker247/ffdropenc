@@ -5,11 +5,11 @@ An OSX droplet to batch encode video files for web upload. It is built off shell
 
 **Latest updates**
 
+* 11.7.2012 - Synced to current snapshots of ffmpeg and x264. Replaced faac with fdk-aac. Presets utilizing aac encoding updated accordingly (-c:a libfdk_aac). Libvpx support added.
 * 10.28.2012 - Fixed qtfaststart issue. Fixed scaling issues. Encoding options build from presets folder, making implementation of new encoding options a lot easier. Added support for Bluray 1080p streams (via x264).
 
 **Known Issues**
 
-* ffmpeg needs to be recompiled with libvpx support
 
 **Instructions**
 
@@ -23,7 +23,7 @@ Batch lists are built from all files and folders drug together to the droplet ic
 
 ffmpeg - www.ffmpeg.org
 x264 - http://www.videolan.org/developers/x264.html
-ffmpeg-static (modified) - https://github.com/stvs/ffmpeg-static
+ffmpeg-static (modified) - https://github.com/csparker247/ffmpeg-static
 qtfaststart - https://github.com/danielgtaylor/qtfaststart
 cocoaDialog - http://mstratman.github.com/cocoadialog/
 Platypus - http://sveinbjorn.org/platypus
