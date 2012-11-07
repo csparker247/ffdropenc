@@ -14,7 +14,7 @@ for (( i=1; i<=${args}; i++ ));
 
 		# Vimeo pass 
 			echo Encoding Vimeo 720p HD Version of "$INFILE"
-			ffmpeg -i "${filelist[$i]}" -c:v libx264 -b:v 5M -pix_fmt yuv420p -vf scale=1280:-1 -c:a libfaac -b:a 320k -ar 44.1k "$VIMFILE" 2>"$VERRLOG"
+			ffmpeg -i "${filelist[$i]}" -c:v libx264 -b:v 5M -pix_fmt yuv420p -vf scale=1280:-1 -c:a libfdk_aac -b:a 320k -ar 44.1k "$VIMFILE" 2>"$VERRLOG"
 				# Progress update
 				count=$(echo "scale=3; $count+0.5" | bc)
 				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)

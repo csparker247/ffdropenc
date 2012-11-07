@@ -14,7 +14,7 @@ for (( i=1; i<=${args}; i++ ));
 				
 		# YouTube Pass
 			echo "Encoding YouTube 1080p (Standard) Version of $INFILE"
-			ffmpeg -i "${filelist[$i]}" -c:v libx264 -b:v 10M -maxrate 10M -bufsize 3M -pix_fmt yuv420p -vf scale=1920:-1 -c:a libfaac -profile:a aac_low -b:a 320k -ar 48k "$YOUFILE" 2>"$YERRLOG"
+			ffmpeg -i "${filelist[$i]}" -c:v libx264 -b:v 10M -maxrate 10M -bufsize 3M -pix_fmt yuv420p -vf scale=1920:-1 -c:a libfdk_aac -profile:a aac_low -b:a 320k -ar 48k "$YOUFILE" 2>"$YERRLOG"
 				# Progress update
 				count=$(echo "scale=3; $count+0.8" | bc)
 				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)

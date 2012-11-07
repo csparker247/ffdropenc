@@ -12,16 +12,16 @@
 	<string>Seth Parker</string>
 	<key>BundledFiles</key>
 	<array>
-		<string>/Users/theoaktreeboy/source/ffdropenc/source/bin</string>
-		<string>/Users/theoaktreeboy/source/ffdropenc/source/exts.db</string>
-		<string>/Users/theoaktreeboy/source/ffdropenc/source/presets</string>
+		<string>/Users/media/source/ffdropenc/source/bin</string>
+		<string>/Users/media/source/ffdropenc/source/exts.db</string>
+		<string>/Users/media/source/ffdropenc/source/presets</string>
 	</array>
 	<key>Creator</key>
 	<string>Platypus-4.7</string>
 	<key>DeclareService</key>
 	<false/>
 	<key>Destination</key>
-	<string>/Users/theoaktreeboy/Desktop/MyPlatypusApp.app</string>
+	<string>/Users/media/Desktop/MyPlatypusApp.app</string>
 	<key>DestinationOverride</key>
 	<false/>
 	<key>DevelopmentVersion</key>
@@ -40,9 +40,9 @@
 	<key>IconPath</key>
 	<string>/Applications/Platypus.app/Contents/Resources/PlatypusInstaller.icns</string>
 	<key>Identifier</key>
-	<string>org.theoaktreeboy.ffdropenc</string>
+	<string>org.media.ffdropenc</string>
 	<key>Interpreter</key>
-	<string>/bin/sh</string>
+	<string>/bin/zsh</string>
 	<key>InterpreterArgs</key>
 	<array/>
 	<key>Name</key>
@@ -60,7 +60,7 @@
 	<key>ScriptArgs</key>
 	<array/>
 	<key>ScriptPath</key>
-	<string>/Users/theoaktreeboy/source/ffdropenc/source/ffdropenc.sh</string>
+	<string>/Users/media/source/ffdropenc/source/ffdropenc.sh</string>
 	<key>Secure</key>
 	<false/>
 	<key>ShowInDock</key>
