@@ -5,11 +5,13 @@ An OSX droplet to batch encode video files for web upload. It is built off shell
 
 **Latest updates**
 
+* 11.20.2012 - Added AC3 audio output to Bluray preset. Added two-pass version of Vimeo 720p preset.
 * 11.7.2012 - Synced to current snapshots of ffmpeg and x264. Replaced faac with fdk-aac. Presets utilizing aac encoding updated accordingly (-c:a libfdk_aac). Libvpx support added.
 * 10.28.2012 - Fixed qtfaststart issue. Fixed scaling issues. Encoding options build from presets folder, making implementation of new encoding options a lot easier. Added support for Bluray 1080p streams (via x264).
 
-**Known Issues**
+**Known Issues/Special Notes**
 
+* If you're using Quicktime to playback video files created for the internet, you will sometimes see gray frames and artifacting at the beginning of videos. This is usually a decoder issue in QT and not a problem with the video file. YouTube and Vimeo should both play the file correctly when uploaded. Just to make sure, though, you can test your video in VLC.
 
 **Instructions**
 
