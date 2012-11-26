@@ -11,6 +11,7 @@ An OSX droplet to batch encode video files for web upload. It is built off shell
 
 **Known Issues/Special Notes**
 
+* Script doesn't work with files without extensions (which you can sometimes run into on OSX). Make sure your exported files include one of the approved extensions in the exts.db file.
 * If you're using Quicktime to playback video files created for the internet, you will sometimes see gray frames and artifacting at the beginning of videos. This is usually a decoder issue in QT and not a problem with the video file. YouTube and Vimeo should both play the file correctly when uploaded. Just to make sure, though, you can test your video in VLC.
 
 **Instructions**
