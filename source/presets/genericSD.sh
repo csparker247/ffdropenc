@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# optname Vimeo 1080p HD
+# optname Generic SD (480px Width)
 
 # Encode each file for Vimeo
 for (( i=1; i<=${args}; i++ ));
@@ -9,24 +9,24 @@ for (( i=1; i<=${args}; i++ ));
 			INFILE="$(basename "${filelist[$i]}")"
 			RAWNAME="$(echo "${filelist[$i]}" | sed 's/\(.*\)\..*/\1/')"
 			LOGNAME="$RAWNAME"_2pass.log
-			VERRLOG="$RAWNAME"_vim1080-debug.log
-			VIMFILE="$RAWNAME"_VIM1080.mp4
+			ERRLOG="$RAWNAME"_genericSD-debug.log
+			GENFILE="$RAWNAME"_genericSD.mp4
 
 		# Vimeo pass 
-			echo Encoding Vimeo 1080p HD Version of "$INFILE"
-			ffmpeg -i "${filelist[$i]}" -c:v libx264 -b:v 10M -pix_fmt yuv420p -profile:v baseline -vf scale=1920:-1 -c:a libfdk_aac -b:a 320k -ar 44.1k "$VIMFILE" 2>"$VERRLOG"
+			echo "Encoding Generic SD (480px Width) of $INFILE"
+			ffmpeg -i "${filelist[$i]}" -c:v libx264 -b:v 2500K -pix_fmt yuv420p -profile:v baseline -vf scale=480:-1 -c:a libfdk_aac -b:a 192k -ar 44.1k "$GENFILE" 2>"$ERRLOG"
 				# Progress update
 				count=$(echo "scale=3; $count+0.5" | bc)
 				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
 				echo PROGRESS:"$PROG"
 			echo Moving moov atom.	
-			"$qtfaststart" "$VIMFILE"
+			"$qtfaststart" "$GENFILE"
 				# Progress update
 				count=$(echo "scale=3; $count+0.5" | bc)
 				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
 				echo PROGRESS:"$PROG"	
 				
 		# Cleanup
-			rm "$VERRLOG"			
+			rm "$ERRLOG"			
 	done
 exit 0
