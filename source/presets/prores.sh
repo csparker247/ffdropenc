@@ -16,17 +16,10 @@ for (( i=1; i<=${args}; i++ ));
 			echo "Encoding ProRes 422 (Video Only) Version of $INFILE"
 			ffmpeg -i "${filelist[$i]}" -c:v prores "$OUTFILE" 2>"$ERRLOG"
 				# Progress update
-				count=$(echo "scale=3; $count+0.8" | bc)
+				count=$(echo "scale=3; $count+1" | bc)
 				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
 				echo PROGRESS:"$PROG"
-				
-			echo Moving moov atom.	
-			"$qtfaststart" "$OUTFILE"
-				# Progress update
-				count=$(echo "scale=3; $count+0.2" | bc)
-				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
-				echo PROGRESS:"$PROG"
-				
+
 		# Cleanup
 			rm "$ERRLOG"
 
