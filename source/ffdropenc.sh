@@ -57,7 +57,6 @@ enc_sets=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --ti
 enc_type="$(echo "scale=1; ${enc_sets[2]}+1" | bc)"
 
 # Check for start approval and call the appropriate encoder
-echo PROGRESS:5
 if [ "${enc_sets[1]}" = "2" ]; then
 		echo "Encoding cancelled!"
 		exit 1
