@@ -11,10 +11,12 @@ for (( i=1; i<=${args}; i++ ));
 			ERRLOG="$RAWNAME"_iPad-debug.log
 			OUTFILE="$RAWNAME"_iPad.mp4
 			
+		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
+			NUM_PASSES="1"
+						
 		# Video pass
 			echo "Encoding iPad Version of $INFILE"
-			# Type of encode: 0 = single pass, 1 = first pass, 2 = second pass
-			PASS="0"
+			ENCODER="FFMPEG"
 			ffmpeg -i "${filelist[$i]}" -c:a libfdk_aac -ac 2 -b:a 160k -c:v libx264 -pix_fmt yuv420p -preset slow -profile:v high -level 41 -maxrate 15MB -bufsize 10MB -y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			

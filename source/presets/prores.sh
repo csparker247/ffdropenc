@@ -11,10 +11,12 @@ for (( i=1; i<=${args}; i++ ));
 			ERRLOG="$RAWNAME"_ProRes-debug.log
 			OUTFILE="$RAWNAME"_ProRes.mov
 			
+		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
+			NUM_PASSES="1"
+						
 		# Video pass
 			echo "Encoding ProRes 422 (Video Only) Version of $INFILE"
-			# Type of encode: 0 = single pass, 1 = first pass, 2 = second pass
-			PASS="0"
+			ENCODER="FFMPEG"
 			ffmpeg -i "${filelist[$i]}" -c:v prores -y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			

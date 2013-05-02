@@ -11,10 +11,12 @@ for (( i=1; i<=${args}; i++ ));
 			ERRLOG="$RAWNAME"_[TEMPLATE]-debug.log
 			OUTFILE="$RAWNAME"_[TEMPLATE].mp4
 			
+		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
+			NUM_PASSES="1"
+						
 		# Video pass
 			echo "Encoding [SINGLE-PASS TEMPLATE] Version of $INFILE"
-			# Type of encode: 0 = single pass, 1 = first pass, 2 = second pass
-			PASS="0"
+			ENCODER="FFMPEG"
 			ffmpeg -i "${filelist[$i]}" -c:v libx264 -b:v 2500K -pix_fmt yuv420p -profile:v baseline -vf scale=480:-1 -c:a libfdk_aac -b:a 192k -ar 44.1k -y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			

@@ -1,50 +1,40 @@
 #!/bin/sh
 
 # progress.sh - For accurately tracking ffmpeg progress.
-# Single, first, or second pass should be determined by calling application using the variable $PASS
-
-# Get ffmpeg Process ID
-	PID=$( ps -ef | grep "ffmpeg" | grep -v "grep" | awk '{print $2}' )
-
-# Get video duration in frames
-	duration=$(ffmpeg -i "${filelist[$i]}" 2>&1 | sed -n "s/.* Duration: \([^,]*\), start: .*/\1/p")
-	fps=$(ffmpeg -i "${filelist[$i]}" 2>&1 | sed -n "s/.*, \(.*\) tbr.*/\1/p")
-	hours=$(echo $duration | cut -d":" -f1)
-	minutes=$(echo $duration | cut -d":" -f2)
-	seconds=$(echo $duration | cut -d":" -f3)
-	FRAMES=$(echo "($hours*3600+$minutes*60+$seconds)*$fps" | bc | cut -d"." -f1)
 
 # Check whether this is a single-pass (0), first pass (1), or second pass (2) encode	
-if [[ $PASS == "0" ]]; then
+if [[ $ENCODER == "FFMPEG" ]]; then
+	# Get ffmpeg Process ID
+		PID=$( ps -ef | grep "ffmpeg" | grep -v "grep" | awk '{print $2}' )
+
+	# Get video duration in frames
+		duration=$(ffmpeg -i "${filelist[$i]}" 2>&1 | sed -n "s/.* Duration: \([^,]*\), start: .*/\1/p")
+		fps=$(ffmpeg -i "${filelist[$i]}" 2>&1 | sed -n "s/.*, \(.*\) tbr.*/\1/p")
+		hours=$(echo $duration | cut -d":" -f1)
+		minutes=$(echo $duration | cut -d":" -f2)
+		seconds=$(echo $duration | cut -d":" -f3)
+		FRAMES=$(echo "($hours*3600+$minutes*60+$seconds)*$fps" | bc | cut -d"." -f1)
+	
 	# While ffmpeg runs, process the log file for the current frame, display percentage progress
+		while ps -p $PID>/dev/null ; do
+			currentframe=$(tail -n 1 "$ERRLOG" | awk '/frame=/ { print $2 }')
+			if [[ -n "$currentframe" ]]; then
+				THIS_PROG=$(echo "scale=3; ($currentframe/$FRAMES)" | bc)
+				INTER_PROG=$(echo "scale=3; ($THIS_PROG/$NUM_PASSES)+$count" | bc)
+				PROG=$(echo "scale=3; ($INTER_PROG/$args)*100.0" | bc)
+				echo PROGRESS:"$PROG"
+				sleep 1
+			fi
+		done
+elif [[ $ENCODER == "X264" ]]; then
+	# Get x264 Process ID
+		PID=$( ps -ef | grep "x264" | grep -v "grep" | awk '{print $2}' )
+
 	while ps -p $PID>/dev/null ; do
-		currentframe=$(tail -n 1 "$ERRLOG" | awk '/frame=/ { print $2 }')
-		if [[ -n "$currentframe" ]]; then
-			THIS_PROG=$(echo "scale=3; ($currentframe/$FRAMES)" | bc)
-			INTER_PROG=$(echo "scale=3; ($THIS_PROG+$count)" | bc)
-			PROG=$(echo "scale=3; ($INTER_PROG/$args)*100.0" | bc)
-			echo PROGRESS:"$PROG"
-			sleep 1
-		fi
-	done
-elif [[ $PASS == "1" ]]; then
-	# Same as above, only halves progress to account for second pass
-	while ps -p $PID>/dev/null ; do
-		currentframe=$(tail -n 1 "$ERRLOG" | awk '/frame=/ { print $2 }')
-		if [[ -n "$currentframe" ]]; then
-			THIS_PROG=$(echo "scale=3; ($currentframe/$FRAMES)" | bc)
-			INTER_PROG=$(echo "scale=3; ($THIS_PROG/2)+$count" | bc)
-			PROG=$(echo "scale=3; ($INTER_PROG/$args)*100.0" | bc)
-			echo PROGRESS:"$PROG"
-		fi
-		sleep 1
-	done
-elif [[ $PASS == "2" ]]; then
-	while ps -p $PID>/dev/null ; do
-		currentframe=$(tail -n 1 "$ERRLOG" | awk '/frame=/ { print $2 }')
-		if [[ -n "$currentframe" ]]; then
-			THIS_PROG=$(echo "scale=3; ($currentframe/$FRAMES)" | bc)
-			INTER_PROG=$(echo "scale=3; ($THIS_PROG/2)+$count" | bc)
+		CURRENT_OVER_FRAMES=$(tail -n 1 "$ERRLOG" | awk '/frames\,/ { print $2 }')
+		if [[ -n "$CURRENT_OVER_FRAMES" ]]; then
+#			THIS_PROG=$(echo "scale=3; ($currentframe/$FRAMES)" | bc)
+			INTER_PROG=$(echo "scale=3; ($CURRENT_OVER_FRAMES/$NUM_PASSES)+$count" | bc)
 			PROG=$(echo "scale=3; ($INTER_PROG/$args)*100.0" | bc)
 			echo PROGRESS:"$PROG"
 		fi

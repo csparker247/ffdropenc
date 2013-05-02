@@ -5,7 +5,7 @@ An OSX droplet to batch encode video files for web upload. It is built off shell
 
 **Latest updates**
 
-* 05.02.2013 - Major update to progress tracking. The progress bar should now display batch progress in realtime for all ffmpeg-based presets. The Bluray preset (which uses x264) uses the old progress tracking. Added template presets to aid in creation of new presets. 
+* 05.02.2013 - Major update to progress tracking. The progress bar should now display batch progress in realtime for presets. Added template presets to aid in creation of new presets. 
 * 11.2012-03.2013 - Lots of small changes. Check the commits for more details.
 * 11.20.2012 - Added AC3 audio output to Bluray preset. Added two-pass version of Vimeo 720p preset.
 * 11.7.2012 - Synced to current snapshots of ffmpeg and x264. Replaced faac with fdk-aac. Presets utilizing aac encoding updated accordingly (-c:a libfdk_aac). Libvpx support added.
