@@ -38,7 +38,7 @@ Platypus - http://sveinbjorn.org/platypus
 
 * Download and install Platypus from http://sveinbjorn.org/platypus
 * Open ffdropenc.platypus
-* Set variables: Script Path = webencoder.sh, Output = Progress Bar, Accept Dropped Items
+* Set variables: Script Path = ffdropenc.sh, Output = Progress Bar, Accept Dropped Items
 * Add bundled resources: /bin, /presets, and exts.db
 * Select app icon (I prefer HDD icon)
 * Click Create 
