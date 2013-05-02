@@ -2,7 +2,10 @@
 
 # optname Bluray - 1080p H.264, AC-3
 
-# Encode each file for YouTube
+# Encode each file
+
+echo PROGRESS:5
+
 for (( i=1; i<=${args}; i++ ));
 	do
 		# Remove the extension and make filenames for logs and output.
