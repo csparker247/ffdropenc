@@ -17,7 +17,7 @@ if [[ $ENCODER == "FFMPEG" ]]; then
 	
 	# While ffmpeg runs, process the log file for the current frame, display percentage progress
 		while ps -p $PID>/dev/null ; do
-			currentframe=$(tail -n 1 "$ERRLOG" | awk '/frame=/ { print $2 }')
+			currentframe=$(tail -n 1 "$ERRLOG" | sed 's/frame=\(.*\)fps=.*/\1/'| sed 's/ //g')
 			if [[ -n "$currentframe" ]]; then
 				THIS_PROG=$(echo "scale=3; ($currentframe/$FRAMES)" | bc)
 				INTER_PROG=$(echo "scale=3; ($THIS_PROG/$NUM_PASSES)+$count" | bc)
