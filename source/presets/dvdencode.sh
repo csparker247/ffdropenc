@@ -21,7 +21,7 @@ for (( i=1; i<=${args}; i++ ));
 			# First pass 
 				echo "Encoding 1st Pass, DVD - Widescreen of $INFILE"
 				ENCODER="FFMPEG"
-				ffmpeg -i "${filelist[$i]}" -pass 1 -passlogfile "$TWOPASS" -target film-dvd -an -y "$OUTFILE" \
+				ffmpeg -i "${filelist[$i]}" -pass 1 -passlogfile "$TWOPASS" -pix_fmt yuv420p -s 720x480 -r 29.97 -g 18 -b:v 9M -maxrate 9M -minrate 0 -bufsize 1835008 -packetsize 2048 -muxrate 10080000 -vf scale="'if(gt(iw,ih),720,-1)':'if(gt(iw,ih),-1,480)'" -an -y "$OUTFILE" \
 				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 		
 			# Track encoding progress	
@@ -35,7 +35,7 @@ for (( i=1; i<=${args}; i++ ));
 			# Second Pass
 				echo "Encoding 2nd Pass, DVD - Widescreen of $INFILE"
 				ENCODER="FFMPEG"
-				ffmpeg -i "${filelist[$i]}" -pass 2 -passlogfile "$TWOPASS" -target film-dvd -y "$OUTFILE" \
+				ffmpeg -i "${filelist[$i]}" -pass 2 -passlogfile "$TWOPASS" -pix_fmt yuv420p -s 720x480 -r 29.97 -g 18 -b:v 9M -maxrate 9M -minrate 0 -bufsize 1835008 -packetsize 2048 -muxrate 10080000 -vf scale="'if(gt(iw,ih),720,-1)':'if(gt(iw,ih),-1,480)'" -an -y "$OUTFILE" \
 				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 			# Track encoding progress	
@@ -49,7 +49,7 @@ for (( i=1; i<=${args}; i++ ));
 			# Audio Pass
 				echo "Encoding AC-3 Audio for $INFILE"
 				ENCODER="FFMPEG"
-				ffmpeg -i "${filelist[$i]}" -b:a ac3 -b:a 192k -ar 48000 "$AUDIOFILE" \
+				ffmpeg -i "${filelist[$i]}" -b:a ac3 -b:a 448k -ar 48000 "$AUDIOFILE" \
 				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 			# Track encoding progress	
@@ -63,6 +63,5 @@ for (( i=1; i<=${args}; i++ ));
 		# Cleanup
 			rm "$ERRLOG"
 			rm "$TWOPASS"-0.log
-			rm "$TWOPASS"-0.log.mbtree
 
 		done
