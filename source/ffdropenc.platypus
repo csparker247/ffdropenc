@@ -12,16 +12,16 @@
 	<string>Seth Parker</string>
 	<key>BundledFiles</key>
 	<array>
-		<string>/Users/media/source/ffdropenc/source/bin</string>
-		<string>/Users/media/source/ffdropenc/source/exts.db</string>
-		<string>/Users/media/source/ffdropenc/source/presets</string>
+		<string>/Users/mediateam/source/ffdropenc/source/bin</string>
+		<string>/Users/mediateam/source/ffdropenc/source/exts.db</string>
+		<string>/Users/mediateam/source/ffdropenc/source/presets</string>
 	</array>
 	<key>Creator</key>
 	<string>Platypus-4.7</string>
 	<key>DeclareService</key>
 	<false/>
 	<key>Destination</key>
-	<string>/Users/media/Desktop/MyPlatypusApp.app</string>
+	<string>/Users/mediateam/Desktop/MyPlatypusApp.app</string>
 	<key>DestinationOverride</key>
 	<false/>
 	<key>DevelopmentVersion</key>
@@ -38,9 +38,9 @@
 		<string>fold</string>
 	</array>
 	<key>IconPath</key>
-	<string>/Applications/Platypus.app/Contents/Resources/PlatypusInstaller.icns</string>
+	<string>/Users/mediateam/source/ffdropenc/source/icons/ffdropenc.icns</string>
 	<key>Identifier</key>
-	<string>org.media.ffdropenc</string>
+	<string>org.mediateam.ffdropenc</string>
 	<key>Interpreter</key>
 	<string>/bin/zsh</string>
 	<key>InterpreterArgs</key>
@@ -60,7 +60,7 @@
 	<key>ScriptArgs</key>
 	<array/>
 	<key>ScriptPath</key>
-	<string>/Users/media/source/ffdropenc/source/ffdropenc.sh</string>
+	<string>/Users/mediateam/source/ffdropenc/source/ffdropenc.sh</string>
 	<key>Secure</key>
 	<false/>
 	<key>ShowInDock</key>
