@@ -1,6 +1,8 @@
 .DS_Store
 /ffdropenc.app
+/ffimgdrop.app
 /source/ffdropenc.platypus
+/source/ffimgdrop.platypus
 /test
 source/bin/.DS_Store
 source/bin/qtfaststart/__init__.pyc

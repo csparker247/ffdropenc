@@ -1,9 +1,9 @@
 #!/bin/zsh
 PATH=./bin:$PATH
 
-# ffdropenc
-# This is a droplet to encode videos for upload to YouTube and Vimeo.
-# This droplet is based off the Bluray Encoding Droplet. It uses ffmpeg as its transcoder.
+# ffimgdrop
+# This is a droplet to encode image sequences to video files.
+# This droplet is based off ffdropenc. It uses ffmpeg as its transcoder.
 
 # Quit if no files/arguments given
 if [ $# -eq 0 ]; then
@@ -36,22 +36,22 @@ qtfaststart="bin/qtfaststart/qtfaststart"
 ## Build list of files to encode, using only files from approved extensions list.
 filelist=()
 echo Building file list.
-while [ ! -z "$1" ]
-do
+#while [ ! -z "$1" ]; do ##Disabling until multiple input is possible
+for i in 1; do
 		OLDIFS=$IFS
 		IFS=$'\n'
 		filelist+=($(find "$1" -type f | grep -e ".*/.*\.\($exts)"))
 		IFS=$OLDIFS
 		shift
-done	
+done
+
 
 # Setup Platypus counter
 count=0
 args=${#filelist[@]}
-# For accurate multi-output counter: PROG=($count/($args*${#enc_sets[@]}))*100.000
 
 # Ask for encoding settings
-enc_sets=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "ffdropenc" --text "Select output type." --height 150 --items $preset_name`)
+enc_sets=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "ffimgdrop" --text "Select output type." --height 150 --items $preset_name`)
 	
 # Convert selected value to account for lack of 0 index
 enc_type="$(echo "scale=1; ${enc_sets[2]}+1" | bc)"
