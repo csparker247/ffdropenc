@@ -19,7 +19,7 @@ for (( i=1; i<=${args}; i++ ));
 		# Video pass
 			echo "Encoding H.264 Generic (No Scale) Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg -f image2 -i "${SETNAME}%05d.${EXT}" -c:v libx264 -b:v 10M -maxrate 10M -bufsize 3M -pix_fmt yuv420p -c:a libfdk_aac -profile:a aac_low -b:a 320k -ar 48k -y "$OUTFILE" \
+			ffmpeg -f image2 -r "$enc_fps" -i "${SETNAME}%05d.${EXT}" -c:v libx264 -b:v 10M -maxrate 10M -bufsize 3M -pix_fmt yuv420p -c:a libfdk_aac -profile:a aac_low -b:a 320k -ar 48k -y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	

@@ -25,6 +25,10 @@ fi
 	done
 	# Count number of presets
 	preset_count="${#preset_name[@]}"
+
+# FPS Setup
+	fps_options=("24" "25" "29.97" "30" "60")
+	fps_count="${#fps_options[@]}"
 	
 # Collect list of approved file extensions
 exts=`cat exts.db`
@@ -52,7 +56,23 @@ args=${#filelist[@]}
 
 # Ask for encoding settings
 enc_sets=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "ffimgdrop" --text "Select output type." --height 150 --items $preset_name`)
-	
+select_fps=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "ffimgdrop" --text "Select output fps:" --height 150 --items $fps_options`)
+
+# Convert selected value to account for lack of 0 index
+fps_type="$(echo "scale=1; ${select_fps[2]}+1" | bc)"
+
+# Figure fps from selected option
+if [ "${select_fps[1]}" = "2" ]; then
+		echo "Encoding cancelled!"
+		exit 1
+	else
+		for j in {1..$fps_count}; do
+			if [ $fps_type = $j ]; then
+				enc_fps="$fps_options[$fps_type]"
+			fi
+		done
+fi
+
 # Convert selected value to account for lack of 0 index
 enc_type="$(echo "scale=1; ${enc_sets[2]}+1" | bc)"
 
