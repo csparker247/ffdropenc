@@ -8,8 +8,8 @@ if [[ $ENCODER == "FFMPEG" ]]; then
 		PID=$( ps -ef | grep "ffmpeg" | grep -v "grep" | awk '{print $2}' )
 
 	# Get video duration in frames
-		duration=$(ffmpeg -i "${filelist[$i]}" 2>&1 | sed -n "s/.* Duration: \([^,]*\), start: .*/\1/p")
-		fps=$(ffmpeg -i "${filelist[$i]}" 2>&1 | sed -n "s/.*, \(.*\) tbr.*/\1/p")
+		duration=$(ffmpeg -i "${SETNAME}%05d.${EXT}" 2>&1 | sed -n "s/.* Duration: \([^,]*\), start: .*/\1/p")
+		fps=$(ffmpeg -i "${SETNAME}%05d.${EXT}" 2>&1 | sed -n "s/.*, \(.*\) tbr.*/\1/p")
 		hours=$(echo $duration | cut -d":" -f1)
 		minutes=$(echo $duration | cut -d":" -f2)
 		seconds=$(echo $duration | cut -d":" -f3)
