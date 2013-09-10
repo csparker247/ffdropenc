@@ -31,6 +31,7 @@ fi
 	fps_count="${#fps_options[@]}"
 	
 # Collect list of approved file extensions
+sequence_exts=`cat seqexts.db`
 exts=`cat exts.db`
 
 # Setup qtfaststart
@@ -38,15 +39,24 @@ qtfaststart="bin/qtfaststart/qtfaststart"
 
 
 ## Build list of files to encode, using only files from approved extensions list.
+sequencelist=()
 filelist=()
 echo Building file list.
 #while [ ! -z "$1" ]; do ##Disabling until multiple input is possible
 for i in 1; do
+		if [[ "$1" =~ .*\.($sequence_exts) ]]; then
+			this_dir="$(dirname $1)"
+			this_ext="$(basename $1 | sed 's/.*\.\(.*\)/\1/')"
+			raw_name="$(basename $1 | sed 's/\(.*\)\..*/\1/')"
+			echo $this_dir ~~~ $this_ext ~~~ $raw_name ~~~ $new_name
+			shift
+		else
 		OLDIFS=$IFS
 		IFS=$'\n'
 		filelist+=($(find "$1" -type f | grep -e ".*/.*\.\($exts)"))
 		IFS=$OLDIFS
 		shift
+		fi
 done
 
 
