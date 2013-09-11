@@ -11,6 +11,7 @@ if [ $# -eq 0 ]; then
 fi
 
 ## Program setup
+
 # Build encoding options list
 	preset_script=()
 	preset_name=()
@@ -42,23 +43,41 @@ qtfaststart="bin/qtfaststart/qtfaststart"
 sequencelist=()
 filelist=()
 echo Building file list.
-#while [ ! -z "$1" ]; do ##Disabling until multiple input is possible
-for i in 1; do
-		if [[ "$1" =~ .*\.($sequence_exts) ]]; then
-			this_dir="$(dirname $1)"
-			this_ext="$(basename $1 | sed 's/.*\.\(.*\)/\1/')"
-			raw_name="$(basename $1 | sed 's/\(.*\)\..*/\1/')"
-			echo $this_dir ~~~ $this_ext ~~~ $raw_name ~~~ $new_name
+while [ ! -z "$1" ]; do
+	if [[ "$1" =~ .*\.($sequence_exts) ]]; then
+		inlist="n"
+		tempdir=$(dirname "$1")
+		tempext=$(basename "$1" | sed 's/.*\.\(.*\)/\1/')
+		tempname=$(basename "$1" | sed 's/\(.*\)\..*/\1/')
+		collection=$(echo "$tempname" | sed 's/[0-9]*$//')
+		chartemp=$(echo "$tempname" | grep -o -m 1 -e '[0-9]*$')
+		if [[ "$chartemp" != [0-9]* ]]; then
 			shift
-		else
-		OLDIFS=$IFS
-		IFS=$'\n'
-		filelist+=($(find "$1" -type f | grep -e ".*/.*\.\($exts)"))
-		IFS=$OLDIFS
-		shift
+			continue
 		fi
+ 		charcount=`printf "%02d" ${#chartemp}`
+		new_path="${tempdir}/${collection}%${charcount}d.${tempext}"
+		
+		for e in "${filelist[@]}"; do
+			if [[ "$e" == "$new_path" ]]; then
+				inlist="y"
+				break
+			fi
+		done
+		
+		if [[ "$inlist" == "n" ]]; then
+			filelist+=("$new_path")
+		fi
+	#else
+	#OLDIFS=$IFS
+	#IFS=$'\n'
+	#filelist+=($(find "$1" -type f | grep -e ".*/.*\.\($exts)"))
+	#IFS=$OLDIFS
+	fi
+	shift	
 done
 
+echo ${filelist[@]}
 
 # Setup Platypus counter
 count=0
@@ -91,7 +110,6 @@ if [ "${enc_sets[1]}" = "2" ]; then
 		echo "Encoding cancelled!"
 		exit 1
 	else
-		# echo PROGRESS:5
 		for j in {1..$preset_count}; do
 			if [ $enc_type = $j ]; then
 				. presets/$preset_script[$enc_type] 
