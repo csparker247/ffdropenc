@@ -1,4 +1,6 @@
 .DS_Store
+*.png
+*.psd
 /ffdropenc.app
 /ffimgdrop.app
 /source/ffdropenc.platypus
