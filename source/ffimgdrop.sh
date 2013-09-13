@@ -49,8 +49,6 @@ for (( i=0; i<=${argument_count}; i++ )); do
 	IFS=$OLDIFS
 done
 
-echo ${argument_files[@]}
-
 filelist=()
 has_sequences="n"
 
