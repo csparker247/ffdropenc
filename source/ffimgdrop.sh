@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 PATH=./bin:$PATH
 
 # ffimgdrop
@@ -10,28 +10,26 @@ if [ $# -eq 0 ]; then
 	exit 0
 fi
 
-## Program setup
+# Program setup
 
 # Build encoding options list
-	preset_script=()
-	preset_name=()
-	preset_count="0"
-	has_sequences="n"
-	
-	for i in presets/*.sh; do
-		preset_type=$(sed -n /optname/p "$i" | sed 's/# optname //')
-		if [[ "$preset_type" != "" ]]; then
-			preset_script+="$(basename "$i")"
-			preset_name+=$preset_type
-		fi
-	done
-	# Count number of presets
-	preset_count="${#preset_name[@]}"
+preset_script=()
+preset_name=()
+preset_count="0"
+
+for i in presets/*.sh; do
+	preset_type=$(sed -n /optname/p "$i" | sed 's/# optname //')
+	if [[ "$preset_type" != "" ]]; then
+		preset_script+=( "$(basename "$i")" )
+		preset_name+=( "$preset_type" )
+	fi
+done
+# Count number of presets
+preset_count="${#preset_name[@]}"
 
 # FPS Setup
-	fps_options=("24" "25" "29.97" "30" "60")
-	fps_count="${#fps_options[@]}"
-
+fps_options=( "24" "25" "29.97" "30" "60" )
+fps_count="${#fps_options[@]}"
 
 # Collect list of approved file extensions
 filters=`cat filters.db`
@@ -41,59 +39,58 @@ mov_exts=`cat movexts.db`
 # Setup qtfaststart
 qtfaststart="bin/qtfaststart/qtfaststart"
 
-## Build list of files to encode, using only files from approved extensions list.
-argument_files=()
-filelist=()
-
-echo "Building file list."
-for argument in $@; do
+# Build list of files to encode, using only files from approved extensions list.
+argument_paths=( $@ )
+argument_count=$(expr ${#argument_paths[@]} - 1)
+for (( i=0; i<=${argument_count}; i++ )); do
 	OLDIFS=$IFS
 	IFS=$'\n'
-	argument_files+=($(find "$argument" -type f | grep -e ".*/.*\.\($filters)"))
+	argument_files+=( $(find "${argument_paths[$i]}" -type f | grep -e ".*/.*\.\($filters)") )
 	IFS=$OLDIFS
 done
 
-for thisfile in $argument_files; do
-	echo $thisfile
-	if [[ "$thisfile" =~ .*\.($sequence_exts) ]]; then
+echo ${argument_files[@]}
+
+filelist=()
+has_sequences="n"
+
+echo "Building file list."
+argument_count=$(expr ${#argument_files[@]} - 1)
+for (( i=0; i<=${argument_count}; i++ )); do
+    thisfile=${argument_files[$i]}
+	if [[ $thisfile =~ .*\.($sequence_exts) ]]; then
 		has_sequences="y"
 		inlist="n"
 		tempdir=$(dirname "$thisfile")
 		tempext=$(basename "$thisfile" | sed 's/.*\.\(.*\)/\1/')
 		tempname=$(basename "$thisfile" | sed 's/\(.*\)\..*/\1/')
 		collection=$(echo "$tempname" | sed 's/[0-9]*$//')
-		chartemp=$(echo "$tempname" | grep -o -m 1 -e '[0-9]*$')
+		numtemp=$(echo "$tempname" | grep -o -m 1 -e '[0-9]*$')
 		
-		if [[ "$chartemp" != [0-9]* ]]; then
+		if [[ "$numtemp" != [0-9]* ]]; then
 			continue
 		fi
 		
-		charcount=`printf "%02d" ${#chartemp}`
+		charcount=`printf "%02d" ${#numtemp}`
 		new_path="${tempdir}/${collection}%${charcount}d.${tempext}"
-	
-		for e in $filelist; do
-			if [[ "$e" == "$new_path" ]]; then
-				inlist="y"
-				break
-			fi
-		done
+		
+		args=${#filelist[@]}
+		if [[ $args != "0" ]]; then
+			for (( e=1; e<=${args}; e++ )); do
+				if [[ "${filelist[$e]}" == "$new_path" ]]; then
+					inlist="y"
+					break
+				fi
+			done
+		fi
 	
 		if [[ "$inlist" == "n" ]]; then
-			OLDIFS=$IFS
-			IFS=$'\n'
-			filelist+=("$new_path")
-			IFS=$OLDIFS
+			filelist+=( "$new_path" )
 		fi
-		
 	elif [[ "$thisfile" =~ .*\.($mov_exts) ]]; then
-		OLDIFS=$IFS
-		IFS=$'\n'
-		filelist+=("$thisfile")
-		IFS=$OLDIFS
+		filelist+=( "$thisfile" )
 	fi
 done
-
-echo "I made it!"
 unset argument_files
 
 # Setup Platypus counter
@@ -106,39 +103,39 @@ if [[ "$args" == "0" ]]; then
 fi
 
 # Ask for encoding settings
+OLDIFS=$IFS
+IFS=$'\n'
+enc_sets=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "ffimgdrop" --text "Select output type." --height 150 --items $(for i in ${preset_name[@]}; do echo "$i"; done)`)
+IFS=$OLDIFS
+if [[ "${enc_sets[0]}" == "2" ]]; then
+		echo "Encoding cancelled!"
+		exit 1
+fi
 
-enc_sets=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "ffimgdrop" --text "Select output type." --height 150 --items $preset_name`)
 if [[ "$has_sequences" == "y" ]]; then
-	select_fps=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "ffimgdrop" --text "Select output fps." --height 150 --items $fps_options`)
-	# Convert selected value to account for lack of 0 index
-		fps_type="$(echo "scale=1; ${select_fps[2]}+1" | bc)"
-
+	select_fps=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "ffimgdrop" --text "Select output fps." --height 150 --items "${fps_options[@]}"`)
 	# Figure fps from selected option
-	if [[ "${select_fps[1]}" == "2" ]]; then
+	fps_type=${select_fps[1]}
+	if [[ "${select_fps[0]}" == "2" ]]; then
 			echo "Encoding cancelled!"
 			exit 1
 		else
-			for j in {1..$fps_count}; do
-				if [[ $fps_type == $j ]]; then
-					enc_fps="$fps_options[$fps_type]"
+			for j in $(eval echo "{0..$(expr $fps_count - 1)}"); do
+				if [[ "$fps_type" == $j ]]; then
+					enc_fps="${fps_options[$j]}"
+					break
 				fi
 			done
 	fi
 fi
 
-# Convert selected value to account for lack of 0 index
-enc_type="$(echo "scale=1; ${enc_sets[2]}+1" | bc)"
-
 # Check for start approval and call the appropriate encoder
-if [[ "${enc_sets[1]}" == "2" ]]; then
-		echo "Encoding cancelled!"
-		exit 1
-	else
-		for j in {1..$preset_count}; do
-			if [[ $enc_type == $j ]]; then
-				. presets/$preset_script[$enc_type] 
-			fi
-		done	
-fi	
+enc_type="${enc_sets[1]}"
+for j in $(eval echo "{0..$(expr $preset_count - 1)}"); do
+	if [[ "$enc_type" == $j ]]; then
+		. presets/${preset_script[$j]}
+		break
+	fi
+done
 
 exit 0
