@@ -40,7 +40,7 @@
 		<string>fold</string>
 	</array>
 	<key>IconPath</key>
-	<string>/Users/mediateam/source/ffdropenc/source/icons/ffdropenc.icns</string>
+	<string>/Users/mediateam/source/ffdropenc/source/graphics/ffdropenc.icns</string>
 	<key>Identifier</key>
 	<string>org.mediateam.ffdropenc</string>
 	<key>Interpreter</key>
