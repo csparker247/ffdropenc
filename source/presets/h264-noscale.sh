@@ -15,8 +15,8 @@ for (( i=1; i<=${args}; i++ )); do
 				#	ERRLOG="$SETNAME"_H264.log
 				#	OUTFILE="$SETNAME"_H264.mp4
 				#else
-					ERRLOG="$SETNAME"H264.log
-					OUTFILE="$SETNAME"H264.mp4
+					ERRLOG="$SETNAME"_H264.log
+					OUTFILE="$SETNAME"_H264.mp4
 				#fi
 			else
 			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"

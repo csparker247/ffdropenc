@@ -40,7 +40,10 @@ mov_exts=`cat movexts.db`
 qtfaststart="bin/qtfaststart/qtfaststart"
 
 # Build list of files to encode, using only files from approved extensions list.
+OLDIFS=$IFS
+IFS=$'\n'
 argument_paths=( $@ )
+IFS=$OLDIFS
 argument_count=$(expr ${#argument_paths[@]} - 1)
 for (( i=0; i<=${argument_count}; i++ )); do
 	OLDIFS=$IFS

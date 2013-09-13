@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# optname ProRes 422 (Video Only)
+# optname AppleTV
 
 # Encode each file
 for (( i=1; i<=${args}; i++ )); do
@@ -15,31 +15,32 @@ for (( i=1; i<=${args}; i++ )); do
 				#	ERRLOG="$SETNAME"_H264.log
 				#	OUTFILE="$SETNAME"_H264.mp4
 				#else
-					ERRLOG="$SETNAME"_ProRes422.log
-					OUTFILE="$SETNAME"_ProRes422.mov
+					ERRLOG="$SETNAME"_AppleTV.log
+					OUTFILE="$SETNAME"_AppleTV.mp4
 				#fi
 			else
 			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"
-			ERRLOG="$RAWNAME"_ProRes422.log
-			OUTFILE="$RAWNAME"_ProRes422.mov
+			ERRLOG="$RAWNAME"_AppleTV.log
+			OUTFILE="$RAWNAME"_AppleTV.mp4
 			fi
 			
 		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
 			NUM_PASSES="1"
 						
 		# Video pass
-			echo "Encoding ProRes 422 (Video Only) Version of $INFILE"
+			echo "Encoding AppleTV Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v prores -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:a libfdk_aac -b:a 320k -c:v libx264 -pix_fmt yuv420p -preset slow -profile:v main -level 40 -maxrate 15MB -bufsize 10MB -y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
 			. progress.sh
-		
+
 		# Update progress
 			count=$(echo "scale=3; ($count+1)" | bc)
 			PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
 			echo PROGRESS:"$PROG"
+			
 		# Cleanup
 			rm "$ERRLOG"			
 	done

@@ -5,6 +5,7 @@
 /ffimgdrop.app
 /source/ffdropenc.platypus
 /source/ffimgdrop.platypus
+/source/graphics/legacy
 /test
 source/bin/.DS_Store
 source/bin/qtfaststart/__init__.pyc

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# optname ProRes 422 (Video Only)
+# optname Generic SD (480px Width)
 
 # Encode each file
 for (( i=1; i<=${args}; i++ )); do
@@ -15,27 +15,31 @@ for (( i=1; i<=${args}; i++ )); do
 				#	ERRLOG="$SETNAME"_H264.log
 				#	OUTFILE="$SETNAME"_H264.mp4
 				#else
-					ERRLOG="$SETNAME"_ProRes422.log
-					OUTFILE="$SETNAME"_ProRes422.mov
+					ERRLOG="$SETNAME"_GenericSD.log
+					OUTFILE="$SETNAME"_GenericSD.mp4
 				#fi
 			else
 			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"
-			ERRLOG="$RAWNAME"_ProRes422.log
-			OUTFILE="$RAWNAME"_ProRes422.mov
+			ERRLOG="$RAWNAME"_GenericSD.log
+			OUTFILE="$RAWNAME"_GenericSD.mp4
 			fi
 			
 		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
 			NUM_PASSES="1"
 						
 		# Video pass
-			echo "Encoding ProRes 422 (Video Only) Version of $INFILE"
+			echo "Encoding Generic SD (480px Width) Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v prores -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v libx264 -b:v 2500K -pix_fmt yuv420p -profile:v baseline -vf scale=480:-1 -c:a libfdk_aac -b:a 192k -ar 44.1k -y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
 			. progress.sh
 		
+		# Move the faststart atom
+		echo Moving moov atom.	
+		"$qtfaststart" "$OUTFILE"
+				
 		# Update progress
 			count=$(echo "scale=3; ($count+1)" | bc)
 			PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
