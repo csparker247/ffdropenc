@@ -1,8 +1,5 @@
-ffdropenc
-=========
-
 <img src="http://www.csethparker.com/imgs/xtras/banner2.jpg" width="100%" />
-
+=========
 An OSX droplet to batch encode video files for web upload. It is built off shell scripts, ffmpeg, x264, qtfaststart, cocoaDialog, and Platypus.
 
 **Latest updates**
