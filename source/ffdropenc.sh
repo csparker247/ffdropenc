@@ -1,9 +1,9 @@
 #!/bin/sh
 PATH=./bin:$PATH
 
-# ffimgdrop
-# This is a droplet to encode image sequences to video files.
-# This droplet is based off ffdropenc. It uses ffmpeg as its transcoder.
+# ffdropenc
+# This is a droplet to transcode videos and image sequences to preset video types.
+# It uses ffmpeg as its transcoder.
 
 # Quit if no files/arguments given
 if [ $# -eq 0 ]; then

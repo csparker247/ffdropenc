@@ -13,8 +13,10 @@
 	<key>BundledFiles</key>
 	<array>
 		<string>/Users/mediateam/source/ffdropenc/source/bin</string>
-		<string>/Users/mediateam/source/ffdropenc/source/exts.db</string>
 		<string>/Users/mediateam/source/ffdropenc/source/presets</string>
+		<string>/Users/mediateam/source/ffdropenc/source/filters.db</string>
+		<string>/Users/mediateam/source/ffdropenc/source/movexts.db</string>
+		<string>/Users/mediateam/source/ffdropenc/source/seqexts.db</string>
 	</array>
 	<key>Creator</key>
 	<string>Platypus-4.7</string>
@@ -42,7 +44,7 @@
 	<key>Identifier</key>
 	<string>org.mediateam.ffdropenc</string>
 	<key>Interpreter</key>
-	<string>/bin/zsh</string>
+	<string>/bin/sh</string>
 	<key>InterpreterArgs</key>
 	<array/>
 	<key>Name</key>
@@ -89,6 +91,6 @@
 	<key>UseXMLPlistFormat</key>
 	<true/>
 	<key>Version</key>
-	<string>1.0</string>
+	<string>1.5</string>
 </dict>
 </plist>
