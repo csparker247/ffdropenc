@@ -33,7 +33,6 @@ elif [[ $ENCODER == "X264" ]]; then
 	while ps -p $PID>/dev/null ; do
 		CURRENT_OVER_FRAMES=$(tail -n 1 "$ERRLOG" | awk '/frames\,/ { print $2 }')
 		if [[ -n "$CURRENT_OVER_FRAMES" ]]; then
-#			THIS_PROG=$(echo "scale=3; ($currentframe/$FRAMES)" | bc)
 			INTER_PROG=$(echo "scale=3; ($CURRENT_OVER_FRAMES/$NUM_PASSES)+$count" | bc)
 			PROG=$(echo "scale=3; ($INTER_PROG/$args)*100.0" | bc)
 			echo PROGRESS:"$PROG"

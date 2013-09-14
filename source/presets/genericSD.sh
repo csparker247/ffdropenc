@@ -11,13 +11,13 @@ for (( i=1; i<=${args}; i++ )); do
 			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
 				SEQ_OPTS="-f image2 -r $enc_fps"
 				SETNAME="$(echo "${filelist[$index]}" | sed 's/%[0-9]*d\..*//')"
-				#if [[ $SETNAME != .*(\_|\-|" ") ]]; then
-				#	ERRLOG="$SETNAME"_H264.log
-				#	OUTFILE="$SETNAME"_H264.mp4
-				#else
+				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
+					ERRLOG="$SETNAME"GenericSD.log
+					OUTFILE="$SETNAME"GenericSD.mp4
+				else
 					ERRLOG="$SETNAME"_GenericSD.log
 					OUTFILE="$SETNAME"_GenericSD.mp4
-				#fi
+				fi
 			else
 			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"
 			ERRLOG="$RAWNAME"_GenericSD.log

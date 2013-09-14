@@ -13,15 +13,17 @@ for (( i=1; i<=${args}; i++ )); do
 				SEQ_OPTS="-f image2 -r $enc_fps"
 				X_OPTS="--fps $enc_fps"
 				SETNAME="$(echo "${filelist[$index]}" | sed 's/%[0-9]*d\..*//')"
-				#if [[ $SETNAME != .*(\_|\-|" ") ]]; then
-				#	ERRLOG="$SETNAME"_H264.log
-				#	OUTFILE="$SETNAME"_H264.mp4
-				#else
+				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
+					LOGNAME="$SETNAME"2pass.log
+					ERRLOG="$SETNAME"BD.log
+					OUTFILE="$SETNAME"BD_VIDEO.264
+					AUDIOFILE="$SETNAME"BD_AUDIO.ac3
+				else
 					LOGNAME="$SETNAME"_2pass.log
 					ERRLOG="$SETNAME"_BD.log
 					OUTFILE="$SETNAME"_BD_VIDEO.264
 					AUDIOFILE="$SETNAME"_BD_AUDIO.ac3
-				#fi
+				fi
 			else
 			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"
 			LOGNAME="$RAWNAME"_2pass.log
@@ -65,11 +67,11 @@ for (( i=1; i<=${args}; i++ )); do
 			# Audio Pass
 				echo "Encoding AC-3 Audio for $INFILE"
 				ENCODER="FFMPEG"
-				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -b:a ac3 -b:a 640k -ar 48000 -y "$AUDIOFILE" \
-				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
+				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -b:a ac3 -b:a 640k -ar 48000 -y "$AUDIOFILE" 
+				#2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 			# Track encoding progress	
-				. progress.sh
+				#. progress.sh
 				
 			if [[ ! -f "$AUDIOFILE" ]]; then
 					echo "--------"

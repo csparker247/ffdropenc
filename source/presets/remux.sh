@@ -11,17 +11,17 @@ for (( i=1; i<=${args}; i++ )); do
 			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
 				SEQ_OPTS="-f image2 -r $enc_fps"
 				SETNAME="$(echo "${filelist[$index]}" | sed 's/%[0-9]*d\..*//')"
-				#if [[ $SETNAME != .*(\_|\-|" ") ]]; then
-				#	ERRLOG="$SETNAME"_H264.log
-				#	OUTFILE="$SETNAME"_H264.mp4
-				#else
-					ERRLOG="$SETNAME"_REMUX.log
-					OUTFILE="$SETNAME"_REMUX.mov
-				#fi
+				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
+					ERRLOG="$SETNAME"Remux.log
+					OUTFILE="$SETNAME"Remux.mov
+				else
+					ERRLOG="$SETNAME"_Remux.log
+					OUTFILE="$SETNAME"_Remux.mov
+				fi
 			else
 			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"
-			ERRLOG="$RAWNAME"_REMUX.log
-			OUTFILE="$RAWNAME"_REMUX.mov
+			ERRLOG="$RAWNAME"_Remux.log
+			OUTFILE="$RAWNAME"_Remux.mov
 			fi
 			
 		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
