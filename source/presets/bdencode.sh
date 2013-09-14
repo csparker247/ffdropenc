@@ -37,7 +37,7 @@ for (( i=1; i<=${args}; i++ )); do
 			# First pass 
 				echo "Encoding 1st Pass, Bluray 1080p of $INFILE"
 				ENCODER="X264"
-				x264 --quiet --bitrate 39000 --preset veryslow --tune film $(echo $X_OPTS) --bluray-compat --pic-struct --vbv-maxrate 40000 --vbv-bufsize 30000 --level 4.1 --keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 --sar 1:1 --pass 1 --stats "$LOGNAME" -o "$OUTFILE" "${filelist[$index]}" \
+				x264 --quiet --bitrate 39000 --preset veryslow --tune film $(echo $X_OPTS) --bluray-compat --pic-struct --vbv-maxrate 40000 --vbv-bufsize 30000 --level 4.1 --keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 --sar 1:1 --video-filter resize:width=1920,height=1080,fittobox=both --pass 1 --stats "$LOGNAME" -o "$OUTFILE" "${filelist[$index]}" \
 				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 		
 			# Track encoding progress	
@@ -51,7 +51,7 @@ for (( i=1; i<=${args}; i++ )); do
 			# Second Pass
 				echo "Encoding 2nd Pass, Bluray 1080p of $INFILE"
 				ENCODER="X264"
-				x264 --quiet --bitrate 39000 --preset veryslow --tune film $(echo $X_OPTS) --bluray-compat --pic-struct --vbv-maxrate 40000 --vbv-bufsize 30000 --level 4.1 --keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 --sar 1:1 --pass 2 --stats "$LOGNAME" -o "$OUTFILE" "${filelist[$index]}" \
+				x264 --quiet --bitrate 39000 --preset veryslow --tune film $(echo $X_OPTS) --bluray-compat --pic-struct --vbv-maxrate 40000 --vbv-bufsize 30000 --level 4.1 --keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 --sar 1:1 --video-filter resize:width=1920,height=1080,fittobox=both --pass 2 --stats "$LOGNAME" -o "$OUTFILE" "${filelist[$index]}" \
 				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 			# Track encoding progress	
@@ -65,7 +65,7 @@ for (( i=1; i<=${args}; i++ )); do
 			# Audio Pass
 				echo "Encoding AC-3 Audio for $INFILE"
 				ENCODER="FFMPEG"
-				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -b:a ac3 -b:a 640k -ar 48000 "$AUDIOFILE" \
+				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -b:a ac3 -b:a 640k -ar 48000 -y "$AUDIOFILE" \
 				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 			# Track encoding progress	

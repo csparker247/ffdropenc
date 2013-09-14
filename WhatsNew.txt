@@ -1,0 +1,4 @@
+v1.5 Features and Changes
+-------------------------
+
+- Smarter scaling: Videos will never scale greater than the input video.

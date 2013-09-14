@@ -30,7 +30,7 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding Vimeo 1080p HD Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v libx264 -b:v 10M -pix_fmt yuv420p -profile:v baseline -vf scale=1920:-1 -c:a libfdk_aac -b:a 320k -ar 44.1k -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v libx264 -b:v 10M -pix_fmt yuv420p -profile:v baseline -vf scale="'if(gt(iw,ih),min(1920,iw),-1)':'if(gt(iw,ih),-1,min(1080,ih))'" -c:a libfdk_aac -b:a 320k -ar 44.1k -y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
