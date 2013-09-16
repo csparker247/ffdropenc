@@ -22,7 +22,7 @@ if [[ $ENCODER == "FFMPEG" ]]; then
 				THIS_PROG=$(echo "scale=3; ($currentframe/$FRAMES)" | bc)
 				INTER_PROG=$(echo "scale=3; ($THIS_PROG/$NUM_PASSES)+$count" | bc)
 				PROG=$(echo "scale=3; ($INTER_PROG/$args)*100.0" | bc)
-				echo PROGRESS:"$PROG"
+				echo "PROGRESS:$PROG"
 				sleep 1
 			fi
 		done
@@ -35,7 +35,7 @@ elif [[ $ENCODER == "X264" ]]; then
 		if [[ -n "$CURRENT_OVER_FRAMES" ]]; then
 			INTER_PROG=$(echo "scale=3; ($CURRENT_OVER_FRAMES/$NUM_PASSES)+$count" | bc)
 			PROG=$(echo "scale=3; ($INTER_PROG/$args)*100.0" | bc)
-			echo PROGRESS:"$PROG"
+			echo "PROGRESS:$PROG"
 		fi
 		sleep 1
 	done
