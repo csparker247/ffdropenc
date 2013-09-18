@@ -67,8 +67,8 @@ for (( i=1; i<=${args}; i++ )); do
 			# Audio Pass
 				echo "Encoding AC-3 Audio for $INFILE"
 				ENCODER="FFMPEG"
-				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -b:a ac3 -b:a 640k -ar 48000 -y "$AUDIOFILE" 
-				#2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
+				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -b:a ac3 -b:a 640k -ar 48000 -y "$AUDIOFILE" \
+				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 			# Track encoding progress	
 				#. progress.sh
