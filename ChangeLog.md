@@ -1,6 +1,12 @@
 ffdropenc Change Log
 ====================
 
+##2013-12-10 - v1.5.1 Changes##
+
+ * **BUG FIX**: Fixed issue where anamorphic video would not scale down appropriately.
+ * **UPDATED**: Added jpeg and ogg formats to approved extensions lists.
+ * **BUG FIX**: Added wait time to progress tracker to hopefully combat random parse errors.
+
 ##2013-10-07 - v1.5 Features and Changes##
 
 After branching ffdropenc off to make ffimgdrop, I felt weird about having a second program just 
