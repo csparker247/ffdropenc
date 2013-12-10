@@ -91,6 +91,6 @@
 	<key>UseXMLPlistFormat</key>
 	<true/>
 	<key>Version</key>
-	<string>1.5</string>
+	<string>1.5.1</string>
 </dict>
 </plist>
