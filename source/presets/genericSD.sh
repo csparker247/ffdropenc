@@ -30,7 +30,7 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding Generic SD (480px Width) Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v libx264 -b:v 2500K -pix_fmt yuv420p -profile:v baseline -vf scale="'if(gt(iw,ih),min(720,iw),-1)':'if(gt(iw,ih),-1,min(480,ih))'" -c:a libfdk_aac -b:a 192k -ar 44.1k -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v libx264 -b:v 2500K -pix_fmt yuv420p -profile:v baseline -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(720,iw),-1)':'if(gt(iw,ih),-1,min(480,ih))'" -c:a libfdk_aac -b:a 192k -ar 44.1k -y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
