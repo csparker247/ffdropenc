@@ -33,7 +33,7 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video Pass #1
 			echo "Encoding 1st Pass, YouTube 1080p HD (Professional) Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -pass 1 -passlogfile "$TWOPASS" -c:v libx264 -b:v 45M -maxrate 55M -bufsize 3M -pix_fmt yuv420p -vf scale="'if(gt(iw,ih),min(1920,iw),-1)':'if(gt(iw,ih),-1,min(1080,ih))'" -an -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -pass 1 -passlogfile "$TWOPASS" -c:v libx264 -b:v 45M -maxrate 55M -bufsize 3M -pix_fmt yuv420p -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(1920,iw),-1)':'if(gt(iw,ih),-1,min(1080,ih))'" -an -y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
