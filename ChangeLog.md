@@ -1,6 +1,12 @@
 ffdropenc Change Log
 ====================
 
+##2013-12-17 - v1.5.2##
+  
+ * **NEW**: Chromecast (720p) preset based on Plex's transcoding profile.
+ * **UPDATED**: Template presets now have all changes since v1.5.
+ * **UPDATED**: Minor wording fix in Two-Pass Vimeo preset.
+
 ##2013-12-10 - v1.5.1 Changes##
 
  * **BUG FIX**: Fixed issue where anamorphic video would not scale down appropriately.
