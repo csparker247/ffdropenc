@@ -98,7 +98,7 @@ unset argument_files
 count=0
 args=${#filelist[@]}
 
-if [[ "$args" == "0" ]]; then
+if [[ "$args" == "0" || "${filelist[@]}" == "" ]]; then
 	echo "No supported file types in batch list."
 	exit 0
 fi
