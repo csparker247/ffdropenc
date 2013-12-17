@@ -2,7 +2,8 @@
 
 # progress.sh - For accurately tracking ffmpeg progress.
 
-# Check whether this is a single-pass (0), first pass (1), or second pass (2) encode	
+# Check whether this is a ffmpeg or x264 encode	
+sleep 1
 if [[ $ENCODER == "FFMPEG" ]]; then
 	# Get ffmpeg Process ID
 		PID=$( ps -ef | grep "ffmpeg" | grep -v "grep" | awk '{print $2}' )

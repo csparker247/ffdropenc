@@ -4,6 +4,8 @@ An OSX droplet to batch encode video files.
 
 **Latest updates**
 
+* 12.17.2013 - New Chromecast preset. Templates updated. Minor wording fix.
+* 12.10.2013 - Added new formats to approved extensions list. Fixed scaling issues with anamorphic video.
 * 09.25.2013 - Update to ffdropenc v1.5. Adds smarter scaling and image sequence inputs. 
 * 05.02.2013 - Major update to progress tracking. The progress bar should now display batch progress in realtime for presets. Added template presets to aid in creation of new presets. 
 * 11.2012-03.2013 - Lots of small changes. Check the commits for more details.
@@ -26,7 +28,7 @@ Batch lists are built from all files and folders drug together to the droplet ic
 
 **Download**
   
-The latest executable can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc1.5.dmg "Download ffdropenc on Dropbox").
+The latest OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc1.5.1.dmg "Download ffdropenc on Dropbox").
 
 **Build from source**
 
