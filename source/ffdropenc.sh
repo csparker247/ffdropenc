@@ -28,7 +28,7 @@ done
 preset_count="${#preset_name[@]}"
 
 # FPS Setup
-fps_options=( "24" "25" "29.97" "30" "60" )
+fps_options=( "24" "25" "29.97" "30" "60" "120" )
 fps_count="${#fps_options[@]}"
 
 # Collect list of approved file extensions
