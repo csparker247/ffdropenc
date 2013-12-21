@@ -1,6 +1,11 @@
 ffdropenc Change Log
 ====================
 
+##2013-12-21 - v1.6.0
+
+ * **NEW**: Custom Output Folder. ffdropenc now asks to select a custom output folder. If none is selected, 
+ output files are saved next to the originals.  
+
 ##2013-12-17 - v1.5.2##
   
  * **NEW**: Chromecast (720p) preset based on Plex's transcoding profile.

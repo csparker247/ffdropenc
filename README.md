@@ -4,6 +4,7 @@ An OSX droplet to batch encode video files.
 
 **Latest updates**
 
+* 12.21.2013 - Support for custom output folder.
 * 12.17.2013 - New Chromecast preset. Templates updated. Minor wording fix.
 * 12.10.2013 - Added new formats to approved extensions list. Fixed scaling issues with anamorphic video.
 * 09.25.2013 - Update to ffdropenc v1.5. Adds smarter scaling and image sequence inputs. 
