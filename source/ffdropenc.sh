@@ -36,8 +36,9 @@ filters=`cat filters.db`
 sequence_exts=`cat seqexts.db`
 mov_exts=`cat movexts.db`
 
-# Setup qtfaststart
+# Setup programs
 qtfaststart="bin/qtfaststart/qtfaststart"
+cocoaDialog="bin/cocoaDialog.app/Contents/MacOS/cocoaDialog"
 
 # Build list of files to encode, using only files from approved extensions list.
 OLDIFS=$IFS
@@ -106,7 +107,7 @@ fi
 # Ask for encoding settings
 OLDIFS=$IFS
 IFS=$'\n'
-enc_sets=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "ffimgdrop" --text "Select output type." --height 150 --items $(for i in ${preset_name[@]}; do echo "$i"; done)`)
+enc_sets=(`$cocoaDialog standard-dropdown --title "ffdropenc" --text "Select output type." --height 150 --items $(for i in ${preset_name[@]}; do echo "$i"; done)`)
 IFS=$OLDIFS
 if [[ "${enc_sets[0]}" == "2" ]]; then
 		echo "Encoding cancelled!"
@@ -114,7 +115,7 @@ if [[ "${enc_sets[0]}" == "2" ]]; then
 fi
 
 if [[ "$has_sequences" == "y" ]]; then
-	select_fps=(`bin/cocoaDialog.app/Contents/MacOS/cocoaDialog standard-dropdown --title "ffimgdrop" --text "Select output fps." --height 150 --items "${fps_options[@]}"`)
+	select_fps=(`$cocoaDialog standard-dropdown --title "ffdropenc" --text "Select output fps." --height 150 --items "${fps_options[@]}"`)
 	# Figure fps from selected option
 	fps_type=${select_fps[1]}
 	if [[ "${select_fps[0]}" == "2" ]]; then
