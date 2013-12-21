@@ -8,20 +8,25 @@ for (( i=1; i<=${args}; i++ )); do
 		index=$(expr $i - 1)
 		# Remove the extension and make filenames for logs and output.
 			INFILE="$(basename "${filelist[$index]}")"
+			if [[ "$useNewOutput" == "1" ]]; then
+				OUTPATH="$newOutputPath"
+			else
+				OUTPATH="$(dirname "${filelist[$index]}")"
+			fi
 			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
 				SEQ_OPTS="-f image2 -r $enc_fps"
-				SETNAME="$(echo "${filelist[$index]}" | sed 's/%[0-9]*d\..*//')"
+				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
 				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					ERRLOG="$SETNAME"AppleTV.log
-					OUTFILE="$SETNAME"AppleTV.mp4
+					ERRLOG="${OUTPATH}/${SETNAME}"AppleTV.log
+					OUTFILE="${OUTPATH}/${SETNAME}"AppleTV.mp4
 				else
-					ERRLOG="$SETNAME"_AppleTV.log
-					OUTFILE="$SETNAME"_AppleTV.mp4
+					ERRLOG="${OUTPATH}/${SETNAME}"_AppleTV.log
+					OUTFILE="${OUTPATH}/${SETNAME}"_AppleTV.mp4
 				fi
 			else
-			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"
-			ERRLOG="$RAWNAME"_AppleTV.log
-			OUTFILE="$RAWNAME"_AppleTV.mp4
+				RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
+				ERRLOG="${OUTPATH}/${RAWNAME}"_AppleTV.log
+				OUTFILE="${OUTPATH}/${RAWNAME}"_AppleTV.mp4
 			fi
 			
 		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.

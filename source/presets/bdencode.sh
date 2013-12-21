@@ -9,27 +9,32 @@ for (( i=1; i<=${args}; i++ )); do
 		index=$(expr $i - 1)
 		# Remove the extension and make filenames for logs and output.
 			INFILE="$(basename "${filelist[$index]}")"
+			if [[ "$useNewOutput" == "1" ]]; then
+				OUTPATH="$newOutputPath"
+			else
+				OUTPATH="$(dirname "${filelist[$index]}")"
+			fi
 			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
 				SEQ_OPTS="-f image2 -r $enc_fps"
 				X_OPTS="--fps $enc_fps"
-				SETNAME="$(echo "${filelist[$index]}" | sed 's/%[0-9]*d\..*//')"
+				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
 				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					LOGNAME="$SETNAME"2pass.log
-					ERRLOG="$SETNAME"BD.log
-					OUTFILE="$SETNAME"BD_VIDEO.264
-					AUDIOFILE="$SETNAME"BD_AUDIO.ac3
+					LOGNAME="${OUTPATH}/${SETNAME}"2pass.log
+					ERRLOG="${OUTPATH}/${SETNAME}"BD.log
+					OUTFILE="${OUTPATH}/${SETNAME}"BD_VIDEO.264
+					AUDIOFILE="${OUTPATH}/${SETNAME}"BD_AUDIO.ac3
 				else
-					LOGNAME="$SETNAME"_2pass.log
-					ERRLOG="$SETNAME"_BD.log
-					OUTFILE="$SETNAME"_BD_VIDEO.264
-					AUDIOFILE="$SETNAME"_BD_AUDIO.ac3
+					LOGNAME="${OUTPATH}/${SETNAME}"_2pass.log
+					ERRLOG="${OUTPATH}/${SETNAME}"_BD.log
+					OUTFILE="${OUTPATH}/${SETNAME}"_BD_VIDEO.264
+					AUDIOFILE="${OUTPATH}/${SETNAME}"_BD_AUDIO.ac3
 				fi
 			else
-			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"
-			LOGNAME="$RAWNAME"_2pass.log
-			ERRLOG="$RAWNAME"_BD.log
-			OUTFILE="$RAWNAME"_BD_VIDEO.264
-			AUDIOFILE="$RAWNAME"_BD_AUDIO.ac3
+			RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
+			LOGNAME="${OUTPATH}/${RAWNAME}"_2pass.log
+			ERRLOG="${OUTPATH}/${RAWNAME}"_BD.log
+			OUTFILE="${OUTPATH}/${RAWNAME}"_BD_VIDEO.264
+			AUDIOFILE="${OUTPATH}/${RAWNAME}"_BD_AUDIO.ac3
 			fi
 
 		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.

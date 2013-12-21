@@ -8,20 +8,25 @@ for (( i=1; i<=${args}; i++ )); do
 		index=$(expr $i - 1)
 		# Remove the extension and make filenames for logs and output.
 			INFILE="$(basename "${filelist[$index]}")"
+			if [[ "$useNewOutput" == "1" ]]; then
+				OUTPATH="$newOutputPath"
+			else
+				OUTPATH="$(dirname "${filelist[$index]}")"
+			fi
 			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
 				SEQ_OPTS="-f image2 -r $enc_fps"
-				SETNAME="$(echo "${filelist[$index]}" | sed 's/%[0-9]*d\..*//')"
+				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
 				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					ERRLOG="$SETNAME"Chromecast720.log
-					OUTFILE="$SETNAME"Chromecast720.mp4
+					ERRLOG="${OUTPATH}/${SETNAME}"Chromecast720.log
+					OUTFILE="${OUTPATH}/${SETNAME}"Chromecast720.mp4
 				else
-					ERRLOG="$SETNAME"_Chromecast720.log
-					OUTFILE="$SETNAME"_Chromecast720.mp4
+					ERRLOG="${OUTPATH}/${SETNAME}"_Chromecast720.log
+					OUTFILE="${OUTPATH}/${SETNAME}"_Chromecast720.mp4
 				fi
 			else
-			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"
-			ERRLOG="$RAWNAME"_Chromecast720.log
-			OUTFILE="$RAWNAME"_Chromecast720.mp4
+				RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
+				ERRLOG="${OUTPATH}/${RAWNAME}"_Chromecast720.log
+				OUTFILE="${OUTPATH}/${RAWNAME}"_Chromecast720.mp4
 			fi
 			
 		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.

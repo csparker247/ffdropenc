@@ -8,20 +8,25 @@ for (( i=1; i<=${args}; i++ )); do
 		index=$(expr $i - 1)
 		# Remove the extension and make filenames for logs and output.
 			INFILE="$(basename "${filelist[$index]}")"
+			if [[ "$useNewOutput" == "1" ]]; then
+				OUTPATH="$newOutputPath"
+			else
+				OUTPATH="$(dirname "${filelist[$index]}")"
+			fi
 			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
 				SEQ_OPTS="-f image2 -r $enc_fps"
-				SETNAME="$(echo "${filelist[$index]}" | sed 's/%[0-9]*d\..*//')"
+				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
 				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					ERRLOG="$SETNAME"ProRes422.log
-					OUTFILE="$SETNAME"ProRes422.mov
+					ERRLOG="${OUTPATH}/${SETNAME}"ProRes422.log
+					OUTFILE="${OUTPATH}/${SETNAME}"ProRes422.mov
 				else
-					ERRLOG="$SETNAME"_ProRes422.log
-					OUTFILE="$SETNAME"_ProRes422.mov
+					ERRLOG="${OUTPATH}/${SETNAME}"_ProRes422.log
+					OUTFILE="${OUTPATH}/${SETNAME}"_ProRes422.mov
 				fi
 			else
-			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"
-			ERRLOG="$RAWNAME"_ProRes422.log
-			OUTFILE="$RAWNAME"_ProRes422.mov
+				RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
+				ERRLOG="${OUTPATH}/${RAWNAME}"_ProRes422.log
+				OUTFILE="${OUTPATH}/${RAWNAME}"_ProRes422.mov
 			fi
 			
 		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.

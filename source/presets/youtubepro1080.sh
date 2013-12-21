@@ -8,23 +8,28 @@ for (( i=1; i<=${args}; i++ )); do
 		index=$(expr $i - 1)
 		# Remove the extension and make filenames for logs and output.
 			INFILE="$(basename "${filelist[$index]}")"
+			if [[ "$useNewOutput" == "1" ]]; then
+				OUTPATH="$newOutputPath"
+			else
+				OUTPATH="$(dirname "${filelist[$index]}")"
+			fi
 			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
 				SEQ_OPTS="-f image2 -r $enc_fps"
-				SETNAME="$(echo "${filelist[$index]}" | sed 's/%[0-9]*d\..*//')"
+				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
 				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					TWOPASS="$SETNAME"2pass
-					ERRLOG="$SETNAME"YouTube1080.log
-					OUTFILE="$SETNAME"YouTube1080.mp4
+					TWOPASS="${OUTPATH}/${SETNAME}"2pass
+					ERRLOG="${OUTPATH}/${SETNAME}"YouTube1080.log
+					OUTFILE="${OUTPATH}/${SETNAME}"YouTube1080.mp4
 				else
-					TWOPASS="$SETNAME"_2pass
-					ERRLOG="$SETNAME"_YouTube1080.log
-					OUTFILE="$SETNAME"_YouTube1080.mp4
+					TWOPASS="${OUTPATH}/${SETNAME}"_2pass
+					ERRLOG="${OUTPATH}/${SETNAME}"_YouTube1080.log
+					OUTFILE="${OUTPATH}/${SETNAME}"_YouTube1080.mp4
 				fi
 			else
-			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"
-			TWOPASS="$RAWNAME"_2pass
-			ERRLOG="$RAWNAME"_YouTube1080.log
-			OUTFILE="$RAWNAME"_YouTube1080.mp4
+			RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
+			TWOPASS="${OUTPATH}/${RAWNAME}"_2pass
+			ERRLOG="${OUTPATH}/${RAWNAME}"_YouTube1080.log
+			OUTFILE="${OUTPATH}/${RAWNAME}"_YouTube1080.mp4
 			fi
 
 		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.

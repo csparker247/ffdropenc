@@ -8,26 +8,31 @@ for (( i=1; i<=${args}; i++ )); do
 		index=$(expr $i - 1)
 		# Remove the extension and make filenames for logs and output.
 			INFILE="$(basename "${filelist[$index]}")"
+			if [[ "$useNewOutput" == "1" ]]; then
+				OUTPATH="$newOutputPath"
+			else
+				OUTPATH="$(dirname "${filelist[$index]}")"
+			fi
 			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
 				SEQ_OPTS="-f image2 -r $enc_fps"
-				SETNAME="$(echo "${filelist[$index]}" | sed 's/%[0-9]*d\..*//')"
+				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
 				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					TWOPASS="$SETNAME"2pass
-					ERRLOG="$SETNAME"DVD.log
-					OUTFILE="$SETNAME"DVD.m2v
-					AUDIOFILE="$SETNAME"DVD_AUDIO.ac3
+					TWOPASS="${OUTPATH}/${SETNAME}"2pass
+					ERRLOG="${OUTPATH}/${SETNAME}"DVD.log
+					OUTFILE="${OUTPATH}/${SETNAME}"DVD.m2v
+					AUDIOFILE="${OUTPATH}/${SETNAME}"DVD_AUDIO.ac3
 				else
-					TWOPASS="$SETNAME"_2pass
-					ERRLOG="$SETNAME"_DVD.log
-					OUTFILE="$SETNAME"_DVD.m2v
-					AUDIOFILE="$SETNAME"_DVD_AUDIO.ac3
+					TWOPASS="${OUTPATH}/${SETNAME}"_2pass
+					ERRLOG="${OUTPATH}/${SETNAME}"_DVD.log
+					OUTFILE="${OUTPATH}/${SETNAME}"_DVD.m2v
+					AUDIOFILE="${OUTPATH}/${SETNAME}"_DVD_AUDIO.ac3
 				fi
 			else
-			RAWNAME="$(echo "${filelist[$index]}" | sed 's/\(.*\)\..*/\1/')"
-			TWOPASS="$RAWNAME"_2pass
-			ERRLOG="$RAWNAME"_DVD.log
-			OUTFILE="$RAWNAME"_DVD.m2v
-			AUDIOFILE="$RAWNAME"_DVD_AUDIO.ac3
+			RAWNAME="$(echo "INFILE" | sed 's/\(.*\)\..*/\1/')"
+			TWOPASS="${OUTPATH}/${RAWNAME}"_2pass
+			ERRLOG="${OUTPATH}/${RAWNAME}"_DVD.log
+			OUTFILE="${OUTPATH}/${RAWNAME}"_DVD.m2v
+			AUDIOFILE="${OUTPATH}/${RAWNAME}"_DVD_AUDIO.ac3
 			fi
 
 
