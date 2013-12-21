@@ -1,10 +1,10 @@
 .DS_Store
-/ffdropenc.app
-/ffimgdrop.app
-/source/ffdropenc.platypus
-/source/ffimgdrop.platypus
-/source/graphics/legacy
-/test
+ffdropenc.app
+ffimgdrop.app
+source/ffdropenc.platypus
+source/ffimgdrop.platypus
+source/graphics/legacy
+test/
 source/bin/.DS_Store
 source/bin/qtfaststart/__init__.pyc
 source/bin/qtfaststart/exceptions.pyc

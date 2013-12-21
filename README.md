@@ -29,7 +29,7 @@ Batch lists are built from all files and folders drug together to the droplet ic
 
 **Download**
   
-The latest OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc1.5.1.dmg "Download ffdropenc on Dropbox").
+The latest OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc1.6.0.dmg "Download ffdropenc on Dropbox").
 
 **Build from source**
 
