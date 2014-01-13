@@ -45,6 +45,7 @@ for (( i=1; i<=${args}; i++ )); do
 			count=$(echo "scale=3; ($count+1)" | bc)
 			PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
 			echo PROGRESS:"$PROG"
+			
 		# Cleanup
 			rm "$ERRLOG"			
 	done

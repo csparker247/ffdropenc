@@ -35,15 +35,11 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding Chromecast (720p) Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v libx264 -profile:v high -level 5 -crf 18 -maxrate 8M -bufsize 16M -pix_fmt yuv420p -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(1280,iw),-1)':'if(gt(iw,ih),-1,min(720,ih))'" -x264opts bframes=3:cabac=1 -c:a libfdk_aac -b:a 320k -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v libx264 -profile:v high -level 5 -crf 18 -maxrate 8M -bufsize 16M -pix_fmt yuv420p -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(1280,iw),-1)':'if(gt(iw,ih),-1,min(720,ih))'" -x264opts bframes=3:cabac=1 -movflags faststart -c:a libfdk_aac -b:a 320k -y "$OUTFILE" \
 			
 		# Track encoding progress	
 			. progress.sh
 		
-		# Move the faststart atom
-		echo Moving moov atom.	
-		"$qtfaststart" "$OUTFILE"
-				
 		# Update progress
 			count=$(echo "scale=3; ($count+1)" | bc)
 			PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
