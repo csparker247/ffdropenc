@@ -4,6 +4,7 @@ An OSX droplet to batch encode video files.
 
 **Latest updates**
 
+* 01.13.2014 - Presets use CRF encoding. Experimental ProRes audio. Now uses ffmpeg faststart atom.  
 * 12.21.2013 - Support for custom output folder.
 * 12.17.2013 - New Chromecast preset. Templates updated. Minor wording fix.
 * 12.10.2013 - Added new formats to approved extensions list. Fixed scaling issues with anamorphic video.
@@ -29,7 +30,7 @@ Batch lists are built from all files and folders drug together to the droplet ic
 
 **Download**
   
-The latest OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc1.6.0.dmg "Download ffdropenc on Dropbox").
+The latest OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc1.6.1.dmg "Download ffdropenc on Dropbox").
 
 **Build from source**
 

@@ -1,7 +1,14 @@
 ffdropenc Change Log
 ====================
 
-##2013-12-21 - v1.6.0
+##2014-01-13 - v1.6.1##
+
+ * **UPDATED**: All applicable presets now use CRF encoding. This should still produce comparable quality with a file-size reduction.  
+ * **NEW**: Chromecast (1080p) preset.  
+ * **UPDATED**: Most presets now use ffmpeg's internal faststart atom instead of qtfaststart.  
+ * **UPDATED**: ProRes preset has experimental audio encoding.
+
+##2013-12-21 - v1.6.0##
 
  * **NEW**: Custom Output Folder. ffdropenc now asks to select a custom output folder. If none is selected, 
  output files are saved next to the originals.  
