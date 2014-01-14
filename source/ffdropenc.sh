@@ -132,9 +132,9 @@ if [[ "$has_sequences" == "y" ]]; then
 fi
 
 # Ask for Custom Output Path
-useNewOutput=(`$cocoaDialog yesno-msgbox --no-cancel --title "ffdropenc" --text "Use a custom output folder?" --informative-text "NOTE: All files will be saved to this folder." --icon folder`)
+useNewOutput=`$cocoaDialog yesno-msgbox --no-cancel --title "ffdropenc" --text "Use a custom output folder?" --informative-text "NOTE: All files will be saved to this folder." --icon folder`
 if [[ "$useNewOutput" == "1" ]]; then
-	newOutputPath=(`$cocoaDialog fileselect --select-only-directories --title "ffdropenc" --text "Select an output folder:"`)
+	newOutputPath=`$cocoaDialog fileselect --select-only-directories --title "ffdropenc" --text "Select an output folder:"`
 	if [[ ! -n "$newOutputPath" ]]; then  ### if $rv has a non-zero length
 		echo "No output path selected. Encoding cancelled!"
 		exit 1
