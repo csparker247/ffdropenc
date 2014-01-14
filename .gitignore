@@ -1,6 +1,6 @@
 .DS_Store
 ffdropenc.app
-ffimgdrop.app
+ffdevenc.app
 source/ffdropenc.platypus
 source/ffimgdrop.platypus
 source/graphics/legacy
