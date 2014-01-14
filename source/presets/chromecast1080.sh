@@ -17,16 +17,16 @@ for (( i=1; i<=${args}; i++ )); do
 				SEQ_OPTS="-f image2 -r $enc_fps"
 				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
 				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					ERRLOG="${OUTPATH}/${SETNAME}"Chromecast720.log
-					OUTFILE="${OUTPATH}/${SETNAME}"Chromecast720.mp4
+					ERRLOG="${OUTPATH}/${SETNAME}"Chromecast1080.log
+					OUTFILE="${OUTPATH}/${SETNAME}"Chromecast1080.mp4
 				else
-					ERRLOG="${OUTPATH}/${SETNAME}"_Chromecast720.log
-					OUTFILE="${OUTPATH}/${SETNAME}"_Chromecast720.mp4
+					ERRLOG="${OUTPATH}/${SETNAME}"_Chromecast1080.log
+					OUTFILE="${OUTPATH}/${SETNAME}"_Chromecast1080.mp4
 				fi
 			else
 				RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
-				ERRLOG="${OUTPATH}/${RAWNAME}"_Chromecast720.log
-				OUTFILE="${OUTPATH}/${RAWNAME}"_Chromecast720.mp4
+				ERRLOG="${OUTPATH}/${RAWNAME}"_Chromecast1080.log
+				OUTFILE="${OUTPATH}/${RAWNAME}"_Chromecast1080.mp4
 			fi
 			
 		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
