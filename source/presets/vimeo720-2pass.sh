@@ -52,14 +52,11 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video Pass #2	
 			echo "Encoding 2nd Pass, Vimeo 720p HD Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -pass 2 -passlogfile "$TWOPASS" -c:v libx264 -b:v 5M -maxrate 5M -bufsize 2M -pix_fmt yuv420p -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(1280,iw),-1)':'if(gt(iw,ih),-1,min(720,ih))'" -c:a libfdk_aac -profile:a aac_low -b:a 320k -ar 48k -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -pass 2 -passlogfile "$TWOPASS" -c:v libx264 -b:v 5M -maxrate 5M -bufsize 2M -pix_fmt yuv420p -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(1280,iw),-1)':'if(gt(iw,ih),-1,min(720,ih))'" -movflags faststart -c:a libfdk_aac -b:a 320k -y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
 			. progress.sh
-			
-		echo Moving moov atom.	
-		"$qtfaststart" "$OUTFILE"
 	
 		# Update progress
 			count=$(echo "scale=3; ($count+0.5)" | bc)
