@@ -9,5 +9,8 @@ source/bin/.DS_Store
 source/bin/qtfaststart/__init__.pyc
 source/bin/qtfaststart/exceptions.pyc
 source/bin/qtfaststart/processor.pyc
+source/bin/ffmpeg
+source/bin/x264
 source/graphics/dmg
 ffdropenc.platypus
+build/
