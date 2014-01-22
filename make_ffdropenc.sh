@@ -114,8 +114,14 @@ if [[ $custom_encoder == "" ]]; then
 	cd ..
 	cp ffmpeg-static/target/bin/ffmpeg ffdropenc/bin/ffmpeg
 	cp ffmpeg-static/target/bin/x264 ffdropenc/bin/x264
+	rm -rf ffmpeg-static/
+	# Patch presets to use built-in aac
 	echo
-	echo ffmpeg-static built.
+	echo "New encoder binaries built..."
+	if [[ $free == "1" ]]; then
+		echo "Patching presets for use with free codecs..."
+		grep -rl "\-c:a libfdk_aac" ffdropenc/presets | xargs sed -i "" 's/-c:a libfdk_aac/\-strict experimental \-c:a aac/g'
+	fi
 fi
 
 # Make ffdropenc.app
@@ -159,4 +165,5 @@ if [[ $dmg == "1" ]]; then
 	rm ffdropenc_volume.icns
 fi
 
+echo All files built. Exiting.
 exit 0
