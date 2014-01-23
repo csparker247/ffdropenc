@@ -44,12 +44,10 @@ ffdropenc with a libfdk\_aac-enabled ffmpeg.
   
 > $ git clone https://github.com/csparker247/ffdropenc.git  
 > $ cd ffdropenc/ 
- 
-Most users will want to generate an Installation DMG as it doesn't including versioning in its filename (e.g. ffdropenc.app):
-> $ ./make_ffdropenc.sh -d  
+> $ ./make-ffdropenc.sh 
 
 To see other build options, view the help documentation:  
-> $ ./make_ffdropenc.sh -h  
+> $ ./make-ffdropenc.sh -h  
  
 **Other software**
 
