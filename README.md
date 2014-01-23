@@ -40,7 +40,8 @@ ffdropenc with a libfdk\_aac-enabled ffmpeg.
 * Install Xcode and the Xcode command line tools.
 * Download and install [Platypus](http://sveinbjorn.org/platypus).
 * Install the [Platypus command line tools](http://sveinbjorn.org/files/manpages/PlatypusDocumentation.html#51).
-* Run the following commands:
+* Run the following commands:  
+  
 > $ git clone https://github.com/csparker247/ffdropenc.git  
 > $ cd ffdropenc/ 
  
