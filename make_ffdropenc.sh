@@ -51,21 +51,17 @@ else
 fi
 
 if [[ $custom_encoder == "" ]]; then
-	if pkgutil --pkg-info=com.apple.pkg.CLTools_Executables >/dev/null; then
-		echo "Xcode Command Line Tools found..."
-		if [[ $free == "1" ]]; then
-			status="free"
-		else 
-			status="nonfree"
-		fi
+	if command -v gcc >/dev/null; then
+		echo "gcc compiler found..."
+	elif command -v clang >/dev/null; then
+		echo "clang compiler found..."
 	else
-		echo "ERROR: Xcode Command Line Tools not found. Please install before continuing."
+		echo "ERROR: Compatible C compiler not found. Please install before continuing."
 		echo
 		exit 1
 	fi
 else
 	echo "Using custom encoder binaries. Xcode Command Line Tools not required."
-	status="custom"
 fi
 
 if [[ $custom_encoder == "1" ]]; then
@@ -75,6 +71,17 @@ if [[ $custom_encoder == "1" ]]; then
 		exit 1
 	fi
 	echo "Custom encoder binaries found..."
+fi
+
+# Set build-type
+if [[ $custom_encoder == "" ]]; then
+	if [[ $free == "1" ]]; then
+		status="free"
+	else 
+		status="nonfree"
+	fi
+else
+	status="custom"
 fi
 
 # Create build folder
@@ -89,7 +96,7 @@ fi
 
 cd build
 
-# Copy latest ffdropenc source files and get version
+# Copy latest ffdropenc source files and get version number
 echo "Copying latest source files..."
 echo
 cp -rf "$ff_root"/source ./ffdropenc
@@ -115,9 +122,9 @@ if [[ $custom_encoder == "" ]]; then
 	cp ffmpeg-static/target/bin/ffmpeg ffdropenc/bin/ffmpeg
 	cp ffmpeg-static/target/bin/x264 ffdropenc/bin/x264
 	rm -rf ffmpeg-static/
-	# Patch presets to use built-in aac
 	echo
 	echo "New encoder binaries built..."
+	# Patch presets to use built-in aac when using free
 	if [[ $free == "1" ]]; then
 		echo "Patching presets for use with free codecs..."
 		grep -rl "\-c:a libfdk_aac" ffdropenc/presets | xargs sed -i "" 's/-c:a libfdk_aac/\-strict experimental \-c:a aac/g'
