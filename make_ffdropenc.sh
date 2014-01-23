@@ -2,9 +2,11 @@
 # Auto-build ffdropenc.app and DMG
 
 set -e
-
 echo
-echo "----Auto-build ffdropenc.app----"
+echo "-------------------------"
+echo "| ffdropenc.app Creator |"
+echo "-------------------------"
+echo
 
 # Check that we're running from the right folder
 if [[ "$PWD" != *ffdropenc ]]; then
@@ -15,13 +17,29 @@ if [[ "$PWD" != *ffdropenc ]]; then
 fi
 
 # Get options
-usage() { echo "Usage: $0 [-f] [-c] [-d]" 1>&2; echo; exit 1; }
+usage() { 
+cat << EOF
+Usage: $0 [-h] [-f] [-c] [-d]
+
+This script is used to automatically create ffdropenc.app and distributable DMGs.
+
+OPTIONS:
+	-h	Show this message.
+	-f	Use free codecs only. By default, this script builds ffmpeg using non-free libfdk_aac.
+	-c	Use custom ffmpeg and x264 binaries. Script looks in "ffdropenc/source/bin".
+	-d	Generate Installer DMG from created app.
+	
+	
+EOF
+exit 1
+}
+
 free=""
 custom_encoder=""
 dmg=""
 builddate=$(date +"%Y%m%d")
 
-while getopts "fcd" o; do
+while getopts "fcdh" o; do
     case "${o}" in
         f)
             free=1
@@ -31,6 +49,9 @@ while getopts "fcd" o; do
             ;;
         d)
         	dmg=1
+        	;;
+        h)
+        	usage
         	;;
         *)
             usage

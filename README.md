@@ -4,7 +4,7 @@ An OSX droplet to batch encode video files.
 
 **Latest updates**
 
-* 01.22.2014 - Created ffdropenc auto-build system. Various preset cleanups.
+* 01.22.2014 - Update to v1.7. Created ffdropenc auto-build system. Code reorg. Various preset cleanups.
 * 01.13.2014 - Presets use CRF encoding. Experimental ProRes audio. Now uses ffmpeg faststart atom.  
 * 12.21.2013 - Support for custom output folder.
 * 12.17.2013 - New Chromecast preset. Templates updated. Minor wording fix.
@@ -42,8 +42,13 @@ ffdropenc with a libfdk\_aac-enabled ffmpeg.
 * Install the [Platypus command line tools](http://sveinbjorn.org/files/manpages/PlatypusDocumentation.html#51).
 * Run the following commands:
 > $ git clone https://github.com/csparker247/ffdropenc.git  
-> $ cd ffdropenc/  
+> $ cd ffdropenc/ 
+ 
+Most users will want to generate an Installation DMG as it doesn't including versioning in its filename (e.g. ffdropenc.app):
 > $ ./make_ffdropenc.sh -d  
+
+To see other build options, view the help documentation:  
+> $ ./make_ffdropenc.sh -h  
  
 **Other software**
 
