@@ -2,7 +2,7 @@
 PATH=./bin:$PATH
 
 # ffdropenc
-# Version 1.6.2
+# Version 1.7
 # This is a droplet to transcode videos and image sequences to preset video types.
 # It uses ffmpeg as its transcoder.
 
