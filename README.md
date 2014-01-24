@@ -37,7 +37,8 @@ ffdropenc with a libfdk\_aac-enabled ffmpeg.
 
 **Build from source**
 
-* Install Xcode and the Xcode command line tools.
+* Install Xcode and the Xcode command line tools.  
+* Install pkg-config (via Homebrew)
 * Download and install [Platypus](http://sveinbjorn.org/platypus).
 * Install the [Platypus command line tools](http://sveinbjorn.org/files/manpages/PlatypusDocumentation.html#51).
 * Run the following commands:  
