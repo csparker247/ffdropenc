@@ -119,7 +119,7 @@ else
 fi
 
 if [[ $status == "nonfree" || $status == "free" ]]; then
-	if xcode-select -p > /dev/null 2>&1; then
+	if xcode-select -print-path > /dev/null 2>&1; then
 		echo "Xcode compiler found..."
 	else
 		echo "ERROR: Xcode compiler not found. Please install before continuing."
