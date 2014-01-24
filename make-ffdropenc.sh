@@ -119,12 +119,10 @@ else
 fi
 
 if [[ $status == "nonfree" || $status == "free" ]]; then
-	if command -v gcc >/dev/null; then
-		echo "gcc compiler found..."
-	elif command -v clang >/dev/null; then
-		echo "clang compiler found..."
+	if xcode-select -p > /dev/null 2>&1; then
+		echo "Xcode compiler found..."
 	else
-		echo "ERROR: Compatible C compiler not found. Please install before continuing."
+		echo "ERROR: Xcode compiler not found. Please install before continuing."
 		echo
 		exit 1
 	fi
