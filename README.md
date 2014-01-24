@@ -43,7 +43,7 @@ ffdropenc with a libfdk\_aac-enabled ffmpeg.
 * Run the following commands:  
   
 > $ git clone https://github.com/csparker247/ffdropenc.git  
-> $ cd ffdropenc/ 
+> $ cd ffdropenc/  
 > $ ./make-ffdropenc.sh 
 
 To see other build options, view the help documentation:  
