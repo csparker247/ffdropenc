@@ -2,6 +2,9 @@
 
 # optname AppleTV
 
+SUFFIX="AppleTV"
+EXTENSION=""
+
 # Encode each file
 for (( i=1; i<=${args}; i++ )); do
 		SEQ_OPTS=""
@@ -17,16 +20,16 @@ for (( i=1; i<=${args}; i++ )); do
 				SEQ_OPTS="-f image2 -r $enc_fps"
 				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
 				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					ERRLOG="${OUTPATH}/${SETNAME}"AppleTV.log
-					OUTFILE="${OUTPATH}/${SETNAME}"AppleTV.mp4
+					ERRLOG="${OUTPATH}/${SETNAME}${SUFFIX}.log"
+					OUTFILE="${OUTPATH}/${SETNAME}${SUFFIX}.mp4"
 				else
-					ERRLOG="${OUTPATH}/${SETNAME}"_AppleTV.log
-					OUTFILE="${OUTPATH}/${SETNAME}"_AppleTV.mp4
+					ERRLOG="${OUTPATH}/${SETNAME}_${SUFFIX}.log"
+					OUTFILE="${OUTPATH}/${SETNAME}_${SUFFIX}.mp4"
 				fi
 			else
 				RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
-				ERRLOG="${OUTPATH}/${RAWNAME}"_AppleTV.log
-				OUTFILE="${OUTPATH}/${RAWNAME}"_AppleTV.mp4
+				ERRLOG="${OUTPATH}/${RAWNAME}_${SUFFIX}.log"
+				OUTFILE="${OUTPATH}/${RAWNAME}_${SUFFIX}.mp4"
 			fi
 			
 		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
