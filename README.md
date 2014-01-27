@@ -4,7 +4,7 @@ An OSX droplet to batch encode video files.
 
 **Latest updates**
 
-* 01.22.2014 - Created ffdropenc auto-build system. Various preset cleanups.
+* 01.27.2014 - Update to v1.7. Created ffdropenc auto-build system. Code reorg. Various preset cleanups and bug fixes.  
 * 01.13.2014 - Presets use CRF encoding. Experimental ProRes audio. Now uses ffmpeg faststart atom.  
 * 12.21.2013 - Support for custom output folder.
 * 12.17.2013 - New Chromecast preset. Templates updated. Minor wording fix.
@@ -31,19 +31,25 @@ Batch lists are built from all files and folders drug together to the droplet ic
 
 **Download**
   
-The latest OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc-latest-free.dmg "Download ffdropenc on Dropbox"). 
 Due to licensing concerns, I can no longer distribute binaries with libfdk_aac. However, following the **Build from source** instructions below will compile 
-ffdropenc with a libfdk\_aac-enabled ffmpeg. 
+ffdropenc with a libfdk\_aac-enabled ffmpeg. This will give you much better sound quality and is the preferred installation method.  
+  
+The latest OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc-latest-free.dmg "Download ffdropenc on Dropbox").  
 
 **Build from source**
 
-* Install Xcode and the Xcode command line tools.
+* Install Xcode and the Xcode command line tools.  
+* Install pkg-config (via Homebrew)
 * Download and install [Platypus](http://sveinbjorn.org/platypus).
 * Install the [Platypus command line tools](http://sveinbjorn.org/files/manpages/PlatypusDocumentation.html#51).
-* Run the following commands:
+* Run the following commands:  
+  
 > $ git clone https://github.com/csparker247/ffdropenc.git  
 > $ cd ffdropenc/  
-> $ ./make_ffdropenc.sh -d  
+> $ ./make-ffdropenc.sh 
+
+To see other build options, view the help documentation:  
+> $ ./make-ffdropenc.sh -h  
  
 **Other software**
 
