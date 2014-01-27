@@ -1,12 +1,13 @@
 ffdropenc Change Log
 ====================
 
-##2014-01-22 - v1.7##
+##2014-01-27 - v1.7##
 
  * **NEW**: make-ffdropenc.sh - Automated build script for ffdropenc.app and distributable DMGs.  
  * **UPDATED**: Code reorganization to make further development easier.  
  * **UPDATED**: We no longer distribute ffmpeg or x264 binaries through GitHub. Use make-ffdropenc.sh or ffmpeg-static to compile your own.  
  * **UPDATED**: MPG/MPEG extensions added to file filters.  
+ * **UPDATED**: Requisite bug fixes all the way around.
  * **NEW**: MKV (H.264/Audio Pass-thru) Preset. Useful for compressing DVDs for use by media servers.
 
 ##2014-01-13 - v1.6.1##
