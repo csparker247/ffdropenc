@@ -2,6 +2,7 @@
 PATH=./bin:$PATH
 
 # ffdropenc
+# Version 1.7
 # This is a droplet to transcode videos and image sequences to preset video types.
 # It uses ffmpeg as its transcoder.
 
@@ -32,9 +33,9 @@ fps_options=( "24" "25" "29.97" "30" "60" "120" )
 fps_count="${#fps_options[@]}"
 
 # Collect list of approved file extensions
-filters=`cat filters.db`
-sequence_exts=`cat seqexts.db`
-mov_exts=`cat movexts.db`
+filters=`cat resources/filters.db`
+sequence_exts=`cat resources/seqexts.db`
+mov_exts=`cat resources/movexts.db`
 
 # Setup programs
 qtfaststart="bin/qtfaststart/qtfaststart"

@@ -4,6 +4,7 @@ An OSX droplet to batch encode video files.
 
 **Latest updates**
 
+* 01.27.2014 - Update to v1.7. Created ffdropenc auto-build system. Code reorg. Various preset cleanups and bug fixes.  
 * 01.13.2014 - Presets use CRF encoding. Experimental ProRes audio. Now uses ffmpeg faststart atom.  
 * 12.21.2013 - Support for custom output folder.
 * 12.17.2013 - New Chromecast preset. Templates updated. Minor wording fix.
@@ -30,23 +31,32 @@ Batch lists are built from all files and folders drug together to the droplet ic
 
 **Download**
   
-The latest OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc1.6.2.dmg "Download ffdropenc on Dropbox").
+Due to licensing concerns, I can no longer distribute binaries with libfdk_aac. However, following the **Build from source** instructions below will compile 
+ffdropenc with a libfdk\_aac-enabled ffmpeg. This will give you much better sound quality and is the preferred installation method.  
+  
+The latest OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc-latest-free.dmg "Download ffdropenc on Dropbox").  
 
 **Build from source**
 
-* Download and install Platypus from http://sveinbjorn.org/platypus
-* Open ffdropenc.platypus
-* Set variables: Script Path = ffdropenc.sh, Output = Progress Bar, Accept Dropped Items
-* Add bundled resources: /bin, /presets, filters.db, moxexts.db, and seqexts.db.
-* Set the app icon to /graphics/ffdropenc.icns.
-* Click Create and choose where to save the file.
+* Install Xcode and the Xcode command line tools.  
+* Install pkg-config (via Homebrew)
+* Download and install [Platypus](http://sveinbjorn.org/platypus).
+* Install the [Platypus command line tools](http://sveinbjorn.org/files/manpages/PlatypusDocumentation.html#51).
+* Run the following commands:  
+  
+> $ git clone https://github.com/csparker247/ffdropenc.git  
+> $ cd ffdropenc/  
+> $ ./make-ffdropenc.sh 
+
+To see other build options, view the help documentation:  
+> $ ./make-ffdropenc.sh -h  
  
 **Other software**
 
 ffmpeg - www.ffmpeg.org  
 x264 - http://www.videolan.org/developers/x264.html  
 ffmpeg-static (modified) - https://github.com/csparker247/ffmpeg-static  
-qtfaststart - https://github.com/danielgtaylor/qtfaststart  
+yoursway-create-dmg - https://github.com/csparker247/yoursway-create-dmg  
 cocoaDialog - http://mstratman.github.com/cocoadialog/  
 Platypus - http://sveinbjorn.org/platypus  
 
