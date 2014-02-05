@@ -35,7 +35,9 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding MKV (H.264, Audio Pass-thru) Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -map 0 -c copy -c:v libx264 -crf 18 -maxrate 10M -bufsize 16M -pix_fmt yuv420p -vf "scale=iw*sar:ih" -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -map 0 -c copy \
+			-c:v libx264 -crf 18 -maxrate 10M -bufsize 16M -pix_fmt yuv420p -profile:v high -level 42 -vf "scale=iw*sar:ih" \
+			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	

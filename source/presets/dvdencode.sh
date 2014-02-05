@@ -43,7 +43,10 @@ for (( i=1; i<=${args}; i++ )); do
 			# First pass 
 				echo "Encoding 1st Pass, DVD - Widescreen of $INFILE"
 				ENCODER="FFMPEG"
-				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -pass 1 -passlogfile "$TWOPASS" -pix_fmt yuv420p -s 720x480 -r 29.97 -g 18 -b:v 9M -maxrate 9M -minrate 0 -bufsize 1835008 -packetsize 2048 -muxrate 10080000 -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),720,-1)':'if(gt(iw,ih),-1,trunc(720/a/2)*2)'" -an -y "$OUTFILE" \
+				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -pass 1 -passlogfile "$TWOPASS" \
+				-pix_fmt yuv420p -s 720x480 -r 29.97 -g 18 -b:v 9M -maxrate 9M -minrate 0 -bufsize 1835008 -packetsize 2048 -muxrate 10080000 -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),720,-1)':'if(gt(iw,ih),-1,480)'" \
+				-an \
+				-y "$OUTFILE" \
 				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 		
 			# Track encoding progress	
@@ -57,7 +60,10 @@ for (( i=1; i<=${args}; i++ )); do
 			# Second Pass
 				echo "Encoding 2nd Pass, DVD - Widescreen of $INFILE"
 				ENCODER="FFMPEG"
-				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -pass 2 -passlogfile "$TWOPASS" -pix_fmt yuv420p -s 720x480 -r 29.97 -g 18 -b:v 9M -maxrate 9M -minrate 0 -bufsize 1835008 -packetsize 2048 -muxrate 10080000 -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),720,-1)':'if(gt(iw,ih),-1,480)'" -an -y "$OUTFILE" \
+				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -pass 2 -passlogfile "$TWOPASS" \
+				-pix_fmt yuv420p -s 720x480 -r 29.97 -g 18 -b:v 9M -maxrate 9M -minrate 0 -bufsize 1835008 -packetsize 2048 -muxrate 10080000 -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),720,-1)':'if(gt(iw,ih),-1,480)'" \
+				-an \
+				-y "$OUTFILE" \
 				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 			# Track encoding progress	
@@ -71,7 +77,9 @@ for (( i=1; i<=${args}; i++ )); do
 			# Audio Pass
 				echo "Encoding AC-3 Audio for $INFILE"
 				ENCODER="FFMPEG"
-				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -b:a ac3 -b:a 448k -ar 48000 "$AUDIOFILE" \
+				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" \
+				-c:a ac3 -b:a 448k -ar 48000 \
+				"$AUDIOFILE" \
 				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 			# Track encoding progress	

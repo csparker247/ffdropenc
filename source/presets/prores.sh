@@ -35,7 +35,10 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding ProRes 422 Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v prores -c:a pcm_s16le -filter_complex asetnsamples=n=16384:p=0 -ar 48k -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" \
+			-c:v prores \
+			-c:a pcm_s16le -filter_complex asetnsamples=n=16384:p=0 -ar 48k \
+			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	

@@ -35,7 +35,10 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding H.264 Generic (No Scale) Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v libx264 -crf 16 -maxrate 45M -bufsize 3M -pix_fmt yuv420p -movflags faststart -c:a libfdk_aac -b:a 320k -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" \
+			-c:v libx264 -crf 18 -maxrate 40M -bufsize 8M -pix_fmt yuv420p -profile:v high -level 42 -movflags faststart \
+			-c:a libfdk_aac -b:a 320k \
+			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	

@@ -35,7 +35,10 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding MP4 1080p (High Grain) Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v libx264 -crf 18 -maxrate 10M -bufsize 15M -pix_fmt yuv420p -preset slow -tune grain -profile:v baseline -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(1920,iw),-1)':'if(gt(iw,ih),-1,min(1080,ih))'" -movflags faststart -c:a libfdk_aac -b:a 320k -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" \
+			-c:v libx264 -crf 18 -maxrate 10M -bufsize 15M -pix_fmt yuv420p -preset slow -tune grain -profile:v high -level 42 -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(1920,iw),-1)':'if(gt(iw,ih),-1,min(1080,ih))'" -movflags faststart \
+			-c:a libfdk_aac -b:a 320k \
+			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
