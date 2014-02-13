@@ -36,7 +36,7 @@ for (( i=1; i<=${args}; i++ )); do
 			echo "Encoding H.264 Deinterlaced (720p) Version of $INFILE"
 			ENCODER="FFMPEG"
 			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" \
-			-c:v libx264 -crf 22 -maxrate 8M -bufsize 16M -pix_fmt yuv420p -profile:v high -level 42 -vf "scale=iw*sar:ih, setsar=1/1, yadif, scale='if(gt(iw,ih),min(1280,iw),-1)':'if(gt(iw,ih),-1,min(720,ih))'" -movflags faststart \
+			-c:v libx264 -crf 22 -maxrate 8M -bufsize 16M -pix_fmt yuv420p -profile:v high -level 42 -vf "scale=iw*sar:ih, setsar=1/1, yadif, scale='if(gt(iw,ih),min(1280,ceil(iw/2)*2),trunc(oh*a/2)*2)':'if(gt(iw,ih),trunc(ow/a/2)*2,min(720,ceil(ih/2)*2))'" -movflags faststart \
 			-c:a libfdk_aac -b:a 192k \
 			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &

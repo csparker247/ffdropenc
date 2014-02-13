@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# optname H.264 Generic (No Scale)
+# optname H.264 Generic
 
 # Encode each file
 for (( i=1; i<=${args}; i++ )); do
@@ -33,7 +33,7 @@ for (( i=1; i<=${args}; i++ )); do
 			NUM_PASSES="1"
 						
 		# Video pass
-			echo "Encoding H.264 Generic (No Scale) Version of $INFILE"
+			echo "Encoding H.264 Generic Version of $INFILE"
 			ENCODER="FFMPEG"
 			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" \
 			-c:v libx264 -crf 18 -maxrate 40M -bufsize 8M -pix_fmt yuv420p -profile:v high -level 42 -movflags faststart \
