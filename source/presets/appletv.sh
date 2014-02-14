@@ -2,8 +2,17 @@
 
 # optname AppleTV
 
+# Encoding options
 SUFFIX="AppleTV"
-EXTENSION=""
+EXTENSION="mp4"
+TARGET_VRATE="8M"
+TARGET_ARATE="320k"
+TARGET_WIDTH="1920"
+TARGET_HEIGHT="1080"
+TARGET_DAR="16/9"
+
+# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc. Used by progress tracker.
+NUM_PASSES="1"
 
 # Encode each file
 for (( i=1; i<=${args}; i++ )); do
@@ -31,16 +40,20 @@ for (( i=1; i<=${args}; i++ )); do
 				ERRLOG="${OUTPATH}/${RAWNAME}_${SUFFIX}.log"
 				OUTFILE="${OUTPATH}/${RAWNAME}_${SUFFIX}.mp4"
 			fi
-			
-		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
-			NUM_PASSES="1"
 						
 		# Video pass
 			echo "Encoding AppleTV Version of $INFILE"
 			ENCODER="FFMPEG"
 			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" \
-			-c:v libx264 -crf 18 -maxrate 8M -bufsize 10M -pix_fmt yuv420p -profile:v high -level 40 -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(1920,ceil(iw/2)*2),trunc(oh*a/2)*2)':'if(gt(iw,ih),trunc(ow/a/2)*2,min(1080,ceil(ih/2)*2))'" -movflags faststart \
-			-c:a libfdk_aac -b:a 320k \
+			-c:v libx264 -crf 18 -maxrate "$TARGET_VRATE" -bufsize 10M -pix_fmt yuv420p -profile:v high -level 40 \
+				-vf \
+					"scale=iw*sar:ih,
+					scale=
+						'w=if(lt(dar, $TARGET_DAR), trunc(oh*a/2)*2, min($TARGET_WIDTH,ceil(iw/2)*2)): 
+     					h=if(gte(dar, $TARGET_DAR), trunc(ow/a/2)*2, min($TARGET_HEIGHT,ceil(ih/2)*2))', 
+					setsar=1" \
+				-movflags faststart \
+			-c:a libfdk_aac -b:a "$TARGET_ARATE" \
 			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
