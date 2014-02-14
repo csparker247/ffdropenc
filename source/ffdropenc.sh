@@ -37,9 +37,10 @@ filters=`cat resources/filters.db`
 sequence_exts=`cat resources/seqexts.db`
 mov_exts=`cat resources/movexts.db`
 
-# Setup programs
+# Setup programs, import global functions
 qtfaststart="bin/qtfaststart/qtfaststart"
 cocoaDialog="bin/cocoaDialog.app/Contents/MacOS/cocoaDialog"
+. functions.sh
 
 # Build list of files to encode, using only files from approved extensions list.
 OLDIFS=$IFS

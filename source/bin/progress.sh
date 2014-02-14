@@ -8,13 +8,6 @@ if [[ $ENCODER == "FFMPEG" ]]; then
 	# Get ffmpeg Process ID
 		PID=$( ps -ef | grep "ffmpeg" | grep -v "grep" | awk '{print $2}' )
 
-	# Get video duration in frames
-		duration=$(ffmpeg -i "${filelist[$index]}" 2>&1 | sed -n "s/.* Duration: \([^,]*\), start: .*/\1/p")
-		fps=$(ffmpeg -i "${filelist[$index]}" 2>&1 | sed -n "s/.*, \(.*\) tbr.*/\1/p")
-		hours=$(echo $duration | cut -d":" -f1)
-		minutes=$(echo $duration | cut -d":" -f2)
-		seconds=$(echo $duration | cut -d":" -f3)
-		FRAMES=$(echo "($hours*3600+$minutes*60+$seconds)*$fps" | bc | cut -d"." -f1)
 	
 	# While ffmpeg runs, process the log file for the current frame, display percentage progress
 		while ps -p $PID>/dev/null ; do

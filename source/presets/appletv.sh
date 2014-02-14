@@ -2,50 +2,37 @@
 
 # optname AppleTV
 
+# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc. Used by progress tracker.
+NUM_PASSES="1"
+
 # Encoding options
-SUFFIX="AppleTV"
-EXTENSION="mp4"
+VSUFFIX="AppleTV"
+TPL_SUFFIX=""
+VEXTENSION="mp4"
+CRF="18"
 TARGET_VRATE="8M"
-TARGET_ARATE="320k"
+TARGET_BUFFER="10M"
 TARGET_WIDTH="1920"
 TARGET_HEIGHT="1080"
 TARGET_DAR="16/9"
 
-# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc. Used by progress tracker.
-NUM_PASSES="1"
+ASUFFIX=""
+AEXTENSION=""
+TARGET_ARATE="320k"
 
 # Encode each file
 for (( i=1; i<=${args}; i++ )); do
 		SEQ_OPTS=""
 		index=$(expr $i - 1)
-		# Remove the extension and make filenames for logs and output.
-			INFILE="$(basename "${filelist[$index]}")"
-			if [[ "$useNewOutput" == "1" ]]; then
-				OUTPATH="$newOutputPath"
-			else
-				OUTPATH="$(dirname "${filelist[$index]}")"
-			fi
-			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
-				SEQ_OPTS="-f image2 -r $enc_fps"
-				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
-				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					ERRLOG="${OUTPATH}/${SETNAME}${SUFFIX}.log"
-					OUTFILE="${OUTPATH}/${SETNAME}${SUFFIX}.mp4"
-				else
-					ERRLOG="${OUTPATH}/${SETNAME}_${SUFFIX}.log"
-					OUTFILE="${OUTPATH}/${SETNAME}_${SUFFIX}.mp4"
-				fi
-			else
-				RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
-				ERRLOG="${OUTPATH}/${RAWNAME}_${SUFFIX}.log"
-				OUTFILE="${OUTPATH}/${RAWNAME}_${SUFFIX}.mp4"
-			fi
-						
+		INPUT_FILE="$(echo "${filelist[$index]}")"
+		getLength "$INPUT_FILE"
+		setOutputs "$INPUT_FILE"
+
 		# Video pass
-			echo "Encoding AppleTV Version of $INFILE"
+			echo "Encoding AppleTV Version of $INPUT_NAME"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" \
-			-c:v libx264 -crf 18 -maxrate "$TARGET_VRATE" -bufsize 10M -pix_fmt yuv420p -profile:v high -level 40 \
+			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" \
+			-c:v libx264 -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt yuv420p -profile:v high -level 40 \
 				-vf \
 					"scale=iw*sar:ih,
 					scale=
