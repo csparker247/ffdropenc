@@ -4,6 +4,7 @@
 
 # Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc. Used by progress tracker.
 NUM_PASSES="1"
+TOTALFRAMES=$(echo "$TOTALFRAMES * $NUM_PASSES" | bc)
 
 # Encoding options
 VSUFFIX="AppleTV"
@@ -26,6 +27,7 @@ for (( i=1; i<=${args}; i++ )); do
 		index=$(expr $i - 1)
 		INPUT_FILE="$(echo "${filelist[$index]}")"
 		getLength "$INPUT_FILE"
+		THISFRAMES="$FRAMES"
 		setOutputs "$INPUT_FILE"
 
 		# Video pass
@@ -45,11 +47,11 @@ for (( i=1; i<=${args}; i++ )); do
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
-			. progress.sh
+			getProgress
 
 		# Update progress
-			count=$(echo "scale=3; ($count+1)" | bc)
-			PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
+			FINISHEDFRAMES=$(echo "$FINISHEDFRAMES + $THISFRAMES" | bc)
+			PROG=$(echo "scale=3; ($FINISHEDFRAMES/$TOTALFRAMES)*100.0" | bc)
 			echo PROGRESS:"$PROG"
 			
 		# Cleanup

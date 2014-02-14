@@ -106,6 +106,15 @@ if [[ "$args" == "0" || "${filelist[@]}" == "" ]]; then
 	exit 0
 fi
 
+# Compile total number of frames to be encoded
+TOTALFRAMES="0"
+FINISHEDFRAMES="0"
+for (( i=1; i<=${args}; i++ )); do
+	FILE="$(echo "${filelist[$index]}")"
+	getLength "$FILE"
+	TOTALFRAMES=$(echo "$TOTALFRAMES + $FRAMES" | bc)
+done
+
 # Ask for encoding settings
 OLDIFS=$IFS
 IFS=$'\n'
