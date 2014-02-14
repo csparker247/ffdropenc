@@ -35,7 +35,10 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding YouTube 1080p HD (Standard) Version of $INFILE"
 			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -c:v libx264 -crf 18 -maxrate 10M -bufsize 15M -pix_fmt yuv420p -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(1920,iw),-1)':'if(gt(iw,ih),-1,min(1080,ih))'" -movflags faststart -c:a libfdk_aac -b:a 256k -y "$OUTFILE" \
+			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" \
+			-c:v libx264 -crf 18 -maxrate 10M -bufsize 15M -profile:v high -level 42 -pix_fmt yuv420p -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(1920,ceil(iw/2)*2),trunc(oh*a/2)*2)':'if(gt(iw,ih),trunc(ow/a/2)*2,min(1080,ceil(ih/2)*2))'" -movflags faststart \
+			-c:a libfdk_aac -b:a 256k \
+			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
