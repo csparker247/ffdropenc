@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # optname AppleTV
+DISPLAYNAME="${preset_name[$enc_type]}"
 
 # Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc. Used by progress tracker.
 NUM_PASSES="1"
@@ -31,7 +32,7 @@ for (( i=1; i<=${args}; i++ )); do
 		setOutputs "$INPUT_FILE"
 
 		# Video pass
-			echo "Encoding AppleTV Version of $INPUT_NAME"
+			echo "Encoding $DISPLAYNAME Version of $INPUT_NAME"
 			ENCODER="FFMPEG"
 			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" \
 			-c:v libx264 -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt yuv420p -profile:v high -level 40 \
