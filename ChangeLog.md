@@ -1,6 +1,15 @@
 ffdropenc Change Log
 ====================
 
+##2014-02-15 - v1.8##
+
+ * **NEW**: Global functions for common tasks. Right now these are just being used for progress tracking, but the potential exists for some powerful content filters (i.e. skipping files that already match the target output).  
+ * **NEW**: Added ffprobe to internal bin. It's output is too much better than ffmpeg's. Hopefully no one minds the extra file size.  
+ * **NEW**: A couple of deinterlacing presets. These currently use yadif. Hopefully a w3fdif-based preset will be coming in the future.  
+ * **UPDATED**: All presets have been reorganized to make editing common values easier. This is a major overhaul of the whole preset system and I'm hoping it's going to be worth the effort.  
+ * **UPDATED**: Little tweaks to most presets to make them more compatible with their targets.
+ * **FIXED**: Scaling now works as expected. There was a major oversight with regards to scaling videos not 16x9. This should be fixed.  
+
 ##2014-01-27 - v1.7##
 
  * **NEW**: make-ffdropenc.sh - Automated build script for ffdropenc.app and distributable DMGs.  
@@ -8,7 +17,7 @@ ffdropenc Change Log
  * **UPDATED**: We no longer distribute ffmpeg or x264 binaries through GitHub. Use make-ffdropenc.sh or ffmpeg-static to compile your own.  
  * **UPDATED**: MPG/MPEG extensions added to file filters.  
  * **UPDATED**: Requisite bug fixes all the way around.
- * **NEW**: MKV (H.264/Audio Pass-thru) Preset. Useful for compressing DVDs for use by media servers.
+ * **NEW**: MKV (H.264/Audio Pass-thru) Preset. Useful for compressing DVDs for use by media servers.  
 
 ##2014-01-13 - v1.6.1##
 
