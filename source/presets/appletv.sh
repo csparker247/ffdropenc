@@ -1,7 +1,10 @@
 #!/bin/sh
 
+# Next line used by ffdropenc.sh
 # optname AppleTV
-DISPLAYNAME="${preset_name[$enc_type]}"
+
+# Next line used by this preset. Defaults to same as above.
+CONSOLENAME="${preset_name[$enc_type]}"
 
 # Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc. Used by progress tracker.
 NUM_PASSES="1"
@@ -11,8 +14,11 @@ TOTALFRAMES=$(echo "$TOTALFRAMES * $NUM_PASSES" | bc)
 VSUFFIX="AppleTV"
 TPL_SUFFIX=""
 VEXTENSION="mp4"
+VCODEC="h264"
+VENCODER="libx264"
+PIX_FMT="yuv420p"
 CRF="18"
-TARGET_VRATE="8M"
+TARGET_VRATE="8388608"
 TARGET_BUFFER="10M"
 TARGET_WIDTH="1920"
 TARGET_HEIGHT="1080"
@@ -27,15 +33,22 @@ for (( i=1; i<=${args}; i++ )); do
 		SEQ_OPTS=""
 		index=$(expr $i - 1)
 		INPUT_FILE="$(echo "${filelist[$index]}")"
-		getLength "$INPUT_FILE"
-		THISFRAMES="$FRAMES"
 		setOutputs "$INPUT_FILE"
+		analyze "$INPUT_FILE"
+
+		compareParams "$THIS_VRATE" "$TARGET_VRATE"
+		if [[ $? != 0 ]]; then
+			echo "$INPUT_NAME conforms to target specs. Skipping..."
+			updateProgress
+			cleanLogs
+			continue
+		fi
 
 		# Video pass
-			echo "Encoding $DISPLAYNAME Version of $INPUT_NAME"
+			echo "Encoding $CONSOLENAME Version of $INPUT_NAME"
 			ENCODER="FFMPEG"
 			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" \
-			-c:v libx264 -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt yuv420p -profile:v high -level 40 \
+			-c:v "$VENCODER" -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt "$PIX_FMT" -profile:v high -level 40 \
 				-vf \
 					"scale=iw*sar:ih,
 					scale=
@@ -51,11 +64,9 @@ for (( i=1; i<=${args}; i++ )); do
 			getProgress
 
 		# Update progress
-			FINISHEDFRAMES=$(echo "$FINISHEDFRAMES + $THISFRAMES" | bc)
-			PROG=$(echo "scale=3; ($FINISHEDFRAMES/$TOTALFRAMES)*100.0" | bc)
-			echo PROGRESS:"$PROG"
+			updateProgress
 			
 		# Cleanup
-			rm "$ERRLOG"			
+			cleanLogs			
 	done
 exit 0

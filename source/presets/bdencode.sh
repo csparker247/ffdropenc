@@ -19,19 +19,19 @@ for (( i=1; i<=${args}; i++ )); do
 				X_OPTS="--fps $enc_fps"
 				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
 				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					LOGNAME="${OUTPATH}/${SETNAME}"2pass.log
+					LOGNAME="${OUTPATH}/${SETNAME}"2pass
 					ERRLOG="${OUTPATH}/${SETNAME}"BD.log
 					OUTFILE="${OUTPATH}/${SETNAME}"BD_VIDEO.264
 					AUDIOFILE="${OUTPATH}/${SETNAME}"BD_AUDIO.ac3
 				else
-					LOGNAME="${OUTPATH}/${SETNAME}"_2pass.log
+					LOGNAME="${OUTPATH}/${SETNAME}"_2pass
 					ERRLOG="${OUTPATH}/${SETNAME}"_BD.log
 					OUTFILE="${OUTPATH}/${SETNAME}"_BD_VIDEO.264
 					AUDIOFILE="${OUTPATH}/${SETNAME}"_BD_AUDIO.ac3
 				fi
 			else
 			RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
-			LOGNAME="${OUTPATH}/${RAWNAME}"_2pass.log
+			LOGNAME="${OUTPATH}/${RAWNAME}"_2pass
 			ERRLOG="${OUTPATH}/${RAWNAME}"_BD.log
 			OUTFILE="${OUTPATH}/${RAWNAME}"_BD_VIDEO.264
 			AUDIOFILE="${OUTPATH}/${RAWNAME}"_BD_AUDIO.ac3
@@ -44,7 +44,7 @@ for (( i=1; i<=${args}; i++ )); do
 			# First pass 
 				echo "Encoding 1st Pass, Bluray 1080p of $INFILE"
 				ENCODER="X264"
-				x264 --quiet --bitrate 39000 --preset veryslow --tune film $(echo $X_OPTS) --bluray-compat --pic-struct --vbv-maxrate 40000 --vbv-bufsize 30000 --level 4.1 --keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 --sar 1:1 --video-filter resize:width=1920,height=1080,fittobox=both --pass 1 --stats "$LOGNAME" -o "$OUTFILE" "${filelist[$index]}" \
+				x264 --quiet --bitrate 39000 --preset veryslow --tune film $(echo $X_OPTS) --bluray-compat --pic-struct --vbv-maxrate 40000 --vbv-bufsize 30000 --level 4.1 --keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 --sar 1:1 --video-filter resize:width=1920,height=1080,fittobox=both --pass 1 --stats "${LOGNAME}.log" -o "$OUTFILE" "${filelist[$index]}" \
 				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 		
 			# Track encoding progress	
@@ -58,7 +58,7 @@ for (( i=1; i<=${args}; i++ )); do
 			# Second Pass
 				echo "Encoding 2nd Pass, Bluray 1080p of $INFILE"
 				ENCODER="X264"
-				x264 --quiet --bitrate 39000 --preset veryslow --tune film $(echo $X_OPTS) --bluray-compat --pic-struct --vbv-maxrate 40000 --vbv-bufsize 30000 --level 4.1 --keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 --sar 1:1 --video-filter resize:width=1920,height=1080,fittobox=both --pass 2 --stats "$LOGNAME" -o "$OUTFILE" "${filelist[$index]}" \
+				x264 --quiet --bitrate 39000 --preset veryslow --tune film $(echo $X_OPTS) --bluray-compat --pic-struct --vbv-maxrate 40000 --vbv-bufsize 30000 --level 4.1 --keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 --sar 1:1 --video-filter resize:width=1920,height=1080,fittobox=both --pass 2 --stats "${LOGNAME}.log" -o "$OUTFILE" "${filelist[$index]}" \
 				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 			# Track encoding progress	

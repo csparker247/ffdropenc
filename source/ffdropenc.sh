@@ -111,8 +111,8 @@ TOTALFRAMES="0"
 FINISHEDFRAMES="0"
 for (( i=1; i<=${args}; i++ )); do
 	FILE="$(echo "${filelist[$index]}")"
-	getLength "$FILE"
-	TOTALFRAMES=$(echo "$TOTALFRAMES + $FRAMES" | bc)
+	tempFRAMES=$(getLength "$FILE")
+	TOTALFRAMES=$(echo "$TOTALFRAMES + $tempFRAMES" | bc)
 done
 
 # Ask for encoding settings

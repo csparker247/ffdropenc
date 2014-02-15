@@ -2,16 +2,29 @@
 
 # Global Functions
 
-getLength () {
-	# Get video duration in frames
-	duration=$(ffmpeg -i "$1" 2>&1 | sed -n "s/.* Duration: \([^,]*\), start: .*/\1/p")
-	fps=$(ffmpeg -i "$1" 2>&1 | sed -n "s/.*, \(.*\) tbr.*/\1/p")
-	hours=$(echo $duration | cut -d":" -f1)
-	minutes=$(echo $duration | cut -d":" -f2)
-	seconds=$(echo $duration | cut -d":" -f3)
-	FRAMES=$(echo "($hours*3600+$minutes*60+$seconds)*$fps" | bc | cut -d"." -f1)
+analyze () {
+	ffprobe -i "$1" -loglevel quiet -of flat -select_streams v \
+	-show_entries stream=codec_name,width,height,pix_fmt,level,bit_rate,channels > "$ERRLOG"
+	THIS_VEXTENSION=""
+	THIS_VCODEC="$(sed -n /codec_name/p "$ERRLOG" | sed 's/.*codec_name="\(.*\)"/\1/')"
+	THIS_FRAMES="$(getLength "$1")"
+	THIS_VRATE="$(sed -n /bit_rate/p "$ERRLOG" | sed 's/.*bit_rate="\(.*\)"/\1/')"
+	THIS_WIDTH="$(sed -n /width/p "$ERRLOG" | sed 's/.*width=\(.*\)/\1/')"
+	THIS_HEIGHT="$(sed -n /height/p "$ERRLOG" | sed 's/.*height=\(.*\)/\1/')"
 }
 
+getLength () {
+	# Get video duration in frames
+	echo $(ffprobe -i "$1" -loglevel quiet -of flat -select_streams v:0 -show_entries stream=nb_frames | sed 's/.*frames="\(.*\)"/\1/')
+}
+
+compareParams () {
+	if [ "$1" -ge "$2" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
 
 setOutputs () {
 	# Remove the extension and make filenames for logs and output.
@@ -42,28 +55,40 @@ setOutputs () {
 }
 
 getProgress () {
-# Check whether this is a ffmpeg or x264 encode	
-sleep 1
-if [[ $ENCODER == "FFMPEG" ]]; then
-	# Get ffmpeg Process ID
-		PID=$( ps -ef | grep "ffmpeg" | grep -v "grep" | awk '{print $2}' )
-elif [[ $ENCODER == "X264" ]]; then
-	# Get x264 Process ID
-		PID=$( ps -ef | grep "x264" | grep -v "grep" | awk '{print $2}' )
-fi
-
-# While encoder runs, process the log file for the current frame, display percentage progress
-while ps -p $PID>/dev/null ; do
-	if [[ $ENCODER == "FFMPEG" ]]; then
-		CURRENTFRAME=$(tail -n 1 "$ERRLOG" | sed 's/frame=\(.*\)fps=.*/\1/'| sed 's/ //g')
-	elif [[ $ENCODER == "X264" ]]; then
-		CURRENTFRAME=$(tail -n 1 "$ERRLOG" | awk '/frames\,/ { print $2 }' | sed 's:/[0-9]*::')
-	fi
-	if [[ -n "$CURRENTFRAME" ]]; then
-		tempFINISHED=$(echo "$FINISHEDFRAMES + $CURRENTFRAME" | bc)
-		PROG=$(echo "scale=3; ($tempFINISHED/$TOTALFRAMES)*100.0" | bc)
-		echo "PROGRESS:$PROG"
-	fi
+	# Check whether this is a ffmpeg or x264 encode	
 	sleep 1
-done
+	if [[ $ENCODER == "FFMPEG" ]]; then
+		# Get ffmpeg Process ID
+			PID=$( ps -ef | grep "ffmpeg" | grep -v "grep" | awk '{print $2}' )
+	elif [[ $ENCODER == "X264" ]]; then
+		# Get x264 Process ID
+			PID=$( ps -ef | grep "x264" | grep -v "grep" | awk '{print $2}' )
+	fi
+
+	# While encoder runs, process the log file for the current frame, display percentage progress
+	while ps -p $PID>/dev/null ; do
+		if [[ $ENCODER == "FFMPEG" ]]; then
+			CURRENTFRAME=$(tail -n 1 "$ERRLOG" | sed 's/frame=\(.*\)fps=.*/\1/'| sed 's/ //g')
+		elif [[ $ENCODER == "X264" ]]; then
+			CURRENTFRAME=$(tail -n 1 "$ERRLOG" | awk '/frames\,/ { print $2 }' | sed 's:/[0-9]*::')
+		fi
+		if [[ -n "$CURRENTFRAME" ]]; then
+			tempFINISHED=$(echo "$FINISHEDFRAMES + $CURRENTFRAME" | bc)
+			PROG=$(echo "scale=3; ($tempFINISHED/$TOTALFRAMES)*100.0" | bc)
+			echo "PROGRESS:$PROG"
+		fi
+		sleep 1
+	done
+}
+
+updateProgress () {
+	FINISHEDFRAMES=$(echo "$FINISHEDFRAMES + $THIS_FRAMES" | bc)
+	PROG=$(echo "scale=3; ($FINISHEDFRAMES/$TOTALFRAMES)*100.0" | bc)
+	echo PROGRESS:"$PROG"
+}
+
+cleanLogs () {
+	[[ -e "$ERRLOG" ]] && rm "$ERRLOG"
+	[[ -e "${TWOPASSLOG}*.log" ]] && rm "${TWOPASSLOG}*.log"
+	[[ -e "${TWOPASSLOG}.mbtree" ]] && rm "${TWOPASSLOG}.mbtree"
 }
