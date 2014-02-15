@@ -1,54 +1,60 @@
 #!/bin/sh
 
-# optname YouTube 1080p HD (Standard)
+# Next line used by ffdropenc.sh
+# optname YouTube 1080p (High-Bitrate)
+
+# Next line used by this preset. Defaults to same as above.
+CONSOLENAME="YouTube"
+
+# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc. Used by progress tracker.
+NUM_PASSES="1"
+TOTALFRAMES=$(echo "$TOTALFRAMES * $NUM_PASSES" | bc)
+
+# Encoding options
+VSUFFIX="YouTube"
+VEXTENSION="mp4"
+VENCODER="libx264"
+PIX_FMT="yuv420p"
+CRF="16"
+TARGET_VRATE="45M"
+TARGET_BUFFER="65M"
+TARGET_WIDTH="1920"
+TARGET_HEIGHT="1080"
+TARGET_DAR="16/9"
+
+TARGET_ARATE="320k"
 
 # Encode each file
 for (( i=1; i<=${args}; i++ )); do
 		SEQ_OPTS=""
 		index=$(expr $i - 1)
-		# Remove the extension and make filenames for logs and output.
-			INFILE="$(basename "${filelist[$index]}")"
-			if [[ "$useNewOutput" == "1" ]]; then
-				OUTPATH="$newOutputPath"
-			else
-				OUTPATH="$(dirname "${filelist[$index]}")"
-			fi
-			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
-				SEQ_OPTS="-f image2 -r $enc_fps"
-				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
-				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					ERRLOG="${OUTPATH}/${SETNAME}"YouTube1080.log
-					OUTFILE="${OUTPATH}/${SETNAME}"YouTube1080.mp4
-				else
-					ERRLOG="${OUTPATH}/${SETNAME}"_YouTube1080.log
-					OUTFILE="${OUTPATH}/${SETNAME}"_YouTube1080.mp4
-				fi
-			else
-				RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
-				ERRLOG="${OUTPATH}/${RAWNAME}"_YouTube1080.log
-				OUTFILE="${OUTPATH}/${RAWNAME}"_YouTube1080.mp4
-			fi
-			
-		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
-			NUM_PASSES="1"
-						
+		INPUT_FILE="$(echo "${filelist[$index]}")"
+		
+		setOutputs "$INPUT_FILE"
+		THIS_FRAMES="$(getLength "$1")"
+
 		# Video pass
-			echo "Encoding YouTube 1080p HD (Standard) Version of $INFILE"
-			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" \
-			-c:v libx264 -crf 18 -maxrate 10M -bufsize 15M -profile:v high -level 42 -pix_fmt yuv420p -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),min(1920,ceil(iw/2)*2),trunc(oh*a/2)*2)':'if(gt(iw,ih),trunc(ow/a/2)*2,min(1080,ceil(ih/2)*2))'" -movflags faststart \
-			-c:a libfdk_aac -b:a 256k \
+			echo "Encoding $CONSOLENAME Version of $INPUT_NAME"
+			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" \
+			-c:v "$VENCODER" -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt "$PIX_FMT" -profile:v high -level 42 \
+				-vf \
+					"scale=iw*sar:ih,
+					scale=
+						'w=if(lt(dar, $TARGET_DAR), trunc(oh*a/2)*2, min($TARGET_WIDTH,ceil(iw/2)*2)): 
+     					h=if(gte(dar, $TARGET_DAR), trunc(ow/a/2)*2, min($TARGET_HEIGHT,ceil(ih/2)*2))', 
+					setsar=1" \
+				-movflags faststart \
+			-c:a libfdk_aac -b:a "$TARGET_ARATE" \
 			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
-			. progress.sh
-				
+			getProgress FFMPEG
+
 		# Update progress
-			count=$(echo "scale=3; ($count+1)" | bc)
-			PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
-			echo PROGRESS:"$PROG"
+			updateProgress
+			
 		# Cleanup
-			rm "$ERRLOG"			
+			cleanLogs			
 	done
 exit 0

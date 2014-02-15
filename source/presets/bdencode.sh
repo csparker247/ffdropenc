@@ -1,97 +1,91 @@
 #!/bin/sh
 
-# optname Bluray - 1080p H.264, AC-3
+# Next line used by ffdropenc.sh
+# optname Bluray 1080p (H.264, AC-3)
+
+# Next line used by this preset. Defaults to same as above.
+CONSOLENAME="Bluray"
+
+# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc. Used by progress tracker.
+NUM_PASSES="3"
+TOTALFRAMES=$(echo "$TOTALFRAMES * $NUM_PASSES" | bc)
+
+# Encoding options
+VSUFFIX="BD_VIDEO"
+TPL_SUFFIX="2pass"
+VEXTENSION="264"
+TARGET_VRATE="39000"
+TARGET_MAXRATE="40000"
+TARGET_BUFFER="30000"
+TARGET_WIDTH="1920"
+TARGET_HEIGHT="1080"
+
+ASUFFIX="BD_AUDIO"
+AEXTENSION="ac3"
+TARGET_ARATE="640k"
 
 # Encode each file
 for (( i=1; i<=${args}; i++ )); do
 		SEQ_OPTS=""
-		X_OPTS=""
 		index=$(expr $i - 1)
-		# Remove the extension and make filenames for logs and output.
-			INFILE="$(basename "${filelist[$index]}")"
-			if [[ "$useNewOutput" == "1" ]]; then
-				OUTPATH="$newOutputPath"
-			else
-				OUTPATH="$(dirname "${filelist[$index]}")"
-			fi
-			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
-				SEQ_OPTS="-f image2 -r $enc_fps"
-				X_OPTS="--fps $enc_fps"
-				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
-				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					LOGNAME="${OUTPATH}/${SETNAME}"2pass
-					ERRLOG="${OUTPATH}/${SETNAME}"BD.log
-					OUTFILE="${OUTPATH}/${SETNAME}"BD_VIDEO.264
-					AUDIOFILE="${OUTPATH}/${SETNAME}"BD_AUDIO.ac3
-				else
-					LOGNAME="${OUTPATH}/${SETNAME}"_2pass
-					ERRLOG="${OUTPATH}/${SETNAME}"_BD.log
-					OUTFILE="${OUTPATH}/${SETNAME}"_BD_VIDEO.264
-					AUDIOFILE="${OUTPATH}/${SETNAME}"_BD_AUDIO.ac3
-				fi
-			else
-			RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
-			LOGNAME="${OUTPATH}/${RAWNAME}"_2pass
-			ERRLOG="${OUTPATH}/${RAWNAME}"_BD.log
-			OUTFILE="${OUTPATH}/${RAWNAME}"_BD_VIDEO.264
-			AUDIOFILE="${OUTPATH}/${RAWNAME}"_BD_AUDIO.ac3
-			fi
+		INPUT_FILE="$(echo "${filelist[$index]}")"
+		
+		setOutputs "$INPUT_FILE"
+		THIS_FRAMES="$(getLength "$1")"
 
-		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
-			NUM_PASSES="3"
-				
-		# Bluray Encode
-			# First pass 
-				echo "Encoding 1st Pass, Bluray 1080p of $INFILE"
-				ENCODER="X264"
-				x264 --quiet --bitrate 39000 --preset veryslow --tune film $(echo $X_OPTS) --bluray-compat --pic-struct --vbv-maxrate 40000 --vbv-bufsize 30000 --level 4.1 --keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 --sar 1:1 --video-filter resize:width=1920,height=1080,fittobox=both --pass 1 --stats "${LOGNAME}.log" -o "$OUTFILE" "${filelist[$index]}" \
-				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
-		
-			# Track encoding progress	
-				. progress.sh
-		
-			# Update progress
-				count=$(echo "scale=3; ($count+0.33)" | bc)
-				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
-				echo PROGRESS:"$PROG"
+		# Video pass
+			echo "Encoding 1st Pass, $CONSOLENAME Version of $INPUT_NAME"
+			x264 --quiet \
+			--bitrate "$TARGET_VRATE" --bluray-compat --pic-struct --vbv-maxrate "$TARGET_MAXRATE" --vbv-bufsize "$TARGET_BUFFER" \
+			--preset veryslow --tune film $(echo $X_OPTS) --level 4.1 \
+			--keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 \
+			--sar 1:1 --video-filter resize:width="$TARGET_WIDTH",height="$TARGET_HEIGHT",fittobox=both \
+			--pass 1 --stats "${TWOPASSLOG}.log" -o "$OUTFILE" "$INPUT_FILE" \
+			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
-			# Second Pass
-				echo "Encoding 2nd Pass, Bluray 1080p of $INFILE"
-				ENCODER="X264"
-				x264 --quiet --bitrate 39000 --preset veryslow --tune film $(echo $X_OPTS) --bluray-compat --pic-struct --vbv-maxrate 40000 --vbv-bufsize 30000 --level 4.1 --keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 --sar 1:1 --video-filter resize:width=1920,height=1080,fittobox=both --pass 2 --stats "${LOGNAME}.log" -o "$OUTFILE" "${filelist[$index]}" \
-				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
+		# Track encoding progress	
+			getProgress X264
+
+		# Update progress
+			updateProgress
+
+		# Video pass
+			echo "Encoding 2nd Pass, $CONSOLENAME Version of $INPUT_NAME"
+			x264 --quiet \
+			--bitrate "$TARGET_VRATE" --bluray-compat --pic-struct --vbv-maxrate "$TARGET_MAXRATE" --vbv-bufsize "$TARGET_BUFFER" \
+			--preset veryslow --tune film $(echo $X_OPTS) --level 4.1 \
+			--keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 \
+			--sar 1:1 --video-filter resize:width="$TARGET_WIDTH",height="$TARGET_HEIGHT",fittobox=both \
+			--pass 2 --stats "${TWOPASSLOG}.log" -o "$OUTFILE" "$INPUT_FILE" \
+			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
-			# Track encoding progress	
-				. progress.sh
-		
-			# Update progress
-				count=$(echo "scale=3; ($count+0.33)" | bc)
-				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
-				echo PROGRESS:"$PROG"
+		# Track encoding progress	
+			getProgress X264
+
+		# Update progress
+			updateProgress
+
+		# Audio Pass
+			echo "Encoding AC-3 Audio, $CONSOLENAME Version of $INPUT_NAME"
+			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" \
+			-c:a ac3 -b:a "$TARGET_ARATE" -ar 48000 \
+			-y "$AUDIOFILE" \
+			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
-			# Audio Pass
-				echo "Encoding AC-3 Audio for $INFILE"
-				ENCODER="FFMPEG"
-				ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -b:a ac3 -b:a 640k -ar 48000 -y "$AUDIOFILE" \
-				2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
-			
-			# Track encoding progress	
-				#. progress.sh
-				
+		# Track encoding progress	
+			getProgress FFMPEG
+
+		# Check for audio file
 			if [[ ! -f "$AUDIOFILE" ]]; then
 					echo "--------"
 					echo "Warning: Audio file not created for ${INFILE}. Does it have audio?"
 					echo "--------"
 			fi
-		
-			# Update progress
-				count=$(echo "scale=3; ($count+0.34)" | bc)
-				PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
-				echo PROGRESS:"$PROG"
-			
-		# Cleanup
-			rm "$ERRLOG"
-			rm "$LOGNAME"
-			rm "$LOGNAME".mbtree
 
-		done
+		# Update progress
+			updateProgress
+
+		# Cleanup
+			cleanLogs			
+	done
+exit 0

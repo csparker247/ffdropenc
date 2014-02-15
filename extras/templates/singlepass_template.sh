@@ -34,7 +34,7 @@ for (( i=1; i<=${args}; i++ )); do
 		index=$(expr $i - 1)
 		INPUT_FILE="$(echo "${filelist[$index]}")"
 		setOutputs "$INPUT_FILE"
-		analyze "$INPUT_FILE"
+		analyze "$INPUT_FILE" "$ERRLOG"
 
 		compareParams "$THIS_VRATE" "$TARGET_VRATE"
 		if [[ $? != 0 ]]; then

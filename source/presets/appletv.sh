@@ -12,20 +12,16 @@ TOTALFRAMES=$(echo "$TOTALFRAMES * $NUM_PASSES" | bc)
 
 # Encoding options
 VSUFFIX="AppleTV"
-TPL_SUFFIX=""
 VEXTENSION="mp4"
-VCODEC="h264"
 VENCODER="libx264"
 PIX_FMT="yuv420p"
 CRF="18"
-TARGET_VRATE="8388608"
+TARGET_VRATE="8M"
 TARGET_BUFFER="10M"
 TARGET_WIDTH="1920"
 TARGET_HEIGHT="1080"
 TARGET_DAR="16/9"
 
-ASUFFIX=""
-AEXTENSION=""
 TARGET_ARATE="320k"
 
 # Encode each file
@@ -33,20 +29,12 @@ for (( i=1; i<=${args}; i++ )); do
 		SEQ_OPTS=""
 		index=$(expr $i - 1)
 		INPUT_FILE="$(echo "${filelist[$index]}")"
+		
 		setOutputs "$INPUT_FILE"
-		analyze "$INPUT_FILE"
-
-		compareParams "$THIS_VRATE" "$TARGET_VRATE"
-		if [[ $? != 0 ]]; then
-			echo "$INPUT_NAME conforms to target specs. Skipping..."
-			updateProgress
-			cleanLogs
-			continue
-		fi
+		THIS_FRAMES="$(getLength "$1")"
 
 		# Video pass
 			echo "Encoding $CONSOLENAME Version of $INPUT_NAME"
-			ENCODER="FFMPEG"
 			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" \
 			-c:v "$VENCODER" -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt "$PIX_FMT" -profile:v high -level 40 \
 				-vf \
@@ -61,7 +49,7 @@ for (( i=1; i<=${args}; i++ )); do
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
-			getProgress
+			getProgress FFMPEG
 
 		# Update progress
 			updateProgress

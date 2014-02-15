@@ -1,53 +1,57 @@
 #!/bin/sh
 
+# Next line used by ffdropenc.sh
 # optname MKV (H.264, Audio Pass-thru)
+
+# Next line used by this preset. Defaults to same as above.
+CONSOLENAME="${preset_name[$enc_type]}"
+
+# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc. Used by progress tracker.
+NUM_PASSES="1"
+TOTALFRAMES=$(echo "$TOTALFRAMES * $NUM_PASSES" | bc)
+
+# Encoding options
+VSUFFIX="H264"
+VEXTENSION="mkv"
+VCODEC="h264"
+VENCODER="libx264"
+PIX_FMT="yuv420p"
+CRF="18"
+TARGET_VRATE="10M"
+TARGET_BUFFER="16M"
+TARGET_WIDTH="iw"
+TARGET_HEIGHT="ih"
+TARGET_DAR="dar"
 
 # Encode each file
 for (( i=1; i<=${args}; i++ )); do
 		SEQ_OPTS=""
 		index=$(expr $i - 1)
-		# Remove the extension and make filenames for logs and output.
-			INFILE="$(basename "${filelist[$index]}")"
-			if [[ "$useNewOutput" == "1" ]]; then
-				OUTPATH="$newOutputPath"
-			else
-				OUTPATH="$(dirname "${filelist[$index]}")"
-			fi
-			if [[ "$INFILE" =~ .*\.($sequence_exts) ]]; then
-				SEQ_OPTS="-f image2 -r $enc_fps"
-				SETNAME="$(echo "$INFILE" | sed 's/%[0-9]*d\..*//')"
-				if [[ "$SETNAME" =~ .*(\_|\-|" ") ]]; then
-					ERRLOG="${OUTPATH}/${SETNAME}"H264.log
-					OUTFILE="${OUTPATH}/${SETNAME}"H264.mkv
-				else
-					ERRLOG="${OUTPATH}/${SETNAME}"_H264.log
-					OUTFILE="${OUTPATH}/${SETNAME}"_H264.mkv
-				fi
-			else
-				RAWNAME="$(echo "$INFILE" | sed 's/\(.*\)\..*/\1/')"
-				ERRLOG="${OUTPATH}/${RAWNAME}"_H264.log
-				OUTFILE="${OUTPATH}/${RAWNAME}"_H264.mkv
-			fi
+		INPUT_FILE="$(echo "${filelist[$index]}")"
+		
+		setOutputs "$INPUT_FILE"
+		THIS_FRAMES="$(getLength "$1")"
 
-		# Type of encode: 1 = single pass, 2 = two-pass, 3 = three-pass/two-pass+audio, etc.
-			NUM_PASSES="1"
-						
 		# Video pass
-			echo "Encoding MKV (H.264, Audio Pass-thru) Version of $INFILE"
-			ENCODER="FFMPEG"
-			ffmpeg $(echo $SEQ_OPTS) -i "${filelist[$index]}" -map 0 -c copy \
-			-c:v libx264 -crf 18 -maxrate 10M -bufsize 16M -pix_fmt yuv420p -profile:v high -level 42 -vf "scale=iw*sar:ih, scale='if(gt(iw,ih),ceil(iw/2)*2,trunc(oh*a/2)*2)':'if(gt(iw,ih),trunc(ow/a/2)*2,ceil(ih/2)*2)'" \
+			echo "Encoding $CONSOLENAME Version of $INPUT_NAME"
+			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" -map 0 -c copy\
+			-c:v "$VENCODER" -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt "$PIX_FMT" -profile:v high -level 42 \
+				-vf \
+					"scale=iw*sar:ih,
+					scale=
+						'w=if(lt(dar, $TARGET_DAR), trunc(oh*a/2)*2, min($TARGET_WIDTH,ceil(iw/2)*2)): 
+     					h=if(gte(dar, $TARGET_DAR), trunc(ow/a/2)*2, min($TARGET_HEIGHT,ceil(ih/2)*2))', 
+					setsar=1" \
 			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
 		# Track encoding progress	
-			. progress.sh
-				
+			getProgress FFMPEG
+
 		# Update progress
-			count=$(echo "scale=3; ($count+1)" | bc)
-			PROG=$(echo "scale=3; ($count/$args)*100.0" | bc)
-			echo PROGRESS:"$PROG"
+			updateProgress
+			
 		# Cleanup
-			rm "$ERRLOG"			
+			cleanLogs			
 	done
 exit 0

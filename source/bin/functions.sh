@@ -2,22 +2,29 @@
 
 # Global Functions
 
+# analyze $filepath $outputpath
+# Collect media information into temp variables.
+# NOTE: Presets should account for the log file created by this process.
 analyze () {
 	ffprobe -i "$1" -loglevel quiet -of flat -select_streams v \
-	-show_entries stream=codec_name,width,height,pix_fmt,level,bit_rate,channels > "$ERRLOG"
+	-show_entries stream=codec_name,width,height,pix_fmt,level,bit_rate,nb_frames,channels > "$2"
 	THIS_VEXTENSION=""
 	THIS_VCODEC="$(sed -n /codec_name/p "$ERRLOG" | sed 's/.*codec_name="\(.*\)"/\1/')"
-	THIS_FRAMES="$(getLength "$1")"
+	THIS_FRAMES="$(sed -n /nb_frames/p "$ERRLOG" | sed 's/.*frames="\(.*\)"/\1/')"
 	THIS_VRATE="$(sed -n /bit_rate/p "$ERRLOG" | sed 's/.*bit_rate="\(.*\)"/\1/')"
 	THIS_WIDTH="$(sed -n /width/p "$ERRLOG" | sed 's/.*width=\(.*\)/\1/')"
 	THIS_HEIGHT="$(sed -n /height/p "$ERRLOG" | sed 's/.*height=\(.*\)/\1/')"
 }
 
+# getLength $filepath
+# Get video duration in frames
 getLength () {
-	# Get video duration in frames
 	echo $(ffprobe -i "$1" -loglevel quiet -of flat -select_streams v:0 -show_entries stream=nb_frames | sed 's/.*frames="\(.*\)"/\1/')
 }
 
+# compareParams $param $baseline_param
+# Used to test a parameter against a baseline parameter.
+# Parameters are expected to be numeric (e.g. bitrates in kilobytes)
 compareParams () {
 	if [ "$1" -ge "$2" ]; then
 		return 0
@@ -26,6 +33,8 @@ compareParams () {
 	fi
 }
 
+# setOutputs $filepath 
+# Sets up the common names and outputs used by all presets.
 setOutputs () {
 	# Remove the extension and make filenames for logs and output.
 	INPUT_NAME="$(basename "$1")"
@@ -54,41 +63,51 @@ setOutputs () {
 	AUDIOFILE="${OUTPATH}/${RAWNAME}${ASUFFIX}.${AEXTENSION}"
 }
 
+# getProgress $encoder
+# While the encoder process runs, getProgress() reads the encoder's error log
+# and prints progress as the percent of frames completed. Progress is only kept while
+# function runs. Follow with updateProgress() before switching to the next file to
+# "save" progress. The PROGRESS:%d+ format is required for the Platypus progress bar.
 getProgress () {
 	# Check whether this is a ffmpeg or x264 encode	
-	sleep 1
-	if [[ $ENCODER == "FFMPEG" ]]; then
+	if [[ "$1" == "FFMPEG" ]]; then
 		# Get ffmpeg Process ID
 			PID=$( ps -ef | grep "ffmpeg" | grep -v "grep" | awk '{print $2}' )
-	elif [[ $ENCODER == "X264" ]]; then
+	elif [[ "$1" == "X264" ]]; then
 		# Get x264 Process ID
 			PID=$( ps -ef | grep "x264" | grep -v "grep" | awk '{print $2}' )
 	fi
 
 	# While encoder runs, process the log file for the current frame, display percentage progress
 	while ps -p $PID>/dev/null ; do
-		if [[ $ENCODER == "FFMPEG" ]]; then
+		if [[ "$1" == "FFMPEG" ]]; then
 			CURRENTFRAME=$(tail -n 1 "$ERRLOG" | sed 's/frame=\(.*\)fps=.*/\1/'| sed 's/ //g')
-		elif [[ $ENCODER == "X264" ]]; then
+		elif [[ "$1" == "X264" ]]; then
 			CURRENTFRAME=$(tail -n 1 "$ERRLOG" | awk '/frames\,/ { print $2 }' | sed 's:/[0-9]*::')
 		fi
-		if [[ -n "$CURRENTFRAME" ]]; then
+		if [[ "$CURRENTFRAME" = [[:digit:]]* ]]; then
 			tempFINISHED=$(echo "$FINISHEDFRAMES + $CURRENTFRAME" | bc)
 			PROG=$(echo "scale=3; ($tempFINISHED/$TOTALFRAMES)*100.0" | bc)
 			echo "PROGRESS:$PROG"
 		fi
-		sleep 1
 	done
 }
 
+# updateProgess
+# Adds current file's frames to total number of frames completed. getProgress() only temporarily
+# calculates this amount of work done. This function "saves" that work before switching
+# to the next file in the list. The PROGRESS:%d+ format is required for the Platypus progress bar.
 updateProgress () {
 	FINISHEDFRAMES=$(echo "$FINISHEDFRAMES + $THIS_FRAMES" | bc)
 	PROG=$(echo "scale=3; ($FINISHEDFRAMES/$TOTALFRAMES)*100.0" | bc)
 	echo PROGRESS:"$PROG"
 }
 
+# cleanLogs
+# Removes common log files if they exist.
 cleanLogs () {
 	[[ -e "$ERRLOG" ]] && rm "$ERRLOG"
-	[[ -e "${TWOPASSLOG}*.log" ]] && rm "${TWOPASSLOG}*.log"
-	[[ -e "${TWOPASSLOG}.mbtree" ]] && rm "${TWOPASSLOG}.mbtree"
+	[[ -e "${TWOPASSLOG}.log" ]] && rm "${TWOPASSLOG}.log"
+	[[ -e "${TWOPASSLOG}-0.log" ]] && rm "${TWOPASSLOG}-0.log"
+	[[ -e "${TWOPASSLOG}.log.mbtree" ]] && rm "${TWOPASSLOG}.log.mbtree"
 }
