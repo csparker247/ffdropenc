@@ -37,9 +37,10 @@ filters=`cat resources/filters.db`
 sequence_exts=`cat resources/seqexts.db`
 mov_exts=`cat resources/movexts.db`
 
-# Setup programs
+# Setup programs, import global functions
 qtfaststart="bin/qtfaststart/qtfaststart"
 cocoaDialog="bin/cocoaDialog.app/Contents/MacOS/cocoaDialog"
+. functions.sh
 
 # Build list of files to encode, using only files from approved extensions list.
 OLDIFS=$IFS
@@ -104,6 +105,15 @@ if [[ "$args" == "0" || "${filelist[@]}" == "" ]]; then
 	echo "No supported file types in batch list."
 	exit 0
 fi
+
+# Compile total number of frames to be encoded
+TOTALFRAMES="0"
+FINISHEDFRAMES="0"
+for (( i=1; i<=${args}; i++ )); do
+	FILE="$(echo "${filelist[$index]}")"
+	tempFRAMES=$(getLength "$FILE")
+	TOTALFRAMES=$(echo "$TOTALFRAMES + $tempFRAMES" | bc)
+done
 
 # Ask for encoding settings
 OLDIFS=$IFS
