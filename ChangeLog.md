@@ -4,7 +4,7 @@ ffdropenc Change Log
 ##2014-02-15 - v1.8##
 
  * **NEW**: Global functions for common tasks. Right now these are just being used for progress tracking, but the potential exists for some powerful content filters (i.e. skipping files that already match the target output).  
- * **NEW**: Added ffprobe to internal bin. It's output is too much better than ffmpeg's. Hopefully no one minds the extra file size.  
+ * **NEW**: Added ffprobe to internal bin. Its output is too much better than ffmpeg's. Hopefully no one minds the extra file size. ffdevenc.app users should rebuild binaries with make-ffdropenc.sh. 
  * **NEW**: A couple of deinterlacing presets. These currently use yadif. Hopefully a w3fdif-based preset will be coming in the future.  
  * **UPDATED**: All presets have been reorganized to make editing common values easier. This is a major overhaul of the whole preset system and I'm hoping it's going to be worth the effort.  
  * **UPDATED**: Little tweaks to most presets to make them more compatible with their targets.
