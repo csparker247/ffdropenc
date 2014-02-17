@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Next line used by ffdropenc.sh
-# optname ProRes 422
+# optname H.264 1080p (High Grain)
 
 # Next line used by this preset. Defaults to same as above.
 CONSOLENAME="${preset_name[$enc_type]}"
@@ -11,11 +11,18 @@ NUM_PASSES="1"
 TOTALFRAMES=$(echo "$TOTALFRAMES * $NUM_PASSES" | bc)
 
 # Encoding options
-VSUFFIX="ProRes422"
-VEXTENSION="mov"
-VENCODER="prores"
+VSUFFIX="H264Grain"
+VEXTENSION="mp4"
+VENCODER="libx264"
+PIX_FMT="yuv420p"
+CRF="18"
+TARGET_VRATE="10M"
+TARGET_BUFFER="15M"
+TARGET_WIDTH="1920"
+TARGET_HEIGHT="1080"
+TARGET_DAR="16/9"
 
-AENCODER="pcm_s16le"
+TARGET_ARATE="320k"
 
 # Encode each file
 for (( i=1; i<=${args}; i++ )); do
@@ -29,8 +36,15 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding $CONSOLENAME Version of $INPUT_NAME"
 			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" \
-			-c:v "$VENCODER" \
-			-c:a "$AENCODER" -filter_complex asetnsamples=n=16384:p=0 -ar 48k \
+			-c:v "$VENCODER" -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt "$PIX_FMT" -profile:v high -level 42 -preset veryslow -tune grain \
+				-vf \
+					"scale=iw*sar:ih,
+					scale=
+						'w=if(lt(dar, $TARGET_DAR), trunc(oh*a/2)*2, min($TARGET_WIDTH,ceil(iw/2)*2)): 
+     					h=if(gte(dar, $TARGET_DAR), trunc(ow/a/2)*2, min($TARGET_HEIGHT,ceil(ih/2)*2))', 
+					setsar=1" \
+				-movflags faststart \
+			-c:a libfdk_aac -b:a "$TARGET_ARATE" \
 			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			

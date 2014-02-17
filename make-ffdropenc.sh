@@ -183,6 +183,7 @@ if [[ "$dev" == "0" ]]; then
 
 	if [[ "$status" == "nonfree" || "$status" == "free" ]]; then 
 		cp ffmpeg-static/target/bin/ffmpeg "$buildsrc"/bin/ffmpeg
+		cp ffmpeg-static/target/bin/ffprobe "$buildsrc"/bin/ffprobe
 		cp ffmpeg-static/target/bin/x264 "$buildsrc"/bin/x264
 		rm -rf ffmpeg-static/
 	fi
@@ -199,6 +200,7 @@ elif [[ "$dev" == "1" ]]; then
 	
 	if [[ "$status" == "nonfree" ]]; then
 		cp ffmpeg-static/target/bin/ffmpeg "$buildsrc"/bin/ffmpeg
+		cp ffmpeg-static/target/bin/ffprobe "$buildsrc"/bin/ffprobe
 		cp ffmpeg-static/target/bin/x264 "$buildsrc"/bin/x264
 		rm -rf ffmpeg-static/
 	fi

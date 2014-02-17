@@ -4,6 +4,7 @@ An OSX droplet to batch encode video files.
 
 **Latest updates**
 
+* 02.15.2014 - Update to v1.8. Introducing global functions and deinterlacing presets. Major overhaul to preset organization. Ability to analyze files via ffprobe. Improved scaling.  
 * 01.27.2014 - Update to v1.7. Created ffdropenc auto-build system. Code reorg. Various preset cleanups and bug fixes.  
 * 01.13.2014 - Presets use CRF encoding. Experimental ProRes audio. Now uses ffmpeg faststart atom.  
 * 12.21.2013 - Support for custom output folder.
