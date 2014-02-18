@@ -58,16 +58,17 @@ done
 filelist=()
 has_sequences="n"
 
-echo "Building file list."
+echo "Building file list..."
 argument_count=$(expr ${#argument_files[@]} - 1)
 for (( i=0; i<=${argument_count}; i++ )); do
-    thisfile=${argument_files[$i]}
-	if [[ $thisfile =~ .*\.($sequence_exts) ]]; then
+    inputName=${argument_files[$i]}
+	inlist="n"
+
+	if [[ $inputName =~ .*\.($sequence_exts) ]]; then
 		has_sequences="y"
-		inlist="n"
-		tempdir=$(dirname "$thisfile")
-		tempext=$(basename "$thisfile" | sed 's/.*\.\(.*\)/\1/')
-		tempname=$(basename "$thisfile" | sed 's/\(.*\)\..*/\1/')
+		tempdir=$(dirname "$inputName")
+		tempext=$(basename "$inputName" | sed 's/.*\.\(.*\)/\1/')
+		tempname=$(basename "$inputName" | sed 's/\(.*\)\..*/\1/')
 		collection=$(echo "$tempname" | sed 's/[0-9]*$//')
 		numtemp=$(echo "$tempname" | grep -o -m 1 -e '[0-9]*$')
 		
@@ -76,26 +77,29 @@ for (( i=0; i<=${argument_count}; i++ )); do
 		fi
 		
 		charcount=`printf "%02d" ${#numtemp}`
-		new_path="${tempdir}/${collection}%${charcount}d.${tempext}"
-		
-		args=${#filelist[@]}
-		if [[ $args != "0" ]]; then
-			for (( e=1; e<=${args}; e++ )); do
-				if [[ "${filelist[$e]}" == "$new_path" ]]; then
-					inlist="y"
-					break
-				fi
-			done
-		fi
-	
-		if [[ "$inlist" == "n" ]]; then
-			filelist+=( "$new_path" )
-		fi
-	elif [[ "$thisfile" =~ .*\.($mov_exts) ]]; then
-		filelist+=( "$thisfile" )
+		outputName="${tempdir}/${collection}%${charcount}d.${tempext}"
+	elif [[ "$inputName" =~ .*\.($mov_exts) ]]; then
+		outputName="$inputName"
 	fi
+		
+	args=${#filelist[@]}
+	if [[ $args != "0" ]]; then
+		for (( e=1; e<=${args}; e++ )); do
+			tempE=$(expr $e - 1)
+			if [[ "${filelist[$tempE]}" == "$outputName" ]]; then
+				inlist="y"
+				break
+			fi
+		done
+	fi
+
+	if [[ "$inlist" == "n" ]]; then
+		filelist+=( "$outputName" )
+	fi
+
 done
 unset argument_files
+unset tempE
 
 # Setup Platypus counter
 count=0

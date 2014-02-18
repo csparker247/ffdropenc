@@ -19,7 +19,11 @@ analyze () {
 # getLength $filepath
 # Get video duration in frames
 getLength () {
-	echo $(ffprobe -i "$1" -loglevel quiet -of flat -select_streams v:0 -show_entries stream=nb_frames | sed 's/.*frames="\(.*\)"/\1/')
+		tempLENGTH=$(ffprobe -i "$1" -loglevel quiet -of flat -select_streams v:0 -show_entries stream=nb_frames | sed 's/.*frames="\(.*\)"/\1/')
+		if [[ "$tempLENGTH" != [[:digit:]]* ]]; then
+			tempLENGTH=$(ffprobe -i "$1" -loglevel quiet -of flat -count_frames -select_streams v:0 -show_entries stream=nb_read_frames | sed 's/.*frames="\(.*\)"/\1/')
+		fi
+		echo $tempLENGTH
 }
 
 # compareParams $param $baseline_param
