@@ -32,25 +32,30 @@ Batch lists are built from all files and folders drug together to the droplet ic
 
 **Download**
   
-Due to licensing concerns, I can no longer distribute binaries with libfdk_aac. However, following the **Build from source** instructions below will compile 
-ffdropenc with a libfdk\_aac-enabled ffmpeg. This will give you much better sound quality and is the preferred installation method.  
+Due to licensing concerns, I can no longer distribute binaries with fdk-aac. However, following the **Build from source** instructions below will compile 
+ffdropenc with a fdk-aac-enabled ffmpeg. This will give you much better sound quality and is the preferred installation method.  
   
-The latest OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc-latest-free.dmg "Download ffdropenc on Dropbox").  
+The freely distributable OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc-latest-free.dmg "Download ffdropenc on Dropbox").  
 
 **Build from source**
 
 * Install Xcode and the Xcode command line tools.  
 * Install pkg-config (via Homebrew)
 * Download and install [Platypus](http://sveinbjorn.org/platypus).
-* Install the [Platypus command line tools](http://sveinbjorn.org/files/manpages/PlatypusDocumentation.html#51).
+* Install the [Platypus command line tools](http://sveinbjorn.org/files/manpages/PlatypusDocumentation.html#51).  
 * Run the following commands:  
-  
-> $ git clone https://github.com/csparker247/ffdropenc.git  
-> $ cd ffdropenc/  
-> $ ./make-ffdropenc.sh 
+
+	> $ git clone https://github.com/csparker247/ffdropenc.git  
+	> $ cd ffdropenc/  
+	> $ ./make-ffdropenc.sh 
 
 To see other build options, view the help documentation:  
 > $ ./make-ffdropenc.sh -h  
+  
+**Test Videos**  
+
+Test videos are no longer kept in the repository for space concerns. Users with After Effects can render the files themselves using test-video.aep. 
+You can also download MP4 (H.264, AAC) versions of the files from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc-testvideos.zip).
  
 **Other software**
 
@@ -60,6 +65,3 @@ ffmpeg-static (modified) - https://github.com/csparker247/ffmpeg-static
 yoursway-create-dmg - https://github.com/csparker247/yoursway-create-dmg  
 cocoaDialog - http://mstratman.github.com/cocoadialog/  
 Platypus - http://sveinbjorn.org/platypus  
-
-
-
