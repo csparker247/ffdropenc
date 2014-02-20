@@ -36,7 +36,7 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding $CONSOLENAME Version of $INPUT_NAME"
 			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" \
-			-c:v "$VENCODER" -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt "$PIX_FMT" -profile:v high -level 5 \
+			-c:v "$VENCODER" -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt "$PIX_FMT" -profile:v high -level 42 \
 				-vf \
 					"scale=iw*sar:ih,
 					scale=
