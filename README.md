@@ -24,6 +24,8 @@ An OSX droplet to batch encode video files.
 
 **Instructions**
 
+<img src="http://www.csethparker.com/imgs/xtras/Using-ffdropenc.gif" />
+
 There are two ways to launch the app.  
  1) Drag your video files onto the droplet in Finder  
  2) Double-click the droplet and drag your video files onto the window that opens  
