@@ -31,7 +31,7 @@ for (( i=1; i<=${args}; i++ )); do
 		INPUT_FILE="$(echo "${filelist[$index]}")"
 		
 		setOutputs "$INPUT_FILE"
-		THIS_FRAMES="$(getLength "$1")"
+		THIS_FRAMES="$(getLength "$INPUT_FILE")"
 
 		# Video pass
 			echo "Encoding 1st Pass, $CONSOLENAME Version of $INPUT_NAME"
