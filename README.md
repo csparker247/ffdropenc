@@ -40,7 +40,9 @@ ffdropenc with a fdk-aac-enabled ffmpeg. This will give you much better sound qu
 The freely distributable OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc-latest-free.dmg "Download ffdropenc on Dropbox").  
 
 **Build from source**
-
+  
+_APRIL 2014 SPECIAL UPDATE: It has came to my attention that the Xcode 5.1 update has broken compiling for a lot of the prerequisite programs built following this process. It's currently unclear if my build scripts should be adjusted or if the source code needs patches. Until a fix is in place, use the following steps at your own risk._
+  
 * Install Xcode and the Xcode command line tools.  
 * Install pkg-config (via Homebrew)
 * Download and install [Platypus](http://sveinbjorn.org/platypus).
