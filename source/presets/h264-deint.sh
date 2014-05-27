@@ -15,14 +15,14 @@ VSUFFIX="H264Deint"
 VEXTENSION="mp4"
 VENCODER="libx264"
 PIX_FMT="yuv420p"
-CRF="22"
-TARGET_VRATE="8M"
-TARGET_BUFFER="16M"
+CRF="16"
+TARGET_VRATE="20M"
+TARGET_BUFFER="20M"
 TARGET_WIDTH="1920"
 TARGET_HEIGHT="1080"
 TARGET_DAR="16/9"
 
-TARGET_ARATE="256k"
+TARGET_ARATE="320k"
 
 # Encode each file
 for (( i=1; i<=${args}; i++ )); do
@@ -36,7 +36,7 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding $CONSOLENAME Version of $INPUT_NAME"
 			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" \
-			-c:v "$VENCODER" -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt "$PIX_FMT" -profile:v high -level 42 \
+			-c:v "$VENCODER" -crf "$CRF" -maxrate "$TARGET_VRATE" -bufsize "$TARGET_BUFFER" -pix_fmt "$PIX_FMT" -profile:v high -preset veryslow -level 42 \
 				-vf \
 					"scale=iw*sar:ih,
 					yadif,
