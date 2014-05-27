@@ -13,7 +13,7 @@ TOTALFRAMES=$(echo "$TOTALFRAMES * $NUM_PASSES" | bc)
 # Encoding options
 VSUFFIX="ProRes422"
 VEXTENSION="mov"
-VENCODER="prores"
+VENCODER="prores_ks"
 
 AENCODER="pcm_s16le"
 
@@ -29,7 +29,7 @@ for (( i=1; i<=${args}; i++ )); do
 		# Video pass
 			echo "Encoding $CONSOLENAME Version of $INPUT_NAME"
 			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" \
-			-c:v "$VENCODER" \
+			-c:v "$VENCODER" -pix_fmt yuv422p10le -qscale:v 10 -vendor ap10 \
 			-c:a "$AENCODER" -filter_complex asetnsamples=n=16384:p=0 -ar 48k \
 			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
