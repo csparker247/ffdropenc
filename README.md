@@ -20,7 +20,8 @@ An OSX droplet to batch encode video files.
 **Known Issues/Special Notes**
 
 * Doesn't work with files without extensions (which you can sometimes run into on OSX). Make sure your exported files include one of the approved extensions in the database files.
-* Some presets use H.264 video profiles that are unsupported by older versions of Quicktime player. This will usually appear as grey or "corrupted" output during playback. Test your file in VLC to ensure proper encoding.
+* Some presets use H.264 video profiles that are unsupported by older versions of Quicktime player. This will usually appear as grey or "corrupted" output during playback. Test your file in VLC to ensure proper encoding.  
+* The ProRes422 codec doesn't like input files without audio tracks. We're currently seeking a workaround.
 
 **Instructions**
 
@@ -40,8 +41,6 @@ ffdropenc with a fdk-aac-enabled ffmpeg. This will give you much better sound qu
 The freely distributable OSX app can be downloaded from [here](https://dl.dropboxusercontent.com/u/13015285/ffdropenc-latest-free.dmg "Download ffdropenc on Dropbox").  
 
 **Build from source**
-  
-_APRIL 2014 SPECIAL UPDATE: It has came to my attention that the Xcode 5.1 update has broken compiling for a lot of the prerequisite programs built following this process. It's currently unclear if my build scripts should be adjusted or if the source code needs patches. Until a fix is in place, use the following steps at your own risk._
   
 * Install Xcode and the Xcode command line tools.  
 * Install pkg-config (via Homebrew)
