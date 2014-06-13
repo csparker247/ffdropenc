@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Next line used by ffdropenc.sh
-# optname Bluray 1080p (H.264, AC-3)
+# optname Bluray 1080p (H.264, AC-3, 30p)
 
 # Next line used by this preset. Defaults to same as above.
 CONSOLENAME="Bluray"
@@ -40,6 +40,7 @@ for (( i=1; i<=${args}; i++ )); do
 			--preset veryslow --tune film $(echo $X_OPTS) --level 4.1 \
 			--keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 \
 			--sar 1:1 --video-filter resize:width="$TARGET_WIDTH",height="$TARGET_HEIGHT",fittobox=both \
+			--fps 30000/1001 --force-cfr \
 			--pass 1 --stats "${TWOPASSLOG}.log" -o "$OUTFILE" "$INPUT_FILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
@@ -56,6 +57,7 @@ for (( i=1; i<=${args}; i++ )); do
 			--preset veryslow --tune film $(echo $X_OPTS) --level 4.1 \
 			--keyint 30 --slices 4 --fake-interlaced --colorprim bt709 --transfer bt709 --colormatrix bt709 \
 			--sar 1:1 --video-filter resize:width="$TARGET_WIDTH",height="$TARGET_HEIGHT",fittobox=both \
+			--fps 30000/1001 --force-cfr \
 			--pass 2 --stats "${TWOPASSLOG}.log" -o "$OUTFILE" "$INPUT_FILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
