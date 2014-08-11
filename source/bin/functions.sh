@@ -116,4 +116,5 @@ cleanLogs () {
 	[[ -e "${TWOPASSLOG}.log" ]] && rm "${TWOPASSLOG}.log"
 	[[ -e "${TWOPASSLOG}-0.log" ]] && rm "${TWOPASSLOG}-0.log"
 	[[ -e "${TWOPASSLOG}.log.mbtree" ]] && rm "${TWOPASSLOG}.log.mbtree"
+	[[ -e "${TWOPASSLOG}" ]] && rm "${TWOPASSLOG}"
 }
