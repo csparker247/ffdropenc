@@ -34,7 +34,7 @@ OPTIONS:
 					You can make new binaries for use with ffdevenc.app by running:
 					'make-ffdropenc.sh -b nonfree -s'
 
-			custom		Use ffmpeg and x264 binaries found in "../ffdropenc/source/bin".
+			custom		Use ffmpeg binaries found in "../ffdropenc/source/bin".
 					Default value when using sym-link (-s) option.
 
 -d		Generate Installer DMG.
@@ -123,7 +123,7 @@ else
 fi
 
 if [[ $status == "custom" ]]; then
-	if [[ ! -e "$ff_root"/source/bin/ffmpeg ]] || [[ ! -e "$ff_root"/source/bin/x264 ]]; then
+	if [[ ! -e "$ff_root"/source/bin/ffmpeg ]]; then
 		echo "ERROR: Custom binary option used but custom encoder binaries not found in '$ff_root/source/bin'."
 		echo
 		exit 1
@@ -182,7 +182,6 @@ elif [[ "$dev" == "1" ]]; then
 	if [[ "$status" == "nonfree" ]]; then
 		cp ffmpeg-static/target/bin/ffmpeg "$buildsrc"/bin/ffmpeg
 		cp ffmpeg-static/target/bin/ffprobe "$buildsrc"/bin/ffprobe
-		cp ffmpeg-static/target/bin/x264 "$buildsrc"/bin/x264
 		rm -rf ffmpeg-static/
 	fi
 

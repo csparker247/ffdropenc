@@ -28,6 +28,13 @@ getLength () {
 		echo $tempLENGTH
 }
 
+# getFPS $filepath
+# Get video FPS
+getFPS () {
+		tempFPS=$(ffprobe -i "$1" -loglevel quiet -of flat -select_streams v:0 -show_entries stream=r_frame_rate | sed 's/.*r_frame_rate="\(.*\)"/\1/' | tail -1)
+		echo $tempFPS
+}
+
 # compareParams $param $baseline_param
 # Used to test a parameter against a baseline parameter.
 # Parameters are expected to be numeric (e.g. bitrates in kilobytes)
