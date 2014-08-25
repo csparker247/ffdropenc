@@ -30,6 +30,7 @@ for (( i=1; i<=${args}; i++ )); do
 			echo "Encoding $CONSOLENAME Version of $INPUT_NAME"
 			ffmpeg $(echo $SEQ_OPTS) -i "$INPUT_FILE" \
 			-c:v "$VENCODER" -profile:v 4 -pix_fmt yuva444p10le -qscale:v 10 -vendor ap10 \
+			-an \
 			-y "$OUTFILE" \
 			2>&1 | awk '1;{fflush()}' RS='\r\n'>"$ERRLOG" &
 			
