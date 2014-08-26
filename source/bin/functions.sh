@@ -18,12 +18,18 @@ analyze () {
 
 # getLength $filepath
 # Get video duration in frames
+# To-Do: Write ffprobe parser to select beteen nb_frames and tag:number_of_frames. Try finding # of frames first, then try duration method, then count packets, then count frames.
+# Read packets: ffprobe "input" -select_streams v:0  -show_packets -print_format compact 2>/dev/null | egrep -o 'duration_time=[^ ]+'|cut -f2 -d= | perl -ne 'chop; $n+=$_; print (int($n*10)/10)."\n" if (eof());'
 getLength () {
 		tempLENGTH=$(ffprobe -i "$1" -loglevel quiet -of flat -select_streams v:0 -show_entries stream=nb_frames | sed 's/.*frames="\(.*\)"/\1/' | tail -1)
 		if [[ "$tempLENGTH" != [[:digit:]]* ]]; then
 			duration=$(ffprobe -i "$1" -loglevel quiet -of flat -select_streams v:0 -show_entries stream=duration | sed 's/streams.*duration="\(.*\)"/\1/' | tail -1)
-			fps=$(ffprobe -i "$1" -loglevel quiet -of flat -select_streams v:0 -show_entries stream=r_frame_rate | sed 's/streams.*r_frame_rate="\(.*\)"/\1/' | tail -1)
-			tempLENGTH=$(echo "scale=0; $duration*($fps)/1" | bc)
+			if [[ "$duration" != [[:digit:]]* ]]; then
+				tempLENGTH=$(ffprobe -i "$1" -loglevel quiet -of flat -count_frames -select_streams v:0 -show_entries stream=nb_read_frames | sed 's/.*frames="\(.*\)"/\1/' | tail -1)
+			else
+				fps=$(ffprobe -i "$1" -loglevel quiet -of flat -select_streams v:0 -show_entries stream=r_frame_rate | sed 's/streams.*r_frame_rate="\(.*\)"/\1/' | tail -1)
+				tempLENGTH=$(echo "scale=0; $duration*($fps)/1" | bc)
+			fi
 		fi
 		echo $tempLENGTH
 }
