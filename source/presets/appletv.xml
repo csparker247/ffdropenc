@@ -1,38 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<preset>
-<!-- optname used by preset selection and console output -->
-<optname>AppleTV</optname>
-<!-- define an output file -->
-<output>
-  <!-- appended to output filename -->
-  <suffix>AppleTV</suffix>
-  <extension>mp4</extension>
-  <!-- define a video stream and options -->
-  <video>
-    <codec>libx264</codec>
-    <encode_mode>crf</encode_mode>
-    <quality>18</quality>
-    <bitrate>8M</bitrate>
-    <buffer>10M</buffer>
-    <profile>high</profile>
-    <level>4.0</level>
-    <pix_fmt>yuv420p</pix_fmt>
-    <filters>
-      <!-- define settings for custom scale parser -->
-      <scale>
-        <scale_mode>1</scale_mode>
-        <width>1920</width>
-        <height>1080</height>
-        <dar>16/9</dar>
-      </scale>
-    </filters>
-    <!-- enable moov faststart atom -->
-    <faststart>TRUE</faststart>
-  </video>
-  <!-- define an audio stream and options -->
-  <audio>
-    <codec>libfdk_aac</codec>
-    <bitrate>320k</bitrate>
-  </audio>
-</output>
+<preset optname="AppleTV">
+  <!-- define an output file -->
+  <output extension="mp4" suffix="AppleTV">
+    <!-- define a video stream and options -->
+    <video codec="libx264" mode="crf" quality="18" bitrate="8M" buffer="10M" profile="high" level="4.0" pxfmt="yuv420p" faststart="true">
+      <filters>
+        <!-- define settings for custom scale parser -->
+        <scale mode="1" width="1920" height="1080" dar="16/9"></scale>
+      </filters>
+    </video>
+    <!-- define an audio stream and options -->
+    <audio codec="libfdk_aac" bitrate="320k"></audio>
+  </output>
 </preset>
