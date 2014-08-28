@@ -9,7 +9,6 @@
 using namespace std;
 namespace po = boost::program_options;
 
-
 #define VERSION "2.0"
 
 int main (int argc, char* argv[]) {
@@ -21,9 +20,9 @@ int main (int argc, char* argv[]) {
 
   po::options_description desc("Generic options");
   desc.add_options()
-    ("help", "show help")
-    ("preset", po::value(&preset), "select output preset")
-    ("input-files", po::value(&inputfiles))
+    ("help,h", "show help")
+    ("preset,p", po::value(&preset), "select output preset")
+    ("input,i", po::value(&inputfiles), "input file(s)")
   ;
 
   po::variables_map vm;
