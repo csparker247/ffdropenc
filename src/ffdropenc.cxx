@@ -9,10 +9,12 @@
 using namespace std;
 namespace po = boost::program_options;
 
-#define VERSION "2.0"
-
 int main (int argc, char* argv[]) {
-  cout << "ffdropenc " << VERSION << setprecision(5) << endl;
+  cout << endl;
+  cout << " ------------------------- " << endl;
+  cout << "         ffdropenc         " << endl;
+  cout << " ------------------------- " << endl;
+  cout << endl;
   
 // Parse command line options
   string preset;
@@ -34,7 +36,13 @@ int main (int argc, char* argv[]) {
   }
 
   if (vm.count("preset")) {
+    preset = vm["preset"].as<string>();
     cout << "You selected the " << preset << " preset." << endl;
+  }
+  else {
+    cerr << "ERROR: No preset selected. Exiting..." << endl;
+    cout << endl;
+    return 1; 
   }
 
   return 0;
