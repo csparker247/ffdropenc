@@ -21,3 +21,4 @@ ffdropenc
 local_*
 *.mkv
 src/bin
+*.sublime*
