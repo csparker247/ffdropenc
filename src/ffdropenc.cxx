@@ -4,10 +4,9 @@
 
 #include "ffdropenc.h"
 
-#include "boost/program_options.hpp"
+#include "cereal/cereal.hpp"
 
 using namespace std;
-namespace po = boost::program_options;
 
 int main (int argc, char* argv[]) {
   cout << endl;
@@ -17,33 +16,8 @@ int main (int argc, char* argv[]) {
   cout << endl;
   
 // Parse command line options
-  string preset;
-  vector<string> inputfiles;
-
-  po::options_description desc("Generic options");
-  desc.add_options()
-    ("help,h", "show help")
-    ("preset,p", po::value(&preset), "select output preset")
-    ("input,i", po::value(&inputfiles), "input file(s)")
-  ;
-
-  po::variables_map vm;
-  po::store(po::parse_command_line(argc, argv, desc), vm);
-
-  if (vm.count("help")) {
-    cout << desc << endl;
-    return 1;
-  }
-
-  if (vm.count("preset")) {
-    preset = vm["preset"].as<string>();
-    cout << "You selected the " << preset << " preset." << endl;
-  }
-  else {
-    cerr << "ERROR: No preset selected. Exiting..." << endl;
-    cout << endl;
-    return 1; 
-  }
+  string preset = argv[1];
+  vector<string> inputfiles(argv + 2, argv + argc);
 
   return 0;
 }
