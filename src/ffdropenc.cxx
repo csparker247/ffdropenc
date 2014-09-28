@@ -19,11 +19,11 @@ int main (int argc, char* argv[]) {
   
 // Parse command line options
   int preset;
-  vector<string> inputlist;
+  vector<string> inputList;
 
   preset = stoi(argv[1]);
   for (int i = 2; i < argc; ++i) {
-    inputlist.push_back(argv[i]);  
+    inputList.push_back(argv[i]);  
   };
 
 // Load all the preset files
@@ -31,8 +31,6 @@ int main (int argc, char* argv[]) {
   vector<string> presetFiles;
   loadPresets(presetList, presetFiles);
   
-  
-
 // Sanity check: output the loaded presets and the file list
   cout << "Loaded the following presets:" << endl;
   for (int i = 0; i < presetList.size(); ++i) {
@@ -41,8 +39,8 @@ int main (int argc, char* argv[]) {
   cout << endl;
 
   cout << "File list:" << endl;
-  for (int i = 0; i < inputlist.size(); ++i) {
-    cout << "  " << i << ": " << inputlist[i] << endl;
+  for (int i = 0; i < inputList.size(); ++i) {
+    cout << "  " << i << ": " << inputList[i] << endl;
   }
   cout << endl;
 
@@ -51,8 +49,18 @@ int main (int argc, char* argv[]) {
   string presetPath;
   presetPath = presetDir + presetFiles[preset];
   cfg.readFile(presetPath.c_str());
-  string name = cfg.lookup("preset.listname");
+  string name = cfg.lookup("listname");
   cout << "Selected preset: " << name << endl << endl;
+
+// Process each file in inputList
+  vector<string>::iterator inputIterator = inputList.begin();
+  while (inputIterator != inputList.end()) {
+    string ffmpegCommand;
+    // Build the command for that file
+    ffmpegCommand = buildCommand(*inputIterator, cfg);
+    cout << ffmpegCommand << endl;
+    ++inputIterator;
+  }
 
   return 0;
 }
