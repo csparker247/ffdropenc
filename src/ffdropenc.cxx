@@ -1,14 +1,15 @@
 // ffdropenc
-#include <iostream>
-#include <string>
-#include <vector>
-
-#include <libconfig.h++>
 
 #include "ffdropenc.h"
+#include "ffcommon.h"
+#include "InputFile.h"
 
 using namespace std;
 using namespace libconfig;
+
+// Environment defines
+string presetDir = PRESET_DIR;
+string cfg_extension = PRESET_EXT;
 
 int main (int argc, char* argv[]) {
   cout << endl;
@@ -19,11 +20,12 @@ int main (int argc, char* argv[]) {
   
 // Parse command line options
   int preset;
-  vector<string> inputList;
+  vector<InputFile> inputList;
 
   preset = stoi(argv[1]);
   for (int i = 2; i < argc; ++i) {
-    inputList.push_back(argv[i]);  
+    InputFile thisFile(argv[i]);
+    inputList.push_back(thisFile);  
   };
 
 // Load all the preset files
@@ -32,6 +34,7 @@ int main (int argc, char* argv[]) {
   loadPresets(presetList, presetFiles);
   
 // Sanity check: output the loaded presets and the file list
+// To-Do: Move this to a test.
   cout << "Loaded the following presets:" << endl;
   for (int i = 0; i < presetList.size(); ++i) {
     cout << "  " << i << ": " << presetList[i] << endl;
@@ -40,7 +43,7 @@ int main (int argc, char* argv[]) {
 
   cout << "File list:" << endl;
   for (int i = 0; i < inputList.size(); ++i) {
-    cout << "  " << i << ": " << inputList[i] << endl;
+    cout << "  " << i << ": " << inputList[i].path << endl;
   }
   cout << endl;
 
@@ -53,7 +56,7 @@ int main (int argc, char* argv[]) {
   cout << "Selected preset: " << name << endl << endl;
 
 // Process each file in inputList
-  vector<string>::iterator inputIterator = inputList.begin();
+  vector<InputFile>::iterator inputIterator = inputList.begin();
   while (inputIterator != inputList.end()) {
     string ffmpegCommand;
     // Build the command for that file

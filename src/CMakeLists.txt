@@ -9,6 +9,6 @@ find_package(LibConfig++ REQUIRED)
 include_directories(${LIBCONFIG++_INCLUDE_DIR})
 set(CMAKE_EXE_LINKER_FLAGS "-lconfig++")
 
-add_executable(ffdropenc ffdropenc.cxx)
+add_executable(ffdropenc "InputFile.cxx" "ffcommon.cxx" "ffdropenc.cxx")
 
 target_link_libraries(ffdropenc ${LIBCONFIG_LIBRARY})
