@@ -21,12 +21,17 @@ void search(std::string directory, std::string extension, std::vector<std::strin
   return;
 }
 
-// Get just the filename from a path. From the find_last_of example on cplusplus.com
-// To-Do: Modify to remove extension if specified, like bash's basename 
+// Return a file name, removing the path and extension from a string containing a full file path
+// Note: This will not work as expected if the file name includes a '.' and no extension, a rare
+// possibility, but one worth mentioning.
 std::string basename (const std::string& str) {
-  unsigned found = str.find_last_of("/\\");
-  //std::cout << " path: " << str.substr(0,found) << '\n';
-  return str.substr(found+1);
+  std::string newsstr;
+  unsigned start, end;
+
+  start = str.find_last_of("/\\");
+  end = str.find_last_of(".");
+  newstr = str.substr(start + 1, end - start - 1);
+  return newstr;
 }
 
 /* Read the presets directory and fill out presetList and presetFiles vectors.
