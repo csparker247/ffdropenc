@@ -86,6 +86,39 @@ void loadPresets(std::vector<std::string>& presetList, std::vector<std::string>&
   }
 }
 
+// Parse a stream's filters from a cfg and return its filtergraph
+std::string buildFilterGraph(const libconfig::Setting& filters) {
+  std::string filterGraph;
+  // Iterate over all of the filters
+  for (int k = 0; k < filters.getLength(); ++k) {
+    const libconfig::Setting &filter = filters[k];
+    std::string filterName;
+    std::string filterCommand;
+    filter.lookupValue("filter", filterName);
+    
+    // Do something special for the scale filter
+    if (filterName == "scale") {
+      filterCommand = "scale=1920:1080";
+    }
+    // Otherwise just copy the filter's cmdline option
+    else {
+      std::string filterData;
+      filter.lookupValue("data", filterData);
+      filterCommand = filterData;
+    }
+    
+    // If there's not anythign in the filter graph, just add it
+    if (filterGraph.empty()) {
+      filterGraph.append(filterCommand);
+    }
+    // Otherwise put a filter separator, then the command
+    else {
+      filterGraph.append("," + filterCommand);
+    }
+  }
+  return filterGraph;
+}
+
 // Build an ffmpeg command given a file path and a preset config
 // This command assumes the preset cfg's don't specify incompatible options
 // To-Do: All of the libconfig loads need error handling
@@ -117,6 +150,10 @@ std::string buildCommand(const std::string& inputFile, const libconfig::Config& 
       if (type == "video") {
         // Every video stream will start with this
         command.append(" -c:v " + codec);
+        // Skip all other settings if we're just copying the stream
+        if (codec == "copy") {
+          continue;
+        } 
 
         // Encoding mode (crf, 2pass, etc.) changes a lot
         // Only CRF supported right now
@@ -134,7 +171,7 @@ std::string buildCommand(const std::string& inputFile, const libconfig::Config& 
         }
 
         // Set some codec specific options.
-        // To-Do: Only set these with certain codecs?
+        // To-Do: Exception checking if one doesn't exist
         std::string profile, level, pixfmt;
         stream.lookupValue("profile", profile);
         stream.lookupValue("level", level);
@@ -145,7 +182,27 @@ std::string buildCommand(const std::string& inputFile, const libconfig::Config& 
         // Audio settings
         // To-Do: Basically everything with audio logic
         command.append(" -c:a " + codec);
+        // Skip all other settings if we're just copying the stream
+        if (codec == "copy") {
+          continue;
+        }
         command.append(" -b:a " + bitrate);
+      }
+
+      // Parse the streams filter settings
+      try {
+        const libconfig::Setting &filters = stream.lookup("filters");
+        std::string filterGraph = buildFilterGraph(filters);
+        if (type == "video") {
+          command.append(" -vf " + filterGraph);
+        }
+        else if (type == "audio") {
+          command.append(" -af " + filterGraph);
+        }
+      }
+      catch(const libconfig::SettingNotFoundException &nfex)
+      {
+        // Do nothing.
       }
     }
 
