@@ -32,7 +32,15 @@ int main (int argc, char* argv[]) {
   vector<string> presetList;
   vector<string> presetFiles;
   loadPresets(presetList, presetFiles);
-  
+
+// To-Do: Recognize image sequences in inputList?
+
+// Remove duplicates from inputList
+  vector<InputFile>::iterator duplicateRemover;
+  sort(inputList.begin(), inputList.end());
+  duplicateRemover = unique(inputList.begin(), inputList.end());
+  inputList.resize( distance(inputList.begin(), duplicateRemover) );
+
 // Sanity check: output the loaded presets and the file list
 // To-Do: Move this to a test.
   cout << "Loaded the following presets:" << endl;

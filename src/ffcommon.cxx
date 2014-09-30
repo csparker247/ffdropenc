@@ -25,7 +25,7 @@ void search(std::string directory, std::string extension, std::vector<std::strin
 // Note: This will not work as expected if the file name includes a '.' and no extension, a rare
 // possibility, but one worth mentioning.
 std::string basename (const std::string& str) {
-  std::string newsstr;
+  std::string newstr;
   unsigned start, end;
 
   start = str.find_last_of("/\\");

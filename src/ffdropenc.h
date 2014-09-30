@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <iostream>
+#include <algorithm>
 #include <string>
 #include <vector>
 
