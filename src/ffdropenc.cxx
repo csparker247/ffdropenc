@@ -22,6 +22,7 @@ int main (int argc, char* argv[]) {
   int preset;
   vector<InputFile> inputList;
 
+  // These will be replaced with Qt option/file pickers
   preset = stoi(argv[1]);
   for (int i = 2; i < argc; ++i) {
     InputFile thisFile(argv[i]);
@@ -33,7 +34,9 @@ int main (int argc, char* argv[]) {
   vector<string> presetFiles;
   loadPresets(presetList, presetFiles);
 
-// To-Do: Recognize image sequences in inputList?
+// To-Do: Filter by file extension and expand directories (dirent.h)
+
+// To-Do: Convert image sequence paths
 
 // Remove duplicates from inputList
   vector<InputFile>::iterator duplicateRemover;
@@ -51,7 +54,7 @@ int main (int argc, char* argv[]) {
 
   cout << "File list:" << endl;
   for (int i = 0; i < inputList.size(); ++i) {
-    cout << "  " << i << ": " << inputList[i].path << endl;
+    cout << "  " << i << ": " << inputList[i].getPath() << endl;
   }
   cout << endl;
 
@@ -69,7 +72,7 @@ int main (int argc, char* argv[]) {
     string ffmpegCommand;
     // Build the command for that file
     ffmpegCommand = buildCommand(*inputIterator, cfg);
-    cout << ffmpegCommand << endl;
+    cout << ffmpegCommand.c_str() << endl;
     ++inputIterator;
   }
 

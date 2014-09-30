@@ -2,7 +2,7 @@
 #include "InputFile.h"
 
 // Recursive search algorithm courtesy Paul Rehkugler (https://github.com/paulrehkugler/ExtensionSearch)
-void search(std::string directory, std::string extension, std::vector<std::string>& results) {
+void search(const std::string directory, const std::string extension, std::vector<std::string>& results) {
   DIR* dir_point = opendir(directory.c_str());
   dirent* entry = readdir(dir_point);
   while (entry){                        // if !entry then end of directory
@@ -27,7 +27,6 @@ void search(std::string directory, std::string extension, std::vector<std::strin
 std::string basename (const std::string& str) {
   std::string newstr;
   unsigned start, end;
-
   start = str.find_last_of("/\\");
   end = str.find_last_of(".");
   newstr = str.substr(start + 1, end - start - 1);
@@ -82,6 +81,7 @@ void loadPresets(std::vector<std::string>& presetList, std::vector<std::string>&
   }
 }
 
+// To-Do: These next two functions probably should belong to the InputFile class
 // Parse a stream's filters from a cfg and return its filtergraph
 std::string buildFilterGraph(const libconfig::Setting& filters) {
   std::string filterGraph;
@@ -93,6 +93,7 @@ std::string buildFilterGraph(const libconfig::Setting& filters) {
     filter.lookupValue("filter", filterName);
     
     // Do something special for the scale filter
+    // To-do: Make this use the cfg's settings
     if (filterName == "scale") {
       filterCommand = "scale=1920:1080";
     }
@@ -121,7 +122,7 @@ std::string buildFilterGraph(const libconfig::Setting& filters) {
 std::string buildCommand(const InputFile& inputFile, const libconfig::Config& cfg) {
   // Start the command
   std::string command;
-  command = "ffmpeg -i " + inputFile.path;
+  command = "ffmpeg -i " + inputFile.getPath();
 
   // Find the outputs in the cfg
   const libconfig::Setting& root = cfg.getRoot();
@@ -172,7 +173,7 @@ std::string buildCommand(const InputFile& inputFile, const libconfig::Config& cf
         stream.lookupValue("profile", profile);
         stream.lookupValue("level", level);
         stream.lookupValue("pixfmt", pixfmt);
-        command.append(" -profile " + profile + " -level " + level + " -pix_fmt " + pixfmt);
+        command.append(" -profile:v " + profile + " -level " + level + " -pix_fmt " + pixfmt);
       } 
       else if (type == "audio") {
         // Audio settings
@@ -216,7 +217,7 @@ std::string buildCommand(const InputFile& inputFile, const libconfig::Config& cf
 
     // Get the input filename
     // To-Do: Need to set output name in a little more rigorous fashion
-    command.append(" -y " + inputFile.outname + "_" + suffix + "." + extension);
+    command.append(" -y " + inputFile.getOutname() + "_" + suffix + "." + extension);
   }
   return command;
 }
