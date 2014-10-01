@@ -26,8 +26,11 @@ void InputFile::setIO(std::string p) {
   outname = basename(p);
 }
 
-void InputFile::setIO(std::string p, std::string o) {
+void InputFile::setPath(std::string p) {
   path = p;
+}
+
+void InputFile::setOutname(std::string o) {
   outname = o;
 }
 

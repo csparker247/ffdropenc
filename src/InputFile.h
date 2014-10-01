@@ -10,7 +10,8 @@ class InputFile {
     bool operator == (const InputFile&) const;
 
     void setIO(std::string);
-    void setIO(std::string, std::string);
+    void setPath(std::string);
+    void setOutname(std::string);
     std::string getPath() const;
     std::string getOutname() const;
 

@@ -81,7 +81,6 @@ void loadPresets(std::vector<std::string>& presetList, std::vector<std::string>&
   }
 }
 
-// To-Do: These next two functions probably should belong to the InputFile class
 // Parse a stream's filters from a cfg and return its filtergraph
 std::string buildFilterGraph(const libconfig::Setting& filters) {
   std::string filterGraph;
