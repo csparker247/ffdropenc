@@ -17,10 +17,12 @@ class InputFile {
     void setOutname(std::string);
     std::string getPath() const;
     std::string getOutname() const;
+    std::string buildCommand(const libconfig::Config& cfg) const;
 
   private:
     std::string path;
     std::string outname;
 };
+}
 
 #endif
