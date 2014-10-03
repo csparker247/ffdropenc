@@ -1,6 +1,9 @@
 #ifndef INPUTFILE_H
 #define INPUTFILE_H
 
+#include <libconfig.h++>
+
+namespace ffdropenc {
 class InputFile {
   public:
     InputFile ();
