@@ -10,7 +10,8 @@
 #define PRESET_EXT "cfg"
 
 // Helper function declarations
-void search(std::string directory, std::string extension, std::vector<std::string>& results);
+void search(const std::string directory, const std::string extension, std::vector<std::string>& results);
+void expandDir(const std::string directory, std::vector<std::string>& results);
 std::string basename (const std::string& str);
 
 // ffdropenc specific function declarations

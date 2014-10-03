@@ -1,3 +1,12 @@
+#include <stdlib.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
+#include <dirent.h>
+#include <unistd.h>
+#include <libconfig.h++>
+
 #include "ffcommon.h"
 #include "InputFile.h"
 
@@ -15,6 +24,27 @@ void search(const std::string directory, const std::string extension, std::vecto
       std::string fname = entry->d_name;  // filename
       if (fname.find(extension, (fname.length() - extension.length())) != std::string::npos)
         results.push_back(fname);   // add filename to results vector
+    }
+    entry = readdir(dir_point);
+  }
+  return;
+}
+
+// Recursively return all file paths in a parent directory
+void expandDir(const std::string directory, std::vector<std::string>& results) {
+  DIR* dir_point = opendir(directory.c_str());
+  dirent* entry = readdir(dir_point);
+  while (entry){                        // if !entry then end of directory
+    if (entry->d_type == DT_DIR){       // if entry is a directory
+      std::string fname = entry->d_name;
+      if (fname != "." && fname != "..")
+        expandDir(entry->d_name, results); // search through it
+    }
+    else if (entry->d_type == DT_REG){    // if entry is a regular file
+      std::string fname = entry->d_name;  // filename
+      if (fname.substr(0, 1) != ".") {
+        results.push_back(fname);   // add filename to results vector
+      }
     }
     entry = readdir(dir_point);
   }

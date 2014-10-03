@@ -15,28 +15,44 @@ int main (int argc, char* argv[]) {
   std::cout << " ------------------------- " << std::endl;
   std::cout << std::endl;
   
-// Parse command line options
+// Parse preset selection from command line
   int preset;
-  std::vector<InputFile> inputList;
-
-  // These will be replaced with Qt option/file pickers
   preset = std::stoi(argv[1]);
-  for (int i = 2; i < argc; ++i) {
-    InputFile thisFile(argv[i]);
-    inputList.push_back(thisFile);  
-  };
 
 // Load all the preset files
   std::vector<std::string> presetList;
   std::vector<std::string> presetFiles;
   loadPresets(presetList, presetFiles);
 
-// To-Do: Filter by file extension and expand directories (dirent.h)
+// Make a vector of InputFiles
+// This step filters out all non-files and expands directories
+  std::vector<ffdropenc::InputFile> inputList;  
+  struct stat buffer;
+  std::vector<std::string> childPaths;
+  for (int i = 2; i < argc; ++i) {
+    std::string tempPath = argv[i];
+    lstat(tempPath.c_str(), &buffer);
+    if (S_ISDIR(buffer.st_mode)) {
+      expandDir(tempPath.c_str(), childPaths);
+    }
+    else if (S_ISREG(buffer.st_mode)) {
+       ffdropenc::InputFile newFile(tempPath);
+       inputList.push_back(newFile);
+    } 
+  };
 
-// To-Do: Convert image sequence paths
+// Add all of the regular files we found in directories to the inputList
+  std::vector<std::string>::iterator addPaths = childPaths.begin();
+  while (addPaths != childPaths.end()) {
+    ffdropenc::InputFile thisFile(*addPaths);
+    inputList.push_back(thisFile);
+    ++addPaths;
+  }
 
+// To-Do: Convert image format filenames to the %0#d format
+  
 // Remove duplicates from inputList
-  std::vector<InputFile>::iterator duplicateRemover;
+  std::vector<ffdropenc::InputFile>::iterator duplicateRemover;
   sort(inputList.begin(), inputList.end());
   duplicateRemover = unique(inputList.begin(), inputList.end());
   inputList.resize( distance(inputList.begin(), duplicateRemover) );
@@ -55,6 +71,9 @@ int main (int argc, char* argv[]) {
   }
   std::cout << std::endl;
 
+
+///// START THE REAL PROCESSING /////
+
 // Load the user's preset
   libconfig::Config cfg;
   std::string presetPath;
@@ -64,12 +83,12 @@ int main (int argc, char* argv[]) {
   std::cout << "Selected preset: " << name << std::endl << std::endl;
 
 // Process each file in inputList
-  std::vector<InputFile>::iterator inputIterator = inputList.begin();
+  std::vector<ffdropenc::InputFile>::iterator inputIterator = inputList.begin();
   while (inputIterator != inputList.end()) {
     std::string ffmpegCommand;
     // Build the command for that file
-    ffmpegCommand = buildCommand(*inputIterator, cfg);
-    std::cout << ffmpegCommand.c_str() << std::endl;
+    ffmpegCommand = inputIterator->buildCommand(cfg);
+    //std::cout << ffmpegCommand.c_str() << std::endl;
     ++inputIterator;
   }
 
