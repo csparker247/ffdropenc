@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <locale>
 
 #include <dirent.h>
 #include <unistd.h>
@@ -43,6 +44,7 @@ void expandDir(const std::string directory, std::vector<std::string>& results) {
     else if (entry->d_type == DT_REG){    // if entry is a regular file
       std::string fname = entry->d_name;  // filename
       if (fname.substr(0, 1) != ".") {
+        fname.insert(0, directory + "/");
         results.push_back(fname);   // add filename to results vector
       }
     }
@@ -54,13 +56,72 @@ void expandDir(const std::string directory, std::vector<std::string>& results) {
 // Return a file name, removing the path and extension from a string containing a full file path
 // Note: This will not work as expected if the file name includes a '.' and no extension, a rare
 // possibility, but one worth mentioning.
-std::string basename (const std::string& str) {
+std::string basename (const std::string str) {
   std::string newstr;
   unsigned start, end;
   start = str.find_last_of("/\\");
   end = str.find_last_of(".");
   newstr = str.substr(start + 1, end - start - 1);
   return newstr;
+}
+
+// Returns true if the string has an extension that matches one of the approved formats
+bool isImage (const std::string str) {
+  unsigned start, end;
+  std::locale loc;
+  std::string str_ext;
+
+  // Get extension
+  start = str.find_last_of(".");
+  end = str.back();
+  str_ext = str.substr(start + 1, end - start - 1);
+
+  // Convert case
+  for (std::string::size_type j = 0; j < str_ext.length(); ++j) {
+    str_ext[j] = std::toupper(str_ext[j],loc);
+  }
+
+  // Compare to the approved extensions
+  for (int i = 0; i < img_extension.size(); ++i) {
+    std::string approvedExtension;
+    approvedExtension = img_extension[i];
+
+    if (str_ext == approvedExtension){
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// Converts a path of an image sequence (Name ###.jpg) to a formatted path for ffmpeg (Name %03d.jpg)
+std::string makeImageName (const std::string str) {
+  std::string prefix;
+  std::string number;
+  std::string ext;
+  std::string result;
+
+  // Save the file extension
+  int dot_pos = str.find_last_of(".");
+  ext = str.substr(dot_pos);
+  number = str.substr(0, dot_pos);
+
+  // Save everything but the number
+  int last_char = number.find_last_not_of("0123456789");
+  prefix = number.substr(0, last_char + 1);
+  number = number.substr(last_char + 1);
+
+  // Convert the number to the %nd format
+  number = std::to_string(number.length());
+  if (number.length() < 2){
+    number.insert(0, "0");
+  }
+  number = "%" + number + "d";
+
+  // Recombine the path
+  result = prefix + number + ext;
+  
+  return result;
 }
 
 /* Read the presets directory and fill out presetList and presetFiles vectors.

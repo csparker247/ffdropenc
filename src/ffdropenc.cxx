@@ -5,8 +5,8 @@
 #include "InputFile.h"
 
 // Environment defines
-std::string presetDir = PRESET_DIR;
-std::string cfg_extension = PRESET_EXT;
+const std::string presetDir = PRESET_DIR;
+const std::string cfg_extension = PRESET_EXT;
 
 int main (int argc, char* argv[]) {
   std::cout << std::endl;
@@ -36,21 +36,38 @@ int main (int argc, char* argv[]) {
       expandDir(tempPath.c_str(), childPaths);
     }
     else if (S_ISREG(buffer.st_mode)) {
-       ffdropenc::InputFile newFile(tempPath);
-       inputList.push_back(newFile);
+      ffdropenc::InputFile newFile;
+      // If this is an image, convert its path to one ffmpeg can accept
+      if (isImage(tempPath)){
+        tempPath = makeImageName(tempPath);
+        newFile.isImgSeq(true);
+      }
+      else { 
+        newFile.isImgSeq(false);
+      }
+      newFile.setPath(tempPath);
+      inputList.push_back(newFile);
     } 
   };
 
 // Add all of the regular files we found in directories to the inputList
+// There's another Image Sequence filtering step here
   std::vector<std::string>::iterator addPaths = childPaths.begin();
   while (addPaths != childPaths.end()) {
-    ffdropenc::InputFile thisFile(*addPaths);
-    inputList.push_back(thisFile);
+    ffdropenc::InputFile newFile;
+    std::string tempPath = *addPaths;
+    if (isImage(tempPath)){
+      tempPath = makeImageName(tempPath);
+      newFile.isImgSeq(true);
+    }
+    else { 
+      newFile.isImgSeq(false);
+    }
+    newFile.setPath(tempPath);
+    inputList.push_back(newFile);
     ++addPaths;
   }
 
-// To-Do: Convert image format filenames to the %0#d format
-  
 // Remove duplicates from inputList
   std::vector<ffdropenc::InputFile>::iterator duplicateRemover;
   sort(inputList.begin(), inputList.end());
@@ -88,7 +105,7 @@ int main (int argc, char* argv[]) {
     std::string ffmpegCommand;
     // Build the command for that file
     ffmpegCommand = inputIterator->buildCommand(cfg);
-    //std::cout << ffmpegCommand.c_str() << std::endl;
+    std::cout << ffmpegCommand.c_str() << std::endl;
     ++inputIterator;
   }
 

@@ -11,6 +11,7 @@ namespace ffdropenc {
   InputFile::InputFile (std::string p) {
     path = p;
     outname = basename(p);
+    isSeq = false;
   }
 
   // Operators
@@ -43,6 +44,15 @@ namespace ffdropenc {
 
   std::string InputFile::getOutname() const {
     return outname;
+  }
+
+  // Get and set whether file is part of an Image Sequence
+  bool InputFile::isImgSeq() const {
+    return isSeq;
+  }
+
+  void InputFile::isImgSeq(bool b) {
+    isSeq = b;
   }
 
   // Build an ffmpeg command given a file path and a preset config

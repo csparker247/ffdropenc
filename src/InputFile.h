@@ -18,10 +18,13 @@ class InputFile {
     std::string getPath() const;
     std::string getOutname() const;
     std::string buildCommand(const libconfig::Config& cfg) const;
+    bool isImgSeq() const;
+    void isImgSeq(bool);
 
   private:
     std::string path;
     std::string outname;
+    bool isSeq;
 };
 }
 
