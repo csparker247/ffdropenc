@@ -18,6 +18,7 @@ const std::array<std::string, 7> img_extension = { "DPX", "JPG", "JPEG", "PNG", 
 void search(const std::string directory, const std::string extension, std::vector<std::string>& results);
 void expandDir(const std::string directory, std::vector<std::string>& results);
 std::string basename (const std::string str);
+std::string dirname (const std::string str);
 
 bool isImage (const std::string str);
 std::string makeImageName (const std::string str);

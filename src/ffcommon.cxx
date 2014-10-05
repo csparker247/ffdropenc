@@ -65,6 +65,14 @@ std::string basename (const std::string str) {
   return newstr;
 }
 
+std::string dirname (const std::string str) {
+  std::string newstr;
+  unsigned end;
+  end = str.find_last_of("/\\");
+  newstr = str.substr(0, end + 1);
+  return newstr;
+}
+
 // Returns true if the string has an extension that matches one of the approved formats
 bool isImage (const std::string str) {
   unsigned start, end;
@@ -183,9 +191,20 @@ std::string buildFilterGraph(const libconfig::Setting& filters) {
     filter.lookupValue("filter", filterName);
     
     // Do something special for the scale filter
-    // To-do: Make this use the cfg's settings
     if (filterName == "scale") {
-      filterCommand = "scale=1920:1080";
+      unsigned int filterMode, filterWidth, filterHeight;
+      std::string filterdar;
+      filter.lookupValue("mode", filterMode);
+      filter.lookupValue("width", filterWidth);
+      filter.lookupValue("height", filterHeight);
+      filter.lookupValue("dar", filterdar);
+      if (filterMode == 1) {
+        filterCommand = "scale=iw*sar:ih,";
+        filterCommand.append("scale=");
+        filterCommand.append("\"\'w=if(lt(dar, " + filterdar + "), trunc(oh*a/2)*2, min(" + std::to_string(filterWidth) + ",ceil(iw/2)*2)):");
+        filterCommand.append("h=if(gte(dar, " + filterdar + "), trunc(ow/a/2)*2, min(" + std::to_string(filterHeight) + ",ceil(ih/2)*2))\'\",");
+        filterCommand.append("setsar=1");
+      }
     }
     // Otherwise just copy the filter's cmdline option
     else {

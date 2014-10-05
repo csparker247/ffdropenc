@@ -15,10 +15,12 @@ class InputFile {
     void setIO(std::string);
     void setPath(std::string);
     void setOutname(std::string);
+    void setOutpath(std::string);
     void setFps(std::string);
     void setDuration(unsigned long long);
     std::string getPath() const;
     std::string getOutname() const;
+    std::string getOutpath() const;
     std::string getFps() const;
     unsigned long long getDuration() const;
     std::string buildCommand(const libconfig::Config& cfg) const;
@@ -27,6 +29,7 @@ class InputFile {
 
   private:
     std::string path;
+    std::string outpath;
     std::string outname;
     std::string fps;
     unsigned long long duration;

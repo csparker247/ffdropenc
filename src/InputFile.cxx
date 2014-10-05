@@ -8,22 +8,28 @@ namespace ffdropenc {
   // Initializers/Constructors
   InputFile::InputFile () {}
 
+  // To-Do: basename() is stripping the output path. We need to save it.
   InputFile::InputFile (const std::string p) {
     std::string tempPath;
-    std::string tempOut;
+    std::string tempOutpath;
+    std::string tempOutname;
     tempPath = p;
     if (isImage(tempPath)){
       tempPath = makeImageName(tempPath);
-      int sep_Pos = tempPath.find_last_of("%");
-      tempOut = tempPath.substr(0, sep_Pos);
+      tempOutpath = dirname(tempPath);
+      tempOutname = basename(tempPath);
+      int sep_Pos = tempOutname.find_last_of("%");
+      tempOutname = tempOutname.substr(0, sep_Pos);
       isSeq = true;
     }
     else {
-      tempOut = basename(p);
+      tempOutpath = dirname(p);
+      tempOutname = basename(p);
       isSeq = false;
     }
     path = tempPath;
-    outname = tempOut;
+    outpath = tempOutpath;
+    outname = tempOutname;
   }
 
   // Operators
@@ -38,33 +44,46 @@ namespace ffdropenc {
   // Basic Input
   void InputFile::setIO(const std::string p) {
     std::string tempPath;
-    std::string tempOut;
+    std::string tempOutpath;
+    std::string tempOutname;
     tempPath = p;
     if (isImage(tempPath)){
       tempPath = makeImageName(tempPath);
-      int sep_Pos = tempPath.find_last_of("%");
-      tempOut = tempPath.substr(0, sep_Pos);
+      tempOutpath = dirname(tempPath);
+      tempOutname = basename(tempPath);
+      int sep_Pos = tempOutname.find_last_of("%");
+      tempOutname = tempOutname.substr(0, sep_Pos);
       isSeq = true;
     }
     else {
-      tempOut = basename(p);
+      tempOutpath = dirname(p);
+      tempOutname = basename(p);
       isSeq = false;
     }
     path = tempPath;
-    outname = tempOut;
+    outpath = tempOutpath;
+    outname = tempOutname;
   }
 
   void InputFile::setPath(std::string p) {
     path = p;
   }
 
-  void InputFile::setOutname(std::string o) {
-    outname = o;
+  void InputFile::setOutpath(std::string op) {
+    outpath = op;
+  }
+
+  void InputFile::setOutname(std::string on) {
+    outname = on;
   }
 
   // Basic Output
   std::string InputFile::getPath() const {
     return path;
+  }
+
+  std::string InputFile::getOutpath() const {
+    return outpath;
   }
 
   std::string InputFile::getOutname() const {
@@ -202,7 +221,7 @@ namespace ffdropenc {
       }
 
       // Add the output info
-      command.append(" -y \"" + outname);
+      command.append(" -y \"" + outpath + outname);
       std::string last_char = &outname.back();
       if ((last_char != "-") && (last_char != "_") && (last_char != " ")) {
         command.append("-"); 

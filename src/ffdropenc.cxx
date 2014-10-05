@@ -30,6 +30,7 @@ int main (int argc, char* argv[]) {
 
 // Make a vector of InputFiles
 // This step filters out all non-files and expands directories
+// To-Do: This can generate false positives. Replace with <boost/filesystem.hpp>?
   std::vector<ffdropenc::InputFile> inputList;  
   struct stat buffer;
   std::vector<std::string> childPaths;
