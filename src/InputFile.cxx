@@ -108,6 +108,8 @@ namespace ffdropenc {
       command.append(" -r " + fps);
     }
 
+    command.append(" -i \"" + path + "\"");
+
     // Find the outputs in the cfg
     const libconfig::Setting& root = cfg.getRoot();
     const libconfig::Setting &outputs = root["outputs"];
@@ -199,9 +201,13 @@ namespace ffdropenc {
         command.append(" -movflags faststart");
       }
 
-      // Get the input filename
-      // To-Do: Need to set output name in a little more rigorous fashion
-      command.append(" -y " + outname + "_" + suffix + "." + extension);
+      // Add the output info
+      command.append(" -y \"" + outname);
+      std::string last_char = &outname.back();
+      if ((last_char != "-") && (last_char != "_") && (last_char != " ")) {
+        command.append("-"); 
+      }
+      command.append(suffix + "." + extension + "\"");
     }
     return command;
   }
