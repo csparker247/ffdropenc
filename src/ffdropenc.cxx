@@ -24,6 +24,10 @@ int main (int argc, char* argv[]) {
   std::vector<std::string> presetFiles;
   loadPresets(presetList, presetFiles);
 
+// Manually setting the fps for image sequences
+// To-Do: Let the user select this  
+  std::string seqFps = "30000/1001";
+
 // Make a vector of InputFiles
 // This step filters out all non-files and expands directories
   std::vector<ffdropenc::InputFile> inputList;  
@@ -36,16 +40,8 @@ int main (int argc, char* argv[]) {
       expandDir(tempPath.c_str(), childPaths);
     }
     else if (S_ISREG(buffer.st_mode)) {
-      ffdropenc::InputFile newFile;
-      // If this is an image, convert its path to one ffmpeg can accept
-      if (isImage(tempPath)){
-        tempPath = makeImageName(tempPath);
-        newFile.isImgSeq(true);
-      }
-      else { 
-        newFile.isImgSeq(false);
-      }
-      newFile.setPath(tempPath);
+      ffdropenc::InputFile newFile(tempPath);
+      newFile.setFps(seqFps);
       inputList.push_back(newFile);
     } 
   };
@@ -54,16 +50,8 @@ int main (int argc, char* argv[]) {
 // There's another Image Sequence filtering step here
   std::vector<std::string>::iterator addPaths = childPaths.begin();
   while (addPaths != childPaths.end()) {
-    ffdropenc::InputFile newFile;
-    std::string tempPath = *addPaths;
-    if (isImage(tempPath)){
-      tempPath = makeImageName(tempPath);
-      newFile.isImgSeq(true);
-    }
-    else { 
-      newFile.isImgSeq(false);
-    }
-    newFile.setPath(tempPath);
+    ffdropenc::InputFile newFile(*addPaths);
+    newFile.setFps(seqFps);
     inputList.push_back(newFile);
     ++addPaths;
   }

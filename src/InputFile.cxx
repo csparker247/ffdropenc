@@ -8,10 +8,22 @@ namespace ffdropenc {
   // Initializers/Constructors
   InputFile::InputFile () {}
 
-  InputFile::InputFile (std::string p) {
-    path = p;
-    outname = basename(p);
-    isSeq = false;
+  InputFile::InputFile (const std::string p) {
+    std::string tempPath;
+    std::string tempOut;
+    tempPath = p;
+    if (isImage(tempPath)){
+      tempPath = makeImageName(tempPath);
+      int sep_Pos = tempPath.find_last_of("%");
+      tempOut = tempPath.substr(0, sep_Pos);
+      isSeq = true;
+    }
+    else {
+      tempOut = basename(p);
+      isSeq = false;
+    }
+    path = tempPath;
+    outname = tempOut;
   }
 
   // Operators
@@ -24,9 +36,22 @@ namespace ffdropenc {
   }
 
   // Basic Input
-  void InputFile::setIO(std::string p) {
-    path = p;
-    outname = basename(p);
+  void InputFile::setIO(const std::string p) {
+    std::string tempPath;
+    std::string tempOut;
+    tempPath = p;
+    if (isImage(tempPath)){
+      tempPath = makeImageName(tempPath);
+      int sep_Pos = tempPath.find_last_of("%");
+      tempOut = tempPath.substr(0, sep_Pos);
+      isSeq = true;
+    }
+    else {
+      tempOut = basename(p);
+      isSeq = false;
+    }
+    path = tempPath;
+    outname = tempOut;
   }
 
   void InputFile::setPath(std::string p) {
@@ -55,12 +80,33 @@ namespace ffdropenc {
     isSeq = b;
   }
 
+  // Get and set the InputFile's framerate
+  void InputFile::setFps(std::string f) {
+    fps = f;
+  }
+
+  std::string InputFile::getFps() const {
+    return fps;
+  }
+
+  // Get and set the InputFile's duration
+  void InputFile::setDuration(unsigned long long d) {
+    duration = d;
+  }
+
+  unsigned long long InputFile::getDuration() const {
+    return duration;
+  }
+
   // Build an ffmpeg command given a file path and a preset config
   // To-Do: All of the libconfig loads need error handling
   std::string InputFile::buildCommand(const libconfig::Config& cfg) const {
     // Start the command
     std::string command;
-    command = "ffmpeg -i " + path;
+    command = "ffmpeg";
+    if (isSeq == true) {
+      command.append(" -r " + fps);
+    }
 
     // Find the outputs in the cfg
     const libconfig::Setting& root = cfg.getRoot();
