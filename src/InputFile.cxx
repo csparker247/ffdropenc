@@ -146,7 +146,7 @@ namespace ffdropenc {
             int quality;
             stream.lookupValue("buffer", buffer);
             stream.lookupValue("quality", quality);
-            command.append(" -crf " + std::to_string(quality) + " -maxrate " + bitrate + " -bufsize " + buffer);
+            command.append(" -crf " + std::to_string(quality) + " -maxrate:v " + bitrate + " -bufsize:v " + buffer);
           }
           // Default to a "should always work" bitrate setting
           else {
