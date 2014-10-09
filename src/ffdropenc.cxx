@@ -48,7 +48,6 @@ int main (int argc, char* argv[]) {
   };
 
 // Add all of the regular files we found in directories to the inputList
-// There's another Image Sequence filtering step here
   std::vector<std::string>::iterator addPaths = childPaths.begin();
   while (addPaths != childPaths.end()) {
     ffdropenc::InputFile newFile(*addPaths);

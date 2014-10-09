@@ -8,7 +8,7 @@
 
 #define VERSION "2.0"
 #define PRESET_DIR "../presets/"
-#define PRESET_EXT "cfg"
+#define PRESET_EXT "preset"
 
 // Extension filters for image sequences.
 // To-Do: Move these to a config so there's no need to recompile

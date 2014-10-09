@@ -198,7 +198,10 @@ std::string buildFilterGraph(const libconfig::Setting& filters) {
       filter.lookupValue("width", filterWidth);
       filter.lookupValue("height", filterHeight);
       filter.lookupValue("dar", filterdar);
-      if (filterMode == 1) {
+      if (filterMode == 0) {
+        filterCommand = "scale=iw*sar:ih";
+      }
+      else if (filterMode == 1) {
         filterCommand = "scale=iw*sar:ih,";
         filterCommand.append("scale=");
         filterCommand.append("\"\'w=if(lt(dar, " + filterdar + "), trunc(oh*a/2)*2, min(" + std::to_string(filterWidth) + ",ceil(iw/2)*2)):");

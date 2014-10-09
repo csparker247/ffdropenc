@@ -1,0 +1,31 @@
+# Standard Definition (MP4) Preset
+
+listname = "MP4 - H.264/AAC (SD)";
+consolename = "Standard Definition (MP4)";
+
+outputs = ( 
+  { extension = "mp4";
+    suffix = "SD"; 
+    faststart = true;  
+    streams = (
+        { type = "video";
+          codec = "libx264";
+          mode = "crf";
+          quality = 20;
+          bitrate = "3M";
+          buffer = "6M";
+          profile = "high";
+          level = "4.2";
+          pixfmt = "yuv420p";
+          filters = (
+            { filter = "scale"; mode = 1; width = 854; height = 480; dar = "16/9" }
+          );
+        },
+
+        { type = "audio";
+          codec = "libfdk_aac";
+          bitrate = "192k";
+        }
+    );
+  }
+);

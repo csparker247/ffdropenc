@@ -169,16 +169,15 @@ namespace ffdropenc {
           }
           // Default to a "should always work" bitrate setting
           else {
-            command.append(" -b:v " + bitrate );
+            // This is a hack. Needs to change.
+            if (bitrate != "IGNORE") {command.append(" -b:v " + bitrate);}
           }
 
           // Set some codec specific options.
-          // To-Do: Exception checking if one doesn't exist
           std::string profile, level, pixfmt;
-          stream.lookupValue("profile", profile);
-          stream.lookupValue("level", level);
-          stream.lookupValue("pixfmt", pixfmt);
-          command.append(" -profile:v " + profile + " -level " + level + " -pix_fmt " + pixfmt);
+          if(stream.lookupValue("profile", profile)) {command.append(" -profile:v " + profile);}
+          if(stream.lookupValue("level", level)) {command.append(" -level:v " + level);}
+          if(stream.lookupValue("pixfmt", pixfmt)) {command.append(" -pix_fmt " + pixfmt);}
         } 
         else if (type == "audio") {
           // Audio settings
@@ -188,7 +187,8 @@ namespace ffdropenc {
           if (codec == "copy") {
             continue;
           }
-          command.append(" -b:a " + bitrate);
+          // This is a hack. Needs to change.
+          if(bitrate != "IGNORE" ) {command.append(" -b:a " + bitrate);}
         }
 
         // Parse the streams filter settings
@@ -206,6 +206,22 @@ namespace ffdropenc {
         {
           // Do nothing.
         }
+
+        // Parse the streams flags settings
+        try {
+          const libconfig::Setting &flags = stream.lookup("flags");
+          for (int k = 0; k < flags.getLength(); ++k) {
+              const libconfig::Setting &flag = flags[k];
+              std::string flagData;
+              flag.lookupValue("flag", flagData);
+              command.append(" " + flagData);
+          }
+        }
+        catch(const libconfig::SettingNotFoundException &nfex)
+        {
+          // Do nothing.
+        }
+
       }
 
       // Add the final output file options
@@ -223,7 +239,7 @@ namespace ffdropenc {
       // Add the output info
       command.append(" -y \"" + outpath + outname);
       std::string last_char = &outname.back();
-      if ((last_char != "-") && (last_char != "_") && (last_char != " ")) {
+      if ((last_char != "-") && (last_char != "_") && (last_char != " ") && (suffix != "")) {
         command.append("-"); 
       }
       command.append(suffix + "." + extension + "\"");

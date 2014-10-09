@@ -1,0 +1,30 @@
+# MKV - H.264/Audio Passthru (Square Pixels) Preset
+
+listname = "MKV - H.264/Audio Passthru (Square Pixels)";
+consolename = "MKV";
+
+outputs = ( 
+  { extension = "mkv";
+    suffix = "H264"; 
+    faststart = false;  
+    streams = (
+        { type = "video";
+          codec = "libx264";
+          mode = "crf";
+          quality = 18;
+          bitrate = "10M";
+          buffer = "16M";
+          profile = "high";
+          level = "4.2";
+          pixfmt = "yuv420p";
+          filters = (
+            { filter = "scale"; mode = 0 }
+          );
+        },
+
+        { type = "audio";
+          codec = "copy";
+        }
+    );
+  }
+);

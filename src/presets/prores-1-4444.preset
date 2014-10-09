@@ -1,0 +1,32 @@
+# ProRes 4444 Preset
+
+listname = "ProRes 4444";
+consolename = "ProRes 4444";
+
+outputs = ( 
+  { extension = "mov";
+    suffix = "ProRes"; 
+    faststart = false;  
+    streams = (
+        { type = "video";
+          codec = "prores_ks";
+          pixfmt = "yuva444p10le";
+          bitrate = "IGNORE";
+          profile = "4";
+          flags = (
+            { flag = "-qscale:v 10" },
+            { flag = "-vendor ap10" }
+          );
+        },
+
+        { type = "audio";
+          codec = "pcm_s16le";
+          bitrate = "IGNORE"
+          flags = (
+            { flag = "-filter_complex asetnsamples=n=16384:p=0" },
+            { flag = "-ar 48k" }
+          );
+        }
+    );
+  }
+);

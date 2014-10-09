@@ -1,0 +1,31 @@
+# Vimeo Preset
+
+listname = "Vimeo 1080p";
+consolename = "Vimeo";
+
+outputs = ( 
+  { extension = "mp4";
+    suffix = "Vimeo"; 
+    faststart = true;  
+    streams = (
+        { type = "video";
+          codec = "libx264";
+          mode = "crf";
+          quality = 18;
+          bitrate = "10M";
+          buffer = "15M";
+          profile = "high";
+          level = "4.2";
+          pixfmt = "yuv420p";
+          filters = (
+            { filter = "scale"; mode = 1; width = 1920; height = 1080; dar = "16/9" }
+          );
+        },
+
+        { type = "audio";
+          codec = "libfdk_aac";
+          bitrate = "320k";
+        }
+    );
+  }
+);
