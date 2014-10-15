@@ -1,3 +1,6 @@
+#include <unistd.h>
+#include <sys/wait.h>
+#include <errno.h>
 #include <string>
 
 #include "InputFile.h"
@@ -117,6 +120,40 @@ namespace ffdropenc {
     return duration;
   }
 
+  bool InputFile::analyze() {
+    pid_t pid;
+    int status;
+    pid_t ret;
+
+    /*... Sanitize arguments ... */
+
+    pid = fork();
+    if (pid == -1) {
+      std::perror("fork error");
+    }
+    else if (pid != 0) {
+      while ((ret = waitpid(pid, &status, 0)) == -1) {
+        if (errno != EINTR) {
+          std::perror("Error waiting for child process");
+          break;
+        }
+      }
+      if ((ret != -1) &&
+          (!WIFEXITED(status) || !WEXITSTATUS(status)) ) {
+        /* report unexpected child status */
+      }
+    } else {
+
+      /*... Initialize env as a sanitized copy of environ ...*/
+
+      if (execl ("./ffprobe", "ffprobe", path.c_str(), "-loglevel", "quiet", "-of", "ini", "-show_streams", (char *)0) == -1) {
+        perror("Error executing ffprobe");
+        _exit(127);
+      }
+    }
+    return 0;
+  }
+
   // Build an ffmpeg command given a file path and a preset config
   // To-Do: All of the libconfig loads need error handling
   std::string InputFile::buildCommand(const libconfig::Config& cfg) const {
@@ -144,8 +181,10 @@ namespace ffdropenc {
         const libconfig::Setting &stream = streams[j];
         std::string type, codec, mode, bitrate;
         // These variables should exist for every output stream
-        stream.lookupValue("type", type);
-        stream.lookupValue("codec", codec);
+        if(!(stream.lookupValue("type", type) &&
+             stream.lookupValue("codec", codec))) {
+          continue;
+        }
         stream.lookupValue("mode", mode);
         stream.lookupValue("bitrate", bitrate);
 

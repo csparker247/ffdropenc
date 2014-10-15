@@ -26,11 +26,13 @@ class InputFile {
     std::string buildCommand(const libconfig::Config& cfg) const;
     bool isImgSeq() const;
     void isImgSeq(bool);
+    bool analyze();
 
   private:
     std::string path;
     std::string outpath;
     std::string outname;
+    int w,h;
     std::string fps;
     unsigned long long duration;
     bool isSeq;

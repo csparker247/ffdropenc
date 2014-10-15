@@ -93,7 +93,8 @@ int main (int argc, char* argv[]) {
     std::string ffmpegCommand;
     // Build the command for that file
     ffmpegCommand = inputIterator->buildCommand(cfg);
-    std::cout << ffmpegCommand.c_str() << std::endl;
+    inputIterator->analyze();
+    //std::cout << ffmpegCommand.c_str() << std::endl;
     ++inputIterator;
   }
 
