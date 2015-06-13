@@ -44,6 +44,8 @@ OPTIONS:
 -s		Create sym-linked development application, ffdevenc.app, using files in "ffdropenc/source".
   		Disables DMG (-d) output. Defaults to custom binaries. Currently not usable with free encoder option.
 
+-l		Patch presets to always keep output information.
+		
 
 
 EOF
@@ -58,8 +60,9 @@ status="nonfree"
 remove_cache=0
 dmg=0
 dev=0
+debug=0
 
-while getopts ":hb:rds" arg; do
+while getopts ":hb:rdsl" arg; do
     case "${arg}" in
         h)
         	usage
@@ -83,6 +86,9 @@ while getopts ":hb:rds" arg; do
         s)
         	dev=1
         	;;
+        l)
+			debug=1
+			;;
         *)
           usage
           ;;
@@ -182,6 +188,12 @@ if [[ "$dev" == "0" ]]; then
 		cp sffmpeg/build/bin/x264 "$buildsrc"/bin/x264
 	fi
 
+	if [[ "$debug" == "1" ]]; then
+		buildname="ffdebugenc"
+		echo "Patching presets for debugging..."
+		grep -rl "cleanLogs" "$buildsrc"/presets | xargs sed -i "" 's/cleanLogs/#cleanLogs/g'
+	fi
+	
 elif [[ "$dev" == "1" ]]; then
 	buildsrc="$ff_root/source"
 	buildname="ffdevenc"
