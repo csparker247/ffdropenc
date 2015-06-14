@@ -5,13 +5,14 @@ source/ffdropenc.platypus
 source/ffimgdrop.platypus
 source/graphics/legacy
 test/
-source/bin/.DS_Store
-source/bin/qtfaststart/__init__.pyc
-source/bin/qtfaststart/exceptions.pyc
-source/bin/qtfaststart/processor.pyc
-source/bin/ffmpeg
-source/bin/ffprobe
-source/bin/x264
+bin/.DS_Store
+bin/qtfaststart/__init__.pyc
+bin/qtfaststart/exceptions.pyc
+bin/qtfaststart/processor.pyc
+bin/ffmpeg
+bin/ffprobe
+bin/x264
+bin/cocoaDialog.app/
 source/graphics/dmg
 ffdropenc.platypus
 build/
@@ -22,3 +23,4 @@ local_*
 *.mkv
 src/bin
 *.sublime*
+.idea/
