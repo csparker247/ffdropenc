@@ -3,6 +3,7 @@
 #include "ffdropenc.h"
 #include "ffcommon.h"
 #include "InputFile.h"
+#include "Video.h"
 
 // Environment defines
 const std::string presetDir = PRESET_DIR;
