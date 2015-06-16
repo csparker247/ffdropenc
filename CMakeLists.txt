@@ -11,5 +11,5 @@ include_directories(${LIBCONFIG++_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 
 set(DROP_REQ_LIBS ${LIBCONFIG_LIBRARY} ${Boost_LIBRARIES})
 
-add_executable(ffdropenc src/InputFile.cxx src/ffcommon.cxx src/ffdropenc.cxx src/Video.cpp)
+add_executable(ffdropenc src/ffdropenc.cpp src/Video.cpp)
 target_link_libraries(ffdropenc ${DROP_REQ_LIBS})

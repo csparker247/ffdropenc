@@ -22,12 +22,8 @@ Video::Video ( boost::filesystem::path inputPath, unsigned preset ) {
     _outputExt = inputPath.extension().string();
     _appendSuffix = true;
 
-    /* To-Do: analyze video
-     * _fps =
-     * _frames =
-     * _isImgSeq =
-     * _startingIndex =
-    */
+    // To-Do: analyze video
+    // _analyze();
 
     // set progress
     _progress = 0.0;
@@ -39,5 +35,17 @@ Video::Video ( boost::filesystem::path inputPath, unsigned preset ) {
     _transcoded = false;
 
 };
+
+// Construct the full output path from all of its requisite parts
+// this.outputPath() == _outputDir + _outputFileName + _outputSuffix + _outputExt
+boost::filesystem::path Video::outputPath() {
+    boost::filesystem::path concatenatedPath = _outputDir;
+    std::string outputFullFilename = _outputFileName;
+    if (_appendSuffix) outputFullFilename += _outputSuffix;
+    outputFullFilename += _outputExt;
+    concatenatedPath /= boost::filesystem::path(outputFullFilename);
+
+    return concatenatedPath;
+}
 
 } // namespace ffdropenc

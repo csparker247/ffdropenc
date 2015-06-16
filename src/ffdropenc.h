@@ -1,15 +1,11 @@
-#ifndef FFDROPENC_H
-#define FFDROPENC_H
+//
+// Created by Seth Parker on 6/15/15.
+//
 
-#include <stdlib.h>
-#include <iostream>
-#include <algorithm>
-#include <string>
-#include <vector>
-#include <sys/stat.h>
+#ifndef FFDROPENC_FFDROPENC_H
+#define FFDROPENC_FFDROPENC_H
 
-#include <dirent.h>
-#include <unistd.h>
-#include <libconfig.h++>
+#include "Video.h"
+#include "boost/program_options.hpp"
 
-#endif
+#endif //FFDROPENC_FFDROPENC_H

@@ -26,19 +26,21 @@ public:
     int setOutputSuffix();
     int setOutputExt();
 
-    //int analyze();
+    int transcode();
 
 private:
     // input location
     boost::filesystem::path _inputPath; // where the file is
 
     // output location
-    // _outputDir + _outputFileName + _outputSuffix + _outputExt == output file and location
     boost::filesystem::path _outputDir; // where the file is going
     std::string _outputFileName; // what it will be called
     std::string _outputSuffix; // what will be appended to the filename
     std::string _outputExt; // what its extension will be
     bool _appendSuffix; // do we want to append _outputSuffix to the filename?
+
+    // metadata
+    int _analyze(); // fills out the metadata
 
     // progress tracking
     double _fps; // frames per second
@@ -48,6 +50,7 @@ private:
     // image sequence
     bool _isImgSeq; // is an image sequence?
     unsigned long _startingIndex; // what's the first number in the seq? (e.g. 000, 050, 121?)
+    std::string _outputFPS; // the desired frame rate for the output file
 
     // encoding parameters
     unsigned _preset; // the index of the preset we want to use for encoding
