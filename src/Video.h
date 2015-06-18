@@ -54,6 +54,7 @@ private:
 
     // encoding parameters
     unsigned _preset; // the index of the preset we want to use for encoding
+    std::string _command(); // returns the transcoding command that is run by this.transcode();
 
     // debug log stuff
     boost::filesystem::path _logDir; // where the debug log will be saved

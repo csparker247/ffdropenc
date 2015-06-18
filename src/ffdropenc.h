@@ -5,7 +5,10 @@
 #ifndef FFDROPENC_FFDROPENC_H
 #define FFDROPENC_FFDROPENC_H
 
+#include <iostream>
+
 #include "Video.h"
+#include "boost/filesystem.hpp"
 #include "boost/program_options.hpp"
 
 #endif //FFDROPENC_FFDROPENC_H
