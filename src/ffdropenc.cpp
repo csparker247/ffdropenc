@@ -9,7 +9,7 @@
 int main( int argc, char* argv[] ) {
 
     ////// Read the presets directories //////
-    std::vector<ffdropenc::Preset*> preset_list; // Preset._cfg cannot be copied, must be referenced after construction
+    std::vector<ffdropenc::Preset*> preset_list;
 
     boost::filesystem::path presets_dir(FFDROPENC_PRESET_DIR);
     ffdropenc::loadPresets( presets_dir, preset_list );

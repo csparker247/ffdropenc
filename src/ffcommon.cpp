@@ -14,9 +14,11 @@ namespace ffdropenc {
             boost::filesystem::recursive_directory_iterator presetIterator_end; // default construction defaults to iterator.end() value somehow;
 
             while (presetFileIterator != presetIterator_end) {
-                //To-do: Check for .preset extension
-                Preset* newFilePreset = new Preset(*presetFileIterator); // Configs don't have copy constructors, so these must be pointers
-                presetsList.push_back( newFilePreset );
+                boost::filesystem::path current_fs_entry = *presetFileIterator;
+                if ( current_fs_entry.extension() == ".preset" ) {
+                    Preset *newFilePreset = new Preset(*presetFileIterator);
+                    presetsList.push_back(newFilePreset);
+                }
 
                 ++presetFileIterator;
             }

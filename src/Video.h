@@ -54,7 +54,7 @@ private:
     std::string _outputFPS; // the desired frame rate for the output file
 
     // encoding parameters
-    Preset* _preset; // the index of the preset we want to use for encoding
+    Preset* _preset; // A pointer to the preset we're using
     std::string _command(); // returns the transcoding command that is run by this.transcode();
 
     // debug log stuff

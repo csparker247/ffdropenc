@@ -1,31 +1,31 @@
-# Apple TV Preset
-
-listname = "Apple TV";
-consolename = "Apple TV";
-
-outputs = ( 
-  { extension = "mp4";
-    suffix = "AppleTV"; 
-    faststart = true;  
-    streams = (
-        { type = "video";
-          codec = "libx264";
-          mode = "crf";
-          quality = 18;
-          bitrate = "8M";
-          buffer = "10M";
-          profile = "high";
-          level = "4.0";
-          pixfmt = "yuv420p";
-          filters = (
-            { filter = "scale"; mode = 1; width = 1920; height = 1080; dar = "16/9" }
-          );
-        },
-
-        { type = "audio";
-          codec = "libfdk_aac";
-          bitrate = "320k";
-        }
-    );
-  }
-);
+{
+  "listname" : "Apple TV",
+  "consolename" : "Apple TV",
+  
+  "outputs" : [
+    { "extension" : "mp4",
+      "suffix" : "AppleTV",
+      "faststart" : true,
+      "streams" : [
+          { "type" : "video",
+            "codec" : "libx264",
+            "mode" : "crf",
+            "quality" : 18,
+            "bitrate" : "8M",
+            "buffer" : "10M",
+            "profile" : "high",
+            "level" : "4.0",
+            "pixfmt" : "yuv420p",
+            "filters" : [
+              { "filter" : "scale", "mode" : 1, "width" : 1920, "height" : 1080, "dar" : "16/9" }
+            ]
+          },
+  
+          { "type" : "audio",
+            "codec" : "libfdk_aac",
+            "bitrate" : "320k"
+          }
+      ]
+    }
+  ]
+}
