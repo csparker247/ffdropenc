@@ -3,14 +3,15 @@
 //
 
 #include "Video.h"
+#include "Preset.h"
 
 namespace ffdropenc {
 
 // Constructors
-Video::Video ( boost::filesystem::path inputPath, unsigned preset ) {
+Video::Video ( boost::filesystem::path inputPath, Preset* preset ) {
 
     // set preset first
-    _preset = preset; // defaults to first in Presets vector
+    _preset = preset;
 
     // set the source file
     _inputPath = inputPath;

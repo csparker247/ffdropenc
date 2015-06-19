@@ -2,15 +2,30 @@
 // Created by Seth Parker on 6/15/15.
 //
 
+#define FFDROPENC_PRESET_DIR "presets/" // For development only
+
 #include "ffdropenc.h"
 
 int main( int argc, char* argv[] ) {
 
-    // Variables we need to keep from the command line
+    ////// Read the presets directories //////
+    std::vector<ffdropenc::Preset*> preset_list; // Preset._cfg cannot be copied, must be referenced after construction
+
+    boost::filesystem::path presets_dir(FFDROPENC_PRESET_DIR);
+    ffdropenc::loadPresets( presets_dir, preset_list );
+
+    // Make sure we've found presets
+    if( preset_list.size() ) {
+        std::cout << preset_list.size() << " presets loaded." << std::endl;
+    } else {
+        std::cerr << "Error: No presets loaded!" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    ////// Parse the command line //////
     int selectedPreset;
     std::vector<std::string> parsedFiles;
 
-    // Try so that we can catch boost/program_options errors
     try {
         // All command line options
         boost::program_options::options_description options("Options");
@@ -39,17 +54,18 @@ int main( int argc, char* argv[] ) {
         }
 
         if (parsedOptions.count("preset")) {
-            std::cout << parsedOptions["preset"].as<int>() << std::endl;
+            selectedPreset = parsedOptions["preset"].as<int>();
+        } else {
+            std::cerr << "ERROR: Preset not supplied!" << std::endl;
+            return EXIT_FAILURE;
         }
 
         // Transfer the parsed strings into the parsedFiles vector for easier access
         if (parsedOptions.count("input-file")) {
             parsedFiles = parsedOptions["input-file"].as<std::vector<std::string> >();
-            std::vector<std::string>::iterator filesIterator = parsedFiles.begin();
-            while (filesIterator != parsedFiles.end()) {
-                std::cout << *filesIterator << std::endl;
-                ++filesIterator;
-            }
+        } else {
+            std::cerr << "ERROR: Input file(s) not supplied!" << std::endl;
+            return EXIT_FAILURE;
         }
     }
     catch(std::exception& e)
@@ -57,6 +73,23 @@ int main( int argc, char* argv[] ) {
         std::cerr << "ERROR: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
+
+    ////// To-Do: Handle Directories in parsedFiles //////
+
+    ////// Make our Video Queue //////
+    std::vector<ffdropenc::Video> queue;
+
+    std::vector<std::string>::iterator filesIterator = parsedFiles.begin();
+    while (filesIterator != parsedFiles.end()) {
+        // To-Do: check that these files actually exist
+        ffdropenc::Video newVideo( *filesIterator, preset_list[selectedPreset] );
+        queue.push_back( newVideo );
+
+        ++filesIterator;
+    }
+
+    std::cout << queue[0].outputPath() << std::endl;
+
 
     return EXIT_SUCCESS;
 }

@@ -7,12 +7,13 @@
 #define FFDROPENC_VIDEO_H
 
 #include <boost/filesystem.hpp>
+#include "Preset.h"
 
 namespace ffdropenc {
 
 class Video {
 public:
-    Video( boost::filesystem::path inputPath, unsigned preset = 0 );
+    Video( boost::filesystem::path inputPath, Preset* preset );
 
     // Accessors
     boost::filesystem::path inputPath() { return _inputPath; };
@@ -53,7 +54,7 @@ private:
     std::string _outputFPS; // the desired frame rate for the output file
 
     // encoding parameters
-    unsigned _preset; // the index of the preset we want to use for encoding
+    Preset* _preset; // the index of the preset we want to use for encoding
     std::string _command(); // returns the transcoding command that is run by this.transcode();
 
     // debug log stuff

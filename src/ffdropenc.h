@@ -7,7 +7,10 @@
 
 #include <iostream>
 
+#include "ffcommon.h"
 #include "Video.h"
+#include "Preset.h"
+
 #include "boost/filesystem.hpp"
 #include "boost/program_options.hpp"
 
