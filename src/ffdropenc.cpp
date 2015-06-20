@@ -88,7 +88,7 @@ int main( int argc, char* argv[] ) {
         ++filesIterator;
     }
 
-    std::cout << queue[0].outputPath() << std::endl;
+    queue[0].transcode();
 
 
     return EXIT_SUCCESS;

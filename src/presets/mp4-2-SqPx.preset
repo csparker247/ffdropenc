@@ -1,31 +1,31 @@
-# MP4 - H.264/AAC (Square Pixels) Preset
+{
+  "listname" : "MP4 - H.264/AAC [Square Pixels]",
+  "consolename" : "MP4",
 
-listname = "MP4 - H.264/AAC (Square Pixels)";
-consolename = "MP4";
+  "outputs" : [
+    { "extension" : "mp4",
+      "suffix" : "H264",
+      "faststart" : true,
+      "streams" : [
+          { "type" : "video",
+            "codec" : "libx264",
+            "mode" : "crf",
+            "quality" : 18,
+            "bitrate" : "15M",
+            "buffer" : "12M",
+            "profile" : "high",
+            "level" : "4.2",
+            "pixfmt" : "yuv420p",
+            "filters" : [
+              { "filter" : "scale", "mode" : 0 }
+            ]
+          },
 
-outputs = ( 
-  { extension = "mp4";
-    suffix = "H264"; 
-    faststart = true;  
-    streams = (
-        { type = "video";
-          codec = "libx264";
-          mode = "crf";
-          quality = 18;
-          bitrate = "15M";
-          buffer = "12M";
-          profile = "high";
-          level = "4.2";
-          pixfmt = "yuv420p";
-          filters = (
-            { filter = "scale"; mode = 0 }
-          );
-        },
-
-        { type = "audio";
-          codec = "libfdk_aac";
-          bitrate = "320k";
-        }
-    );
-  }
-);
+          { "type" : "audio",
+            "codec" : "libfdk_aac",
+            "bitrate" : "320k"
+          }
+      ]
+    }
+  ]
+}

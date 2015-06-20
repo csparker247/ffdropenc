@@ -15,8 +15,9 @@ namespace ffdropenc {
     class Preset {
     public:
         Preset( boost::filesystem::path path );
-        std::string getVideoSettings();
-        std::string getAudioSettings();
+        int numberOfOutputs();
+        std::string getSettings( int outputIndex );
+
     private:
         std::string _name; //Name for display purposes
         std::string _shortname; //For console use

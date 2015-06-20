@@ -1,34 +1,34 @@
-# MP4 - H.264/AAC (7200p, Very Slow Encode) Preset
+{
+  "listname" : "MP4 - H.264/AAC [720p, Very Slow Encode]",
+  "consolename" : "MP4 [Very Slow Encode]",
 
-listname = "MP4 - H.264/AAC (720p, Very Slow Encode)";
-consolename = "MP4 (Very Slow Encode)";
+  "outputs" : [
+    { "extension" : "mp4",
+      "suffix" : "Small",
+      "faststart" : true,
+      "streams" : [
+          { "type" : "video",
+            "codec" : "libx264",
+            "mode" : "crf",
+            "quality" : 18,
+            "bitrate" : "2M",
+            "buffer" : "6M",
+            "profile" : "high",
+            "level" : "4.2",
+            "pixfmt" : "yuv420p",
+            "filters" : [
+              { "filter" : "scale", "mode" : 1, "width" : 1280, "height" : 720, "dar" : "16/9" }
+            ],
+            "flags" : [
+              { "flag" : "-preset veryslow" }
+            ]
+          },
 
-outputs = ( 
-  { extension = "mp4";
-    suffix = "Small"; 
-    faststart = true;  
-    streams = (
-        { type = "video";
-          codec = "libx264";
-          mode = "crf";
-          quality = 18;
-          bitrate = "2M";
-          buffer = "6M";
-          profile = "high";
-          level = "4.2";
-          pixfmt = "yuv420p";
-          filters = (
-            { filter = "scale"; mode = 1; width = 1280; height = 720; dar = "16/9" }
-          );
-          flags = (
-            { flag = "-preset veryslow" }
-          );
-        },
-
-        { type = "audio";
-          codec = "libfdk_aac";
-          bitrate = "192k";
-        }
-    );
-  }
-);
+          { "type" : "audio",
+            "codec" : "libfdk_aac",
+            "bitrate" : "192k"
+          }
+      ]
+    }
+  ]
+}
