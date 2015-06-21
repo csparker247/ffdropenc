@@ -2,8 +2,6 @@
 // Created by Seth Parker on 6/15/15.
 //
 
-#define FFDROPENC_PRESET_DIR "presets/" // For development only
-
 #include "ffdropenc.h"
 
 int main( int argc, char* argv[] ) {
@@ -11,7 +9,7 @@ int main( int argc, char* argv[] ) {
     ////// Read the presets directories //////
     std::vector<ffdropenc::Preset*> preset_list;
 
-    boost::filesystem::path presets_dir(FFDROPENC_PRESET_DIR);
+    boost::filesystem::path presets_dir(FF_PRESET_DIR);
     ffdropenc::loadPresets( presets_dir, preset_list );
 
     // Make sure we've found presets
@@ -81,7 +79,7 @@ int main( int argc, char* argv[] ) {
 
     std::vector<std::string>::iterator filesIterator = parsedFiles.begin();
     while (filesIterator != parsedFiles.end()) {
-        // To-Do: check that these files actually exist
+        // To-Do: check that these files actually exist, expand directories
         ffdropenc::Video newVideo( *filesIterator, preset_list[selectedPreset] );
         queue.push_back( newVideo );
 

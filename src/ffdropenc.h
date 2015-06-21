@@ -7,6 +7,7 @@
 
 #include <iostream>
 
+#include "ffdefines.h"
 #include "ffcommon.h"
 #include "Video.h"
 #include "Preset.h"

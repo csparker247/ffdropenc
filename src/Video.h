@@ -7,13 +7,15 @@
 #define FFDROPENC_VIDEO_H
 
 #include <boost/filesystem.hpp>
+
+#include "ffdefines.h"
 #include "Preset.h"
 
 namespace ffdropenc {
 
     class Video {
     public:
-        Video( boost::filesystem::path inputPath, Preset* preset );
+        Video( boost::filesystem::path inputPath, Preset* preset, bool isImgSeq = false );
 
         // Accessors
         boost::filesystem::path inputPath() { return _inputPath; };
@@ -56,6 +58,7 @@ namespace ffdropenc {
         // encoding parameters
         Preset* _preset; // A pointer to the preset we're using
         std::string _command(); // returns the transcoding command that is run by this.transcode();
+        bool _overwrite; // overwrite the output file?
 
         // debug log stuff
         boost::filesystem::path _logDir; // where the debug log will be saved

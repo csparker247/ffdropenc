@@ -6,6 +6,7 @@
 
 namespace ffdropenc {
 
+    // Load any .preset files in the given directory
     int loadPresets( boost::filesystem::path presetDir, std::vector<ffdropenc::Preset*>& presetsList ) {
 
         if (boost::filesystem::exists(presetDir)) {
