@@ -4,8 +4,6 @@
 
 #include "ffdropenc.h"
 
-void RemoveDirs(std::vector<std::string> &fileList, std::vector<std::string> &resolvedFiles);
-
 int main( int argc, char* argv[] ) {
 
     ////// Read the presets directories //////
