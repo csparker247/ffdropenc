@@ -51,6 +51,30 @@ namespace ffdropenc {
         return concatenatedPath;
     }
 
+    // Convert this video into an Img Sequence
+    int Video::convertToSeq( std::string fps ) {
+        _isImgSeq = FF_IS_IMG_SEQ;
+        _outputFPS = fps;
+
+        int last_letter_pos = _inputPath.stem().string().find_last_not_of("0123456789");
+        std::string fileName = _inputPath.stem().string().substr(0, last_letter_pos + 1);
+        std::string seqNumber = _inputPath.stem().string().substr(last_letter_pos + 1);
+
+        _startingIndex = boost::lexical_cast<unsigned long>( seqNumber );
+        _outputFileName = fileName;
+
+        // Convert seqNumber to the %nd format
+        seqNumber = std::to_string(seqNumber.length());
+        if (seqNumber.length() < 2) seqNumber.insert(0, "0");
+        seqNumber = "%" + seqNumber + "d";
+
+        fileName += seqNumber + _inputPath.extension().string();
+
+        _inputPath = boost::filesystem::path(_inputPath.parent_path().string() + fileName);
+
+        return EXIT_SUCCESS;
+    }
+
     // Do the transcoding
     int Video::transcode() {
 
@@ -81,7 +105,14 @@ namespace ffdropenc {
             // Setting to overwrite the output file if it exists
             if (_overwrite) command.append(" -y");
 
-            _outputSuffix = _preset->getSuffix(output);
+            // Add the suffix
+            std::string last_char = &_outputFileName.back();
+            if ((last_char != "-") && (last_char != "_") && (last_char != " "))
+                _outputSuffix = "-" + _preset->getSuffix(output);
+            else
+                _outputSuffix = _preset->getSuffix(output);
+
+            // Add the file extension
             _outputExt = _preset->getExtension(output);
 
             // Add the output path

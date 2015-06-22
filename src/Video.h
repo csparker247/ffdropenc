@@ -7,6 +7,7 @@
 #define FFDROPENC_VIDEO_H
 
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "ffdefines.h"
 #include "Preset.h"
@@ -28,6 +29,8 @@ namespace ffdropenc {
         int setOutputFilename();
         int setOutputSuffix();
         int setOutputExt();
+
+        int convertToSeq( std::string fps );
 
         int transcode();
 
@@ -52,7 +55,7 @@ namespace ffdropenc {
 
         // image sequence
         bool _isImgSeq; // is an image sequence?
-        unsigned long _startingIndex; // what's the first number in the seq? (e.g. 000, 050, 121?)
+        unsigned long _startingIndex; // what's the first number in the seq? (e.g. 0, 50, 121?)
         std::string _outputFPS; // the desired frame rate for the output file
 
         // encoding parameters

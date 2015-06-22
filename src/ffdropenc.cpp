@@ -4,6 +4,8 @@
 
 #include "ffdropenc.h"
 
+void RemoveDirs(std::vector<std::string> &fileList, std::vector<std::string> &resolvedFiles);
+
 int main( int argc, char* argv[] ) {
 
     ////// Read the presets directories //////
@@ -23,6 +25,7 @@ int main( int argc, char* argv[] ) {
     ////// Parse the command line //////
     int selectedPreset;
     std::vector<std::string> parsedFiles;
+    std::string selectedFPS = "30"; // To-Do: Add this to cmd line options
 
     try {
         // All command line options
@@ -72,22 +75,30 @@ int main( int argc, char* argv[] ) {
         return EXIT_FAILURE;
     }
 
-    ////// To-Do: Handle Directories in parsedFiles //////
+    ////// Expand dirs and remove files that don't exist //////
+    std::vector<std::string> filteredFileVector;
+    ffdropenc::RemoveDirs(parsedFiles, filteredFileVector);
 
-    ////// Make our Video Queue //////
+    ////// Make our Initial Video Queue //////
     std::vector<ffdropenc::Video> queue;
 
-    std::vector<std::string>::iterator filesIterator = parsedFiles.begin();
-    while (filesIterator != parsedFiles.end()) {
-        // To-Do: check that these files actually exist, expand directories
+    std::vector<std::string>::iterator filesIterator = filteredFileVector.begin();
+    while ( filesIterator != filteredFileVector.end() ) {
+
         ffdropenc::Video newVideo( *filesIterator, preset_list[selectedPreset] );
+
+        // If Video is an ImgSeq, do the appropriate bookkeeping
+        if( ffdropenc::isImgSequence( newVideo.inputPath() ) ) newVideo.convertToSeq(selectedFPS);
+
         queue.push_back( newVideo );
 
         ++filesIterator;
     }
 
-    queue[0].transcode();
+    ////// Filter the queue of duplicates ////// To-Do
 
+    for ( std::vector<ffdropenc::Video>::iterator queueItem = queue.begin(); queueItem != queue.end(); ++queueItem )
+        queueItem->transcode();
 
     return EXIT_SUCCESS;
 }

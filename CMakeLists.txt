@@ -10,5 +10,5 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 set(DROP_REQ_LIBS ${Boost_LIBRARIES})
 
-add_executable(ffdropenc src/ffdropenc.cpp src/ffcommon.cpp src/Video.cpp src/Preset.cpp src/ffio.cpp)
+add_executable(ffdropenc src/ffdropenc.cpp src/ffcommon.cpp src/Video.cpp src/Preset.cpp src/ffio.cpp src/ffdefines.h)
 target_link_libraries(ffdropenc ${DROP_REQ_LIBS})

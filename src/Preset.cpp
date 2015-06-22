@@ -97,7 +97,7 @@ namespace ffdropenc {
     }
 
     std::string Preset::getSuffix( int outputIndex ) {
-        return "_" + _cfg.get("outputs").get<picojson::array>()[outputIndex].get("suffix").get<std::string>();
+        return _cfg.get("outputs").get<picojson::array>()[outputIndex].get("suffix").get<std::string>();
     }
 
     std::string Preset::getExtension( int outputIndex ) {
