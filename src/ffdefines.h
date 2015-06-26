@@ -11,6 +11,7 @@
 
 #define FF_ERR_INPUT_OVERWRITE 100;
 
-#define FF_IS_IMG_SEQ true;
+#define FF_IS_IMG_SEQ   true;
+#define FF_IS_VIDEO     true;
 
 #endif //FFDROPENC_FFDEFINES_H

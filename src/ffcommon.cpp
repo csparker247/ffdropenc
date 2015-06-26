@@ -29,6 +29,18 @@ namespace ffdropenc {
         return EXIT_SUCCESS;
     }
 
+    // Check if the file is an approved video format
+    bool isVideo( boost::filesystem::path file ) {
+
+        std::string extension( boost::to_upper_copy<std::string>(file.extension().string()) );
+
+        for ( int i = 0; i < FF_VID_EXTENSIONS.size(); ++i ) {
+            if ( extension == "." + FF_VID_EXTENSIONS[i] ) return FF_IS_VIDEO;
+        }
+
+        return false;
+    }
+
     // Check if this is an image file sequence
     bool isImgSequence( boost::filesystem::path file ) {
 
@@ -42,7 +54,7 @@ namespace ffdropenc {
     }
 
     // Removes directory entries from a vector of file paths by recursively expanding them
-    void RemoveDirs(std::vector<std::string> &fileList, std::vector<std::string> &resolvedFiles) {
+    void ExpandDirs(std::vector<std::string> &fileList, std::vector<std::string> &resolvedFiles) {
         std::vector<std::string>::iterator file = fileList.begin();
         while ( file != fileList.end() ) {
 

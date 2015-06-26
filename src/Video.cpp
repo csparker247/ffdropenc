@@ -7,7 +7,7 @@
 namespace ffdropenc {
 
     // Constructors
-    Video::Video ( boost::filesystem::path inputPath, Preset* preset, bool isImgSeq ) {
+    Video::Video ( std::string inputPath, Preset* preset, bool isImgSeq ) {
 
         // set preset first
         _preset = preset;
@@ -70,7 +70,7 @@ namespace ffdropenc {
 
         fileName += seqNumber + _inputPath.extension().string();
 
-        _inputPath = boost::filesystem::path(_inputPath.parent_path().string() + fileName);
+        _inputPath = boost::filesystem::path(_inputPath.parent_path().string() + "/" + fileName);
 
         return EXIT_SUCCESS;
     }
@@ -93,7 +93,7 @@ namespace ffdropenc {
         std::string command = FF_TRANSCODER;
 
         // Settings for img sequences
-        if ( _isImgSeq ) command.append( " -r " + _outputFPS );
+        if ( _isImgSeq ) command.append( " -r " + _outputFPS + " -start_number " + std::to_string(_startingIndex) );
 
         // The input file
         command.append( " -i \"" + _inputPath.string() + "\"" );

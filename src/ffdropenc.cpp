@@ -14,7 +14,7 @@ int main( int argc, char* argv[] ) {
 
     // Make sure we've found presets
     if( preset_list.size() ) {
-        std::cout << preset_list.size() << " presets loaded." << std::endl;
+        std::cerr << "Presets loaded: " << preset_list.size() << std::endl;
     } else {
         std::cerr << "Error: No presets loaded!" << std::endl;
         return EXIT_FAILURE;
@@ -75,19 +75,28 @@ int main( int argc, char* argv[] ) {
 
     ////// Expand dirs and remove files that don't exist //////
     std::vector<std::string> filteredFileVector;
-    ffdropenc::RemoveDirs(parsedFiles, filteredFileVector);
+    std::cerr << "Expanding directories..." << std::endl;
+    ffdropenc::ExpandDirs(parsedFiles, filteredFileVector);
 
     ////// Make our Initial Video Queue //////
+    std::cerr << "Making queue..." << std::endl;
     std::vector<ffdropenc::Video> queue;
 
     std::vector<std::string>::iterator filesIterator = filteredFileVector.begin();
     while ( filesIterator != filteredFileVector.end() ) {
+        // Skip this file if it doesn't pass our approved extensions list
+        if (!(ffdropenc::isVideo( *filesIterator ) || ffdropenc::isImgSequence( *filesIterator ) )) {
+            ++filesIterator;
+            continue;
+        }
 
+        // Make a new video for this file
         ffdropenc::Video newVideo( *filesIterator, preset_list[selectedPreset] );
 
         // If Video is an ImgSeq, do the appropriate bookkeeping
         if( ffdropenc::isImgSequence( newVideo.inputPath() ) ) newVideo.convertToSeq(selectedFPS);
 
+        // Add this video to the queue
         queue.push_back( newVideo );
 
         ++filesIterator;

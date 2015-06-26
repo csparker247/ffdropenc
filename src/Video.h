@@ -16,7 +16,7 @@ namespace ffdropenc {
 
     class Video {
     public:
-        Video( boost::filesystem::path inputPath, Preset* preset, bool isImgSeq = false );
+        Video( std::string inputPath, Preset* preset, bool isImgSeq = false );
 
         // Accessors
         boost::filesystem::path inputPath() { return _inputPath; };
