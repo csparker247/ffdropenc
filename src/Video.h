@@ -6,6 +6,8 @@
 #ifndef FFDROPENC_VIDEO_H
 #define FFDROPENC_VIDEO_H
 
+#include <string>
+
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -16,7 +18,13 @@ namespace ffdropenc {
 
     class Video {
     public:
+        // Constructors
+        Video();
         Video( std::string inputPath, Preset* preset, bool isImgSeq = false );
+
+        // Operators
+        bool operator < (const Video&) const;
+        bool operator == (const Video&) const;
 
         // Accessors
         boost::filesystem::path inputPath() { return _inputPath; };
@@ -51,6 +59,7 @@ namespace ffdropenc {
         // progress tracking
         double _fps; // frames per second
         unsigned long _frames; // number of frames
+        unsigned long _duration; // length in ms
         double _progress; // progress of encoding between 0.0 and 1.0
 
         // image sequence

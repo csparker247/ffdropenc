@@ -7,6 +7,16 @@
 namespace ffdropenc {
 
     // Constructors
+    Video::Video () {
+        _inputPath = "";
+
+        _isImgSeq = false;
+
+        _progress = 0.0;
+
+        _transcoded = false;
+    }
+
     Video::Video ( std::string inputPath, Preset* preset, bool isImgSeq ) {
 
         // set preset first
@@ -37,6 +47,18 @@ namespace ffdropenc {
         _transcoded = false;
 
     };
+
+    // Operators
+    bool Video::operator < (const Video& file) const {
+        if ( _inputPath == file._inputPath && _isImgSeq == file._isImgSeq )
+            return ( _startingIndex < file._startingIndex );
+        else
+            return ( _inputPath < file._inputPath );
+    }
+
+    bool Video::operator == (const Video& file) const {
+        return ( _inputPath == file._inputPath );
+    }
 
     // Construct the full output path from all of its requisite parts
     // this.outputPath() == _outputDir + _outputFileName + _outputSuffix + _outputExt

@@ -102,7 +102,12 @@ int main( int argc, char* argv[] ) {
         ++filesIterator;
     }
 
-    ////// Filter the queue of duplicates ////// To-Do
+    ////// Filter the queue of duplicates //////
+    // To-Do: This should probably happen before we create the queue
+    std::sort( queue.begin(), queue.end() );
+
+    std::vector<ffdropenc::Video>::iterator duplicateRemover = std::unique( queue.begin(), queue.end() );
+    queue.resize( std::distance( queue.begin(), duplicateRemover ) );
 
     for ( std::vector<ffdropenc::Video>::iterator queueItem = queue.begin(); queueItem != queue.end(); ++queueItem )
         queueItem->transcode();
