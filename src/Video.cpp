@@ -33,9 +33,10 @@ namespace ffdropenc {
         _appendSuffix = true;
         _overwrite = true;
 
-        // To-Do: analyze video
-        // _analyze();
+        // Image sequence stuff
         _isImgSeq = isImgSeq;
+        if (_isImgSeq) convertToSeq("30000/1001");
+        else _analyze(); // _analyze() needs some work for image sequences
 
         // set progress
         _progress = 0.0;
@@ -105,6 +106,56 @@ namespace ffdropenc {
             return FF_ERR_INPUT_OVERWRITE;
 
         std::cout << _command() << std::endl;
+        return EXIT_SUCCESS;
+    }
+
+    // Analyze
+    int Video::_analyze() {
+        int fds[2];
+        pid_t pid;
+        pipe(fds);
+
+        std::string json;
+
+        // To-Do: Make sure the pipe opened
+        pid = fork();
+        if (pid == (pid_t) 0) {
+            // The child process
+            close(fds[0]); // Close the read end of the pipe
+            dup2 (fds[1], STDOUT_FILENO); // Write to stdout
+            // To-Do: Make sure we're using our ffprobe instead of the one in the path
+            execlp("ffprobe", "ffprobe", "-loglevel", "quiet", "-of", "json=c=1", "-show_streams", "-i", _inputPath.c_str(), NULL );
+            close(fds[1]);
+        }
+        else {
+            // The parent process
+            close(fds[1]); // Close the write end of the pipe
+            dup2 (fds[0], STDIN_FILENO); // Read from stdin. Note: This is terrible. Use boost stream?
+            std::string line;
+            while (std::getline(std::cin, line)) {
+                json += line; // concat every line we get from cin into one string
+                std::cerr << line << std::endl;
+            }
+            waitpid (pid, NULL, 0); // Wait for the child process to finish
+        }
+
+        // Parse the results with picojson
+        picojson::value results;
+        std::string err = picojson::parse( results, json );
+        if (! err.empty()) {
+            std::cerr << _inputPath << " " << err << std::endl;
+        }
+
+        // ffprobe returns an array of stream objects. We always hope that the first one is the video track.
+        // To-Do: check the "codec_type" to determine what we're looking at.
+        if ( results.is<picojson::object>() ) {
+            picojson::value video_info = results.get("streams").get<picojson::array>()[0];
+
+            // To-Do: Get fps, frame size, codec, # of streams, and anything else we need
+            if (video_info.get("duration").is<std::string>())
+                _duration = boost::lexical_cast<double>(video_info.get("duration").get<std::string>());
+        }
+
         return EXIT_SUCCESS;
     }
 

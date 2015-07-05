@@ -6,10 +6,13 @@
 #ifndef FFDROPENC_VIDEO_H
 #define FFDROPENC_VIDEO_H
 
+#include <stdio.h>
+#include <unistd.h>
 #include <string>
 
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include "picojson.h"
 
 #include "ffdefines.h"
 #include "Preset.h"
@@ -59,7 +62,7 @@ namespace ffdropenc {
         // progress tracking
         double _fps; // frames per second
         unsigned long _frames; // number of frames
-        unsigned long _duration; // length in ms
+        double _duration; // length in seconds
         double _progress; // progress of encoding between 0.0 and 1.0
 
         // image sequence

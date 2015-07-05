@@ -91,10 +91,10 @@ int main( int argc, char* argv[] ) {
         }
 
         // Make a new video for this file
-        ffdropenc::Video newVideo( *filesIterator, preset_list[selectedPreset] );
+        bool imgSeq = ffdropenc::isImgSequence( *filesIterator );
+        ffdropenc::Video newVideo( *filesIterator, preset_list[selectedPreset], imgSeq );
 
-        // If Video is an ImgSeq, do the appropriate bookkeeping
-        if( ffdropenc::isImgSequence( newVideo.inputPath() ) ) newVideo.convertToSeq(selectedFPS);
+        // To-Do: If Video is an ImgSeq, set the selected fps
 
         // Add this video to the queue
         queue.push_back( newVideo );
