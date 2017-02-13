@@ -1,14 +1,53 @@
-project(ffdropenc)
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+# ffdropenc
+# Written by: Seth Parker
 
-# Use custom package finders
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-find_package(Boost 1.58.0 REQUIRED COMPONENTS system filesystem program_options)
+project("ffdropenc" VERSION 0.1.0)
 
-include_directories(${Boost_INCLUDE_DIRS})
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
-set(DROP_REQ_LIBS ${Boost_LIBRARIES})
+# Use modern C++ for everything and generate compile_commands database.
+set(CMAKE_CXX_STANDARD 14)
+set(CXX_STANDARD_REQUIRED on)
+set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
-add_executable(ffdropenc src/ffdropenc.cpp src/ffcommon.cpp src/Video.cpp src/Preset.cpp src/ffio.cpp src/ffdefines.h)
-target_link_libraries(ffdropenc ${DROP_REQ_LIBS})
+# Choose what to build
+option(BUILD_APPS     "Compile core programs"    on)
+option(BUILD_DOC      "Compile documentation"    on)
+
+# Choose what to install
+option(INSTALL_APPS      "Install core programs"    on)
+option(INSTALL_DOC       "Install documentation"    on)
+
+# Look for external dependencies.
+include(FindDependencies)
+
+# Some helpful constants to be used in subprojects.
+include(Constants)
+
+# XXX Hack to get ninja output colorized for all source files.
+if (CMAKE_GENERATOR MATCHES "Ninja")
+    add_compile_options(-fdiagnostics-color=always)
+endif()
+
+# Enable warnings
+include(Warnings)
+
+## Libraries ##
+add_subdirectory(libdropenc)
+
+## Core Apps ##
+if (BUILD_APPS)
+    add_subdirectory(apps)
+endif()
+
+## Documentation
+if (BUILD_DOC)
+    add_subdirectory(doc)
+endif()
+
+# Install to system directories
+include(Install)
