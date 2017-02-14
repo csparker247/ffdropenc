@@ -7,7 +7,7 @@
 find_package(Sanitizers)
 
 ### Boost ###
-find_package(Boost)
+find_package(Boost REQUIRED COMPONENTS filesystem)
 
 
 ############

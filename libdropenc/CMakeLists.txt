@@ -1,9 +1,11 @@
-project(libdropenc VERSION 0.1 LANGUAGES CXX)
+project(libff_dropenc VERSION 0.1 LANGUAGES CXX)
 set(module "dropenc")
-set(target "${module}")
+set(target "ff_${module}")
 
 set(srcs
-
+    src/File.cpp
+    src/Preset.cpp
+    src/QueueItem.cpp
 )
 
 add_library(${target} ${srcs})
@@ -15,7 +17,7 @@ target_include_directories(${target}
 )
 target_link_libraries(${target}
     PUBLIC
-#        opencv_core
+        Boost::filesystem
 )
 set_target_properties(${target} PROPERTIES
     VERSION "${PROJECT_VERSION}"

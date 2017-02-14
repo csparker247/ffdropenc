@@ -1,39 +1,18 @@
-//
-// Created by Seth Parker on 6/19/15.
-//
+#include "ffdropenc/File.hpp"
 
-#include "ffdropenc/ffcommon.h"
+#include <boost/algorithm/string.hpp>
 
-namespace ffdropenc
-{
+// Extension filters for image sequences.
+static constexpr std::vector<std::string> FF_VID_EXTENSIONS = {
+    "AVI", "GIF",  "MOV", "MP4", "M4A", "3GP", "264", "H264", "M4V",
+    "MKV", "MPEG", "MPG", "MTS", "MXF", "OGG", "VOB", "WMV"};
+static constexpr std::vector<std::string> FF_IMG_EXTENSIONS = {
+    "DPX", "JPG", "JPEG", "PNG", "TIF", "TIFF", "TGA"};
 
-// Load any .preset files in the given directory
-int loadPresets(
-    boost::filesystem::path presetDir,
-    std::vector<ffdropenc::Preset*>& presetsList)
-{
+static constexpr bool FF_IS_IMG_SEQ = true;
+static constexpr bool FF_IS_VIDEO = true;
 
-    if (boost::filesystem::exists(presetDir)) {
-
-        boost::filesystem::recursive_directory_iterator presetFileIterator(
-            presetDir);
-        boost::filesystem::recursive_directory_iterator
-            presetIterator_end;  // default construction defaults to
-                                 // iterator.end() value somehow;
-
-        while (presetFileIterator != presetIterator_end) {
-            boost::filesystem::path current_fs_entry = *presetFileIterator;
-            if (current_fs_entry.extension() == ".preset") {
-                Preset* newFilePreset = new Preset(*presetFileIterator);
-                presetsList.push_back(newFilePreset);
-            }
-
-            ++presetFileIterator;
-        }
-    }
-
-    return EXIT_SUCCESS;
-}
+using namespace ffdropenc;
 
 // Check if the file is an approved video format
 bool isVideo(boost::filesystem::path file)
@@ -101,5 +80,3 @@ void ExpandDirs(
         ++file;
     }
 }
-
-}  // namespace ffdropenc

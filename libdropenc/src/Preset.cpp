@@ -1,24 +1,20 @@
-//
-// Created by Seth Parker on 6/17/15.
-//
+#include "ffdropenc/Preset.hpp"
 
-#include "ffdropenc/Preset.h"
+#include <istream>
 
-namespace ffdropenc
+using namespace ffdropenc;
+namespace fs = boost::filesystem;
+
+Preset::Preset(fs::path path)
 {
-
-Preset::Preset(boost::filesystem::path path)
-{
-
-    std::string jsonFile = ffdropenc::file_to_string(path.c_str());
-
-    std::string err = picojson::parse(_cfg, jsonFile);
-    if (!err.empty()) {
-        std::cerr << err << std::endl;
+    std::ifstream ifs(path.string());
+    if (!ifs.good()) {
+        throw std::runtime_error("Failed to open preset file");
     }
 
-    std::string _name = _cfg.get("listname").get<std::string>();
-    std::string _shortname = _cfg.get("consolename").get<std::string>();
+    ifs >> cfg_;
+
+    ifs.close();
 }
 
 std::string Preset::getSettings(int outputIndex)
@@ -28,87 +24,78 @@ std::string Preset::getSettings(int outputIndex)
     std::string settings = "";
 
     // Get the json info of the requested output file
-    picojson::value output =
-        _cfg.get("outputs").get<picojson::array>()[outputIndex];
+    json output = cfg_["outputs"][outputIndex];
 
     // Iterate through all of the stream types
-    picojson::array streams = output.get("streams").get<picojson::array>();
-    for (picojson::array::iterator stream = streams.begin();
-         stream != streams.end(); ++stream) {
+    json streams = output["streams"];
+    for (json& s : streams) {
 
         // What sort of stream is this?
-        std::string streamType = stream->get("type").get<std::string>();
+        std::string streamType = s["type"].get<std::string>();
 
         // Handle video streams
         if (streamType == "video") {
             // Add the codec
-            settings.append(" -c:v " + stream->get("codec").get<std::string>());
+            settings.append(" -c:v " + s["codec"].get<std::string>());
 
             // Skip the rest of this loop if we're copying the input stream
-            if (stream->get("codec").get<std::string>() == "copy")
+            if (s["codec"].get<std::string>() == "copy")
                 continue;
 
             // Encoding mode //To-Do: Add more modes
-            if (stream->get("mode").get<std::string>() == "crf") {
-                int quality = stream->get("quality").get<double>();
-                std::string bitrate = stream->get("bitrate").get<std::string>();
-                std::string buffer = stream->get("buffer").get<std::string>();
+            if (s["mode"].get<std::string>() == "crf") {
+                auto quality = s["quality"].get<int>();
+                auto bitrate = s["bitrate"].get<std::string>();
+                auto buffer = s["buffer"].get<std::string>();
                 settings.append(
                     " -crf " + std::to_string(quality) + " -maxrate:v " +
                     bitrate + " -bufsize:v " + buffer);
             }
 
             // Some codec specific options (mostly H.264 things)
-            if (!stream->get("profile").is<picojson::null>())
-                settings.append(
-                    " -profile " + stream->get("profile").get<std::string>());
-            if (!stream->get("level").is<picojson::null>())
-                settings.append(
-                    " -level " + stream->get("level").get<std::string>());
-            if (!stream->get("pixfmt").is<picojson::null>())
-                settings.append(
-                    " -pix_fmt " + stream->get("pixfmt").get<std::string>());
+            if (!s["profile"].is_null())
+                settings.append(" -profile " + s["profile"].get<std::string>());
+            if (!s["level"].is_null())
+                settings.append(" -level " + s["level"].get<std::string>());
+            if (!s["pixfmt"].is_null())
+                settings.append(" -pix_fmt " + s["pixfmt"].get<std::string>());
         }  // Video Streams
 
         // Handle audio streams
         else if (streamType == "audio") {
             // Add the codec
-            settings.append(" -c:a " + stream->get("codec").get<std::string>());
+            settings.append(" -c:a " + s["codec"].get<std::string>());
 
             // Skip the rest of this loop if we're copying the input stream
-            if (stream->get("codec").get<std::string>() == "copy")
+            if (s["codec"].get<std::string>() == "copy")
                 continue;
 
             // Append the output bitrate if we need it
-            if (stream->get("bitrate").get<std::string>() != "default")
-                settings.append(
-                    " -b:a " + stream->get("bitrate").get<std::string>());
+            if (s["bitrate"].get<std::string>() != "default")
+                settings.append(" -b:a " + s["bitrate"].get<std::string>());
         }  // Audio Streams
 
         // Handle filters on the stream
-        if (stream->get("filters").is<picojson::array>()) {
-            picojson::array filters =
-                stream->get("filters").get<picojson::array>();
+        if (s["filters"].is_array()) {
+            json filters = s["filters"];
             if (streamType == "video")
-                settings.append(" -vf " + _filterGraph(filters));
+                settings.append(" -vf " + ConstructFilterGraph(filters));
             if (streamType == "audio")
-                settings.append(" -af " + _filterGraph(filters));
+                settings.append(" -af " + ConstructFilterGraph(filters));
         }
 
         // Handle flags on the stream
-        if (stream->get("flags").is<picojson::array>()) {
-            picojson::array flags = stream->get("flags").get<picojson::array>();
-            for (picojson::array::iterator flag = flags.begin();
-                 flag != flags.end(); ++flag) {
-                settings.append(" " + flag->get("flag").get<std::string>());
+        if (s["flags"].is_array()) {
+            json flags = s["flags"];
+            for (json& flag : flags) {
+                settings.append(" " + flag["flag"].get<std::string>());
             }
         }
 
     }  // Stream Iterator
 
     // Fast start atom
-    if (output.get("faststart").is<bool>() &&
-        output.get("faststart").get<bool>())
+    if (output["faststart"].get<bool>())
         settings.append(" -movflags faststart");
 
     return settings;
@@ -116,22 +103,15 @@ std::string Preset::getSettings(int outputIndex)
 
 std::string Preset::getSuffix(int outputIndex)
 {
-    return _cfg.get("outputs")
-        .get<picojson::array>()[outputIndex]
-        .get("suffix")
-        .get<std::string>();
+    return cfg_["outputs"][outputIndex]["suffix"].get<std::string>();
 }
 
 std::string Preset::getExtension(int outputIndex)
 {
-    return "." +
-           _cfg.get("outputs")
-               .get<picojson::array>()[outputIndex]
-               .get("extension")
-               .get<std::string>();
+    return "." + cfg_["outputs"][outputIndex]["extension"].get<std::string>();
 }
 
-std::string Preset::_filterGraph(picojson::array filters)
+std::string Preset::ConstructFilterGraph(json filters)
 {
     std::string filterGraph = "";  // all of the filters concatenated
 
@@ -141,34 +121,34 @@ std::string Preset::_filterGraph(picojson::array filters)
         std::string filterCommand = "";  // the command for just this filter
 
         // Which filter is this?
-        if (!filter->get("filter")
+        if (!filter["filter")
                  .is<std::string>())  // Ignore if there isn't a name
             continue;
-        std::string filterName = filter->get("filter").get<std::string>();
+        std::string filterName = filter["filter"].get<std::string>();
 
         // Handle the scale filter
         if (filterName == "scale") {
 
-            if (!filter->get("mode")
+            if (!filter["mode")
                      .is<double>())  // Ignore if mode doesn't exist
                 continue;
 
             // Mode #0: Square pixels only, no scaling
-            if (filter->get("mode").get<double>() == 0)
+            if (filter["mode"].get<double>() == 0)
                 filterCommand = "scale=iw*sar:ih";
 
             // Mode #1: Square pixels, maintain aspect ratio, limit to width x
             // height
-            else if (filter->get("mode").get<double>() == 1) {
+            else if (filter["mode"].get<double>() == 1) {
                 // Read the settings
-                if (!filter->get("width").is<double>() ||
-                    !filter->get("height").is<double>() ||
-                    !filter->get("dar").is<std::string>())
+                if (!filter["width").is<double>() ||
+                    !filter["height").is<double>() ||
+                    !filter["dar").is<std::string>())
                     continue;
 
-                int width = filter->get("width").get<double>();
-                int height = filter->get("height").get<double>();
-                std::string dar = filter->get("dar").get<std::string>();
+                int width = filter["width"].get<double>();
+                int height = filter["height"].get<double>();
+                std::string dar = filter["dar"].get<std::string>();
 
                 filterCommand = "scale=iw*sar:ih,";
                 filterCommand.append("scale=");
@@ -184,8 +164,8 @@ std::string Preset::_filterGraph(picojson::array filters)
         }  // Scale filter
 
         // Handle misc. filters
-        else if (filter->get("data").is<std::string>())
-            filterCommand = filter->get("data").get<std::string>();
+        else if (filter["data").is<std::string>())
+            filterCommand = filter["data"].get<std::string>();
 
         // Add this filter to the filter graph
         if (filterCommand != "" && filterGraph.empty())
@@ -198,4 +178,23 @@ std::string Preset::_filterGraph(picojson::array filters)
     return filterGraph;
 }
 
-}  // namespace ffdropenc
+// Load any .preset files in the given directory
+std::vector<Preset> Preset::LoadPresetDir(fs::path dir)
+{
+
+    std::vector<Preset> presets;
+    if (fs::exists(dir)) {
+
+        fs::recursive_directory_iterator it(dir);
+        fs::recursive_directory_iterator itEnd;
+
+        while (it != itEnd) {
+            if (fs::path(*it).extension() == ".preset") {
+                presets.emplace_back(*it);
+            }
+            ++it;
+        }
+    }
+
+    return presets;
+}

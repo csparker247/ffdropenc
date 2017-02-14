@@ -13,9 +13,8 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
-#include "../../../src/picojson.h"
 
-#include "Preset.h"
+#include "Preset.hpp"
 #include "ffdefines.h"
 
 namespace ffdropenc

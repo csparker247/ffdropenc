@@ -2,7 +2,7 @@
 // Created by Seth Parker on 6/14/15.
 //
 
-#include "ffdropenc/Video.h"
+#include "ffdropenc/QueueItem.hpp"
 
 namespace ffdropenc
 {
