@@ -1,6 +1,6 @@
 #include "ffdropenc/Preset.hpp"
 
-#include <istream>
+#include <iostream>
 
 using namespace ffdropenc;
 namespace fs = boost::filesystem;
@@ -76,7 +76,7 @@ std::string Preset::getSettings(int outputIndex)
         }  // Audio Streams
 
         // Handle filters on the stream
-        if (s["filters"].is_array()) {
+        if (!s["filters"].is_null()) {
             json filters = s["filters"];
             if (streamType == "video")
                 settings.append(" -vf " + ConstructFilterGraph(filters));
@@ -85,7 +85,7 @@ std::string Preset::getSettings(int outputIndex)
         }
 
         // Handle flags on the stream
-        if (s["flags"].is_array()) {
+        if (!s["flags"].is_null()) {
             json flags = s["flags"];
             for (json& flag : flags) {
                 settings.append(" " + flag["flag"].get<std::string>());
@@ -115,22 +115,19 @@ std::string Preset::ConstructFilterGraph(json filters)
 {
     std::string filterGraph = "";  // all of the filters concatenated
 
-    for (picojson::array::iterator filter = filters.begin();
-         filter != filters.end(); ++filter) {
+    for (json& filter : filters) {
 
         std::string filterCommand = "";  // the command for just this filter
 
         // Which filter is this?
-        if (!filter["filter")
-                 .is<std::string>())  // Ignore if there isn't a name
+        if (filter["filter"].is_null()) // Ignore if there isn't a name
             continue;
         std::string filterName = filter["filter"].get<std::string>();
 
         // Handle the scale filter
         if (filterName == "scale") {
 
-            if (!filter["mode")
-                     .is<double>())  // Ignore if mode doesn't exist
+            if (!filter["mode"].is_number_float())  // Ignore if mode doesn't exist
                 continue;
 
             // Mode #0: Square pixels only, no scaling
@@ -141,9 +138,9 @@ std::string Preset::ConstructFilterGraph(json filters)
             // height
             else if (filter["mode"].get<double>() == 1) {
                 // Read the settings
-                if (!filter["width").is<double>() ||
-                    !filter["height").is<double>() ||
-                    !filter["dar").is<std::string>())
+                if (!filter["width"].is_number_float() ||
+                    !filter["height"].is_number_float() ||
+                    !filter["dar"].is_string())
                     continue;
 
                 int width = filter["width"].get<double>();
@@ -164,7 +161,7 @@ std::string Preset::ConstructFilterGraph(json filters)
         }  // Scale filter
 
         // Handle misc. filters
-        else if (filter["data").is<std::string>())
+        else if (filter["data"].is_string())
             filterCommand = filter["data"].get<std::string>();
 
         // Add this filter to the filter graph

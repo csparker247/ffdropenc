@@ -2,7 +2,7 @@
 
 #include <boost/filesystem.hpp>
 
-#include "external/json.hpp"
+#include "ffdropenc/external/json.hpp"
 
 namespace ffdropenc
 {

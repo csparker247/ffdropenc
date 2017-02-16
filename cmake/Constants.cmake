@@ -5,7 +5,7 @@ set(proj_prefix "ffde")
 #
 #     #include <proj/module-1/ClassExample.h>
 #
-set(include_install_dir "include/${proj_prefix}")
+set(include_install_dir "include/")
 
 # CMake config files
 set(config_install_dir "lib/cmake/${PROJECT_NAME}")

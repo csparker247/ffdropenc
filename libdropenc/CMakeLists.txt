@@ -1,11 +1,10 @@
-project(libff_dropenc VERSION 0.1 LANGUAGES CXX)
-set(module "dropenc")
-set(target "ff_${module}")
+project(dropenclib VERSION 0.1 LANGUAGES CXX)
+set(module "core")
+set(target "ffde_${module}")
 
 set(srcs
     src/File.cpp
     src/Preset.cpp
-    src/QueueItem.cpp
 )
 
 add_library(${target} ${srcs})
@@ -13,7 +12,7 @@ add_library("${namespace}${module}" ALIAS "${target}")
 target_include_directories(${target}
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:${include_install_dir}>
+        $<INSTALL_INTERFACE:include>
 )
 target_link_libraries(${target}
     PUBLIC
@@ -29,11 +28,11 @@ install(
     EXPORT "${targets_export_name}"
     ARCHIVE DESTINATION "lib"
     LIBRARY DESTINATION "lib"
-    INCLUDES DESTINATION "${include_install_dir}/${module}"
+    INCLUDES DESTINATION "${include_install_dir}"
     RUNTIME DESTINATION "bin"
 )
 install(
-    DIRECTORY "include/${module}"
+    DIRECTORY "include/ffdropenc"
     DESTINATION "${include_install_dir}"
     FILES_MATCHING REGEX ".*\.(h|hpp)$"
 )
