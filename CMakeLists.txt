@@ -37,6 +37,7 @@ endif()
 include(Warnings)
 
 ## Libraries ##
+add_subdirectory(external)
 add_subdirectory(libdropenc)
 
 ## Core Apps ##
