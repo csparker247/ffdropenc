@@ -1,5 +1,6 @@
 ffdropenc
 =========
+[![Build Status](https://travis-ci.org/csparker247/ffdropenc.svg?branch=develop)](https://travis-ci.org/csparker247/ffdropenc)
 An OSX droplet to batch encode video files.
 
 * Doesn't work with files without extensions (which you can sometimes run into on OSX). Make sure your exported files include one of the approved extensions in the database files.
