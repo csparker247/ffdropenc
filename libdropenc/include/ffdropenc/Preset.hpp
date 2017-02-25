@@ -13,18 +13,20 @@ class Preset
 {
 public:
     Preset(boost::filesystem::path path);
-    int numberOfOutputs() { return cfg_["outputs"].size(); }
-    std::string getSettings(int outputIndex);
-    std::string getSuffix(int outputIndex);
-    std::string getExtension(int outputIndex);
+    size_t numberOfOutputs() { return cfg_["outputs"].size(); }
+    std::string getSettings(size_t index);
+    std::string getSuffix(size_t index);
+    std::string getExtension(size_t index);
 
     static std::vector<Preset> LoadPresetDir(boost::filesystem::path dir);
 
 private:
+    enum class ScaleMode { SquarePixel = 0, SizeLimited };
+
     // JSON rep of preset data
     json cfg_;
 
-    std::string ConstructFilterGraph(json filters);
+    std::string construct_filter_graph_(json filters);
 };
 
 }  // namespace ffdropenc

@@ -17,71 +17,78 @@ Preset::Preset(fs::path path)
     ifs.close();
 }
 
-std::string Preset::getSettings(int outputIndex)
+std::string Preset::getSettings(size_t index)
 {
 
     // The settings that will appended to the output's transcode command
     std::string settings = "";
 
     // Get the json info of the requested output file
-    json output = cfg_["outputs"][outputIndex];
+    json output = cfg_["outputs"][index];
 
     // Iterate through all of the stream types
     json streams = output["streams"];
     for (json& s : streams) {
 
         // What sort of stream is this?
-        std::string streamType = s["type"].get<std::string>();
+        auto type = s["type"].get<std::string>();
 
         // Handle video streams
-        if (streamType == "video") {
+        if (type == "video") {
             // Add the codec
             settings.append(" -c:v " + s["codec"].get<std::string>());
 
             // Skip the rest of this loop if we're copying the input stream
-            if (s["codec"].get<std::string>() == "copy")
+            if (s["codec"].get<std::string>() == "copy") {
                 continue;
+            }
 
-            // Encoding mode //To-Do: Add more modes
+            // Encoding mode
             if (s["mode"].get<std::string>() == "crf") {
-                auto quality = s["quality"].get<int>();
+                auto quality = std::to_string(s["quality"].get<int>());
                 auto bitrate = s["bitrate"].get<std::string>();
                 auto buffer = s["buffer"].get<std::string>();
                 settings.append(
-                    " -crf " + std::to_string(quality) + " -maxrate:v " +
-                    bitrate + " -bufsize:v " + buffer);
+                    " -crf " + quality + " -maxrate:v " + bitrate +
+                    " -bufsize:v " + buffer);
             }
 
             // Some codec specific options (mostly H.264 things)
-            if (!s["profile"].is_null())
+            if (!s["profile"].is_null()) {
                 settings.append(" -profile " + s["profile"].get<std::string>());
-            if (!s["level"].is_null())
+            }
+            if (!s["level"].is_null()) {
                 settings.append(" -level " + s["level"].get<std::string>());
-            if (!s["pixfmt"].is_null())
+            }
+            if (!s["pixfmt"].is_null()) {
                 settings.append(" -pix_fmt " + s["pixfmt"].get<std::string>());
-        }  // Video Streams
+            }
+        }
 
         // Handle audio streams
-        else if (streamType == "audio") {
+        else if (type == "audio") {
             // Add the codec
             settings.append(" -c:a " + s["codec"].get<std::string>());
 
             // Skip the rest of this loop if we're copying the input stream
-            if (s["codec"].get<std::string>() == "copy")
+            if (s["codec"].get<std::string>() == "copy") {
                 continue;
+            }
 
             // Append the output bitrate if we need it
-            if (s["bitrate"].get<std::string>() != "default")
+            if (s["bitrate"].get<std::string>() != "default") {
                 settings.append(" -b:a " + s["bitrate"].get<std::string>());
-        }  // Audio Streams
+            }
+        }
 
         // Handle filters on the stream
         if (!s["filters"].is_null()) {
             json filters = s["filters"];
-            if (streamType == "video")
-                settings.append(" -vf " + ConstructFilterGraph(filters));
-            if (streamType == "audio")
-                settings.append(" -af " + ConstructFilterGraph(filters));
+            if (type == "video") {
+                settings.append(" -vf " + construct_filter_graph_(filters));
+            } else if (type == "audio") {
+                settings.append(" -af " + construct_filter_graph_(filters));
+            }
         }
 
         // Handle flags on the stream
@@ -95,84 +102,81 @@ std::string Preset::getSettings(int outputIndex)
     }  // Stream Iterator
 
     // Fast start atom
-    if (output["faststart"].get<bool>())
+    if (output["faststart"].get<bool>()) {
         settings.append(" -movflags faststart");
+    }
 
     return settings;
 }
 
-std::string Preset::getSuffix(int outputIndex)
+std::string Preset::getSuffix(size_t index)
 {
-    return cfg_["outputs"][outputIndex]["suffix"].get<std::string>();
+    return cfg_["outputs"][index]["suffix"].get<std::string>();
 }
 
-std::string Preset::getExtension(int outputIndex)
+std::string Preset::getExtension(size_t index)
 {
-    return "." + cfg_["outputs"][outputIndex]["extension"].get<std::string>();
+    return "." + cfg_["outputs"][index]["extension"].get<std::string>();
 }
 
-std::string Preset::ConstructFilterGraph(json filters)
+std::string Preset::construct_filter_graph_(json filters)
 {
-    std::string filterGraph = "";  // all of the filters concatenated
+    // Output graph
+    std::string graph = "";
 
+    // Iterate over each filter
     for (json& filter : filters) {
+        // Command for just this filter
+        std::string command = "";
 
-        std::string filterCommand = "";  // the command for just this filter
-
-        // Which filter is this?
-        if (filter["filter"].is_null()) // Ignore if there isn't a name
+        // Skip if we don't have a name for the filter
+        if (filter["filter"].is_null()) {
             continue;
-        std::string filterName = filter["filter"].get<std::string>();
+        }
+
+        // Get the filter name
+        auto name = filter["filter"].get<std::string>();
 
         // Handle the scale filter
-        if (filterName == "scale") {
+        if (name == "scale") {
+            // Ignore if the scale mode doesn't exist
+            auto mode = static_cast<ScaleMode>(filter["mode"].get<int>());
 
-            if (!filter["mode"].is_number_float())  // Ignore if mode doesn't exist
-                continue;
-
-            // Mode #0: Square pixels only, no scaling
-            if (filter["mode"].get<double>() == 0)
-                filterCommand = "scale=iw*sar:ih";
-
-            // Mode #1: Square pixels, maintain aspect ratio, limit to width x
-            // height
-            else if (filter["mode"].get<double>() == 1) {
-                // Read the settings
-                if (!filter["width"].is_number_float() ||
-                    !filter["height"].is_number_float() ||
-                    !filter["dar"].is_string())
-                    continue;
-
-                int width = filter["width"].get<double>();
-                int height = filter["height"].get<double>();
-                std::string dar = filter["dar"].get<std::string>();
-
-                filterCommand = "scale=iw*sar:ih,";
-                filterCommand.append("scale=");
-                filterCommand.append(
-                    "\"\'w=if(lt(dar, " + dar + "), trunc(oh*a/2)*2, min(" +
-                    std::to_string(width) + ",ceil(iw/2)*2)):");
-                filterCommand.append(
-                    "h=if(gte(dar, " + dar + "), trunc(ow/a/2)*2, min(" +
-                    std::to_string(height) + ",ceil(ih/2)*2))\'\",");
-                filterCommand.append("setsar=1");
-            }  // Mode #1
-
-        }  // Scale filter
+            switch (mode) {
+                case ScaleMode::SquarePixel:
+                    command = "scale=iw*sar:ih";
+                    break;
+                case ScaleMode::SizeLimited:
+                    auto w = std::to_string(filter["width"].get<int>());
+                    auto h = std::to_string(filter["height"].get<int>());
+                    auto dar = filter["dar"].get<std::string>();
+                    command = "scale=iw*sar:ih,";
+                    command.append("scale=");
+                    command.append(
+                        "\"\'w=if(lt(dar, " + dar + "), trunc(oh*a/2)*2, min(" +
+                        w + ",ceil(iw/2)*2)):");
+                    command.append(
+                        "h=if(gte(dar, " + dar + "), trunc(ow/a/2)*2, min(" +
+                        h + ",ceil(ih/2)*2))\'\",");
+                    command.append("setsar=1");
+                    break;
+            }
+        }
 
         // Handle misc. filters
-        else if (filter["data"].is_string())
-            filterCommand = filter["data"].get<std::string>();
+        else if (filter["data"].is_string()) {
+            command = filter["data"].get<std::string>();
+        }
 
         // Add this filter to the filter graph
-        if (filterCommand != "" && filterGraph.empty())
-            filterGraph.append(filterCommand);
-        else if (filterCommand != "")
-            filterGraph.append("," + filterCommand);
+        if (command != "" && graph.empty()) {
+            graph.append(command);
+        } else if (command != "") {
+            graph.append("," + command);
+        }
+    }
 
-    }  // filter iterator
-
-    return filterGraph;
+    return graph;
 }
 
 // Load any .preset files in the given directory
