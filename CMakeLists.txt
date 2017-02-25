@@ -16,11 +16,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
 # Choose what to build
 option(BUILD_APPS     "Compile core programs"    on)
-option(BUILD_DOC      "Compile documentation"    on)
+option(BUILD_DOC      "Compile documentation"    off)
 
 # Choose what to install
 option(INSTALL_APPS      "Install core programs"    on)
-option(INSTALL_DOC       "Install documentation"    on)
+option(INSTALL_DOC       "Install documentation"    off)
 
 # Look for external dependencies.
 include(FindDependencies)
