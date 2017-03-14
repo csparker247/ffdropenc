@@ -16,70 +16,65 @@ class QueueItem
 public:
     enum class Type { Undefined, Video, Sequence };
 
-    QueueItem() : type_(Type::Undefined), _progress(0.0), _transcoded(false) {}
-    QueueItem(std::string inputPath, Preset* preset, bool isImgSeq = false);
+    QueueItem() = delete;
+    QueueItem(boost::filesystem::path path, Preset::Pointer preset);
 
     // Operators
     bool operator<(const QueueItem&) const;
     bool operator==(const QueueItem&) const;
 
     // Accessors
-    boost::filesystem::path inputPath() { return inputPath_; };
+    boost::filesystem::path inputPath() { return inputPath_; }
     boost::filesystem::path outputPath();
-    double progress() { return _progress; };
+    double progress() { return progress_; }
 
     // Modifiers
-    int setInputPath();
-    int setOutputDir();
-    int setOutputFilename();
-    int setOutputSuffix();
-    int setOutputExt();
+    void setOutputDir(boost::filesystem::path d) { outputDir_ = d; }
+    void setOutputFilename(boost::filesystem::path f) { outputFileName_ = f; }
 
-    int convertToSeq(std::string fps);
+    void convertToSeq(std::string fps);
 
-    int transcode();
+    void transcode();
 
-    static Type DetermineType(std::string ext);
+    static Type DetermineType(boost::filesystem::path p);
 
 private:
     // input location
-    boost::filesystem::path inputPath_;  // where the file is
+    boost::filesystem::path inputPath_;
     Type type_;
 
-    // output location
-    boost::filesystem::path outputDir_;       // where the file is going
-    boost::filesystem::path outputFileName_;  // what it will be called
-    std::string _outputSuffix;  // what will be appended to the filename
-    std::string _outputExt;     // what its extension will be
-    bool _appendSuffix;  // do we want to append _outputSuffix to the filename?
+    // output directory
+    boost::filesystem::path outputDir_;
+    // output basename
+    boost::filesystem::path outputFileName_;
 
     // metadata
-    int analyze_();  // fills out the metadata
+    void analyze_();
 
     // progress tracking
     double _fps;            // frames per second
     unsigned long _frames;  // number of frames
     double _duration;       // length in seconds
-    double _progress;       // progress of encoding between 0.0 and 1.0
+
+    // progress of encoding between 0.0 and 1.0
+    double progress_;
 
     // image sequence
-    bool _isImgSeq;                // is an image sequence?
-    unsigned long _startingIndex;  // what's the first number in the seq? (e.g.
-                                   // 0, 50, 121?)
-    std::string _outputFPS;        // the desired frame rate for the output file
+    uint64_t startingIndex_;  // what's the first number in the seq? (e.g.
+                              // 0, 50, 121?)
+    std::string outputFPS_;   // the desired frame rate for the output file
 
     // encoding parameters
-    Preset* _preset;         // A pointer to the preset we're using
-    std::string _command();  // returns the transcoding command that is run by
-                             // this.transcode();
-    bool _overwrite;         // overwrite the output file?
+    Preset::Pointer preset_;
+    std::string command_();
+    bool overwrite_;
 
     // debug log stuff
-    boost::filesystem::path _logDir;  // where the debug log will be saved
-    bool _cleanupLog;  // delete the log when encoding is finished?
+    boost::filesystem::path logPath_;
+    bool logCleanup_;
 
-    bool _transcoded;
+    bool transcoded_;
+};
 
-};  // Video
-
-}  // namespace ffdropenc
+using Queue = std::vector<QueueItem>;
+}

@@ -1,52 +1,58 @@
-//
-// Created by Seth Parker on 6/14/15.
-//
-
 #include "ffdropenc/QueueItem.hpp"
+
+#include <boost/algorithm/string.hpp>
+
+#include "external/json.hpp"
+
+// Extension filters for image sequences.
+static const std::vector<std::string> FF_VID_EXTENSIONS = {
+    "AVI", "GIF",  "MOV", "MP4", "M4A", "3GP", "264", "H264", "M4V",
+    "MKV", "MPEG", "MPG", "MTS", "MXF", "OGG", "VOB", "WMV"};
+static const std::vector<std::string> FF_IMG_EXTENSIONS = {
+    "DPX", "JPG", "JPEG", "PNG", "TIF", "TIFF", "TGA"};
 
 using namespace ffdropenc;
 namespace fs = boost::filesystem;
 
+using json = nlohmann::json;
+
 // Constructors
-QueueItem::QueueItem(std::string inputPath, Preset* preset, bool isImgSeq)
+QueueItem::QueueItem(fs::path path, Preset::Pointer preset)
+    : progress_(0.0)
+    , preset_(preset)
+    , overwrite_(true)
+    , logCleanup_(true)
+    , transcoded_(false)
 {
-
-    // set preset first
-    _preset = preset;
-
     // set the source file
-    inputPath_ = boost::filesystem::canonical(inputPath);
+    inputPath_ = boost::filesystem::canonical(path);
 
     // set the output file
     outputDir_ = inputPath_.parent_path();
-    outputFileName_ = inputPath_.stem().string();
-    _outputSuffix = "_Converted";
-    _outputExt = inputPath_.extension().string();
-    _appendSuffix = true;
-    _overwrite = true;
+    outputFileName_ = inputPath_.stem();
 
-    // Image sequence stuff
-    _isImgSeq = isImgSeq;
-    if (_isImgSeq)
-        convertToSeq("30000/1001");
-    else
-        analyze_();  // analyze_() needs some work for image sequences
-
-    // set progress
-    _progress = 0.0;
+    // Type stuff
+    type_ = DetermineType(path.extension());
+    switch (type_) {
+        case Type::Video:
+            // analyze_();
+            break;
+        case Type::Sequence:
+            convertToSeq("30000/1001");
+            break;
+        case Type::Undefined:
+            throw std::runtime_error("Unable to determine type");
+    }
 
     // logs
-    _logDir = outputDir_;  // Defaults to same as output file
-    _cleanupLog = true;
-
-    _transcoded = false;
+    logPath_ = outputDir_;  // Defaults to same as output file
 };
 
 // Operators
 bool QueueItem::operator<(const QueueItem& file) const
 {
-    if (inputPath_ == file.inputPath_ && _isImgSeq == file._isImgSeq)
-        return (_startingIndex < file._startingIndex);
+    if (inputPath_ == file.inputPath_ && type_ == file.type_)
+        return (startingIndex_ < file.startingIndex_);
     else
         return (inputPath_ < file.inputPath_);
 }
@@ -57,71 +63,51 @@ bool QueueItem::operator==(const QueueItem& file) const
 }
 
 // Construct the full output path from all of its requisite parts
-// this.outputPath() == outputDir_ + outputFileName_ + _outputSuffix +
-// _outputExt
-// To-do: Handle custom names, suffixes, extensions
 boost::filesystem::path QueueItem::outputPath()
 {
-    boost::filesystem::path concatenatedPath = outputDir_;
-    std::string outputFullFilename = outputFileName_;
-    if (_appendSuffix)
-        outputFullFilename += _outputSuffix;
-    outputFullFilename += _outputExt;
-    concatenatedPath /= boost::filesystem::path(outputFullFilename);
+    auto path = outputFileName_;
+    path += preset_->getSuffix(0);
+    path += preset_->getExtension(0);
 
-    return concatenatedPath;
+    return outputDir_ / path;
 }
 
 // Convert this video into an Img Sequence
-int QueueItem::convertToSeq(std::string fps)
+void QueueItem::convertToSeq(std::string fps)
 {
-    _isImgSeq = FF_IS_IMG_SEQ;
-    _outputFPS = fps;
+    outputFPS_ = fps;
 
-    int last_letter_pos =
-        inputPath_.stem().string().find_last_not_of("0123456789");
-    std::string fileName =
-        inputPath_.stem().string().substr(0, last_letter_pos + 1);
-    std::string seqNumber =
-        inputPath_.stem().string().substr(last_letter_pos + 1);
+    auto stem = inputPath_.stem().string();
+    auto last_letter_pos = stem.find_last_not_of("0123456789");
+    auto fileName = stem.substr(0, last_letter_pos + 1);
+    auto seqNumber = stem.substr(last_letter_pos + 1);
 
-    _startingIndex = boost::lexical_cast<unsigned long>(seqNumber);
+    startingIndex_ = boost::lexical_cast<uint64_t>(seqNumber);
     outputFileName_ = fileName;
 
     // Convert seqNumber to the %nd format
     seqNumber = std::to_string(seqNumber.length());
-    if (seqNumber.length() < 2)
+    if (seqNumber.length() < 2) {
         seqNumber.insert(0, "0");
+    }
     seqNumber = "%" + seqNumber + "d";
 
     fileName += seqNumber + inputPath_.extension().string();
 
-    inputPath_ = boost::filesystem::path(
-        inputPath_.parent_path().string() + "/" + fileName);
-
-    return EXIT_SUCCESS;
+    inputPath_ = inputPath_.parent_path() / fileName;
 }
 
 // Do the transcoding
-int QueueItem::transcode()
-{
-
-    // Don't transcode if the output will overwrite the input
-    if (inputPath_.string() == this->outputPath().string())
-        return FF_ERR_INPUT_OVERWRITE;
-
-    std::cout << _command() << std::endl;
-    return EXIT_SUCCESS;
-}
+void QueueItem::transcode() { std::cout << command_() << std::endl; }
 
 // Analyze
-int QueueItem::analyze_()
+void QueueItem::analyze_()
 {
     int fds[2];
     pid_t pid;
     pipe(fds);
 
-    std::string json;
+    json results;
 
     // To-Do: Make sure the pipe opened
     pid = fork();
@@ -140,94 +126,86 @@ int QueueItem::analyze_()
         close(fds[1]);               // Close the write end of the pipe
         dup2(fds[0], STDIN_FILENO);  // Read from stdin. Note: This is terrible.
                                      // Use boost stream?
-        std::string line;
-        while (std::getline(std::cin, line)) {
-            json += line;  // concat every line we get from cin into one string
-            std::cerr << line << std::endl;
-        }
+        results << std::cin;
         waitpid(pid, NULL, 0);  // Wait for the child process to finish
-    }
-
-    // Parse the results with picojson
-    picojson::value results;
-    std::string err = picojson::parse(results, json);
-    if (!err.empty()) {
-        std::cerr << inputPath_ << " " << err << std::endl;
     }
 
     // ffprobe returns an array of stream objects. We always hope that the first
     // one is the video track.
     // To-Do: check the "codec_type" to determine what we're looking at.
-    if (results.is<picojson::object>()) {
-        picojson::value video_info =
-            results.get("streams").get<picojson::array>()[0];
-
-        // To-Do: Get fps, frame size, codec, # of streams, and anything else we
-        // need
-        if (video_info.get("duration").is<std::string>())
-            _duration = boost::lexical_cast<double>(
-                video_info.get("duration").get<std::string>());
+    if (results.empty()) {
+        throw std::runtime_error("Failed to read from ffprobe");
     }
 
-    return EXIT_SUCCESS;
+    json info = results["streams"][0];
+
+    // To-Do: Get fps, frame size, codec, # of streams, and anything else we
+    // need
+    if (info["duration"].is_number_float()) {
+        _duration = info["duration"].get<double>();
+    }
 }
 
 // Construct the transcoding command
-std::string QueueItem::_command()
+std::string QueueItem::command_()
 {
 
     // The basic transcoder program
-    std::string command = FF_TRANSCODER;
+    std::string command = "ffmpeg";
 
     // Settings for img sequences
-    if (_isImgSeq)
+    if (type_ == Type::Sequence) {
         command.append(
-            " -r " + _outputFPS + " -start_number " +
-            std::to_string(_startingIndex));
+            " -r " + outputFPS_ + " -start_number " +
+            std::to_string(startingIndex_));
+    }
 
     // The input file
     command.append(" -i \"" + inputPath_.string() + "\"");
 
     // Get the settings for the first output of the selected preset
-    for (int output = 0; output < _preset->numberOfOutputs(); ++output) {
-        command.append(_preset->getSettings(output));
+    for (size_t output = 0; output < preset_->numberOfOutputs(); ++output) {
+        command.append(preset_->getSettings(output));
 
         // Setting to overwrite the output file if it exists
-        if (_overwrite)
+        if (overwrite_) {
             command.append(" -y");
+        }
+
+        auto path = outputDir_ / outputFileName_;
 
         // Add the suffix
-        std::string last_char = &outputFileName_.back();
-        if ((last_char != "-") && (last_char != "_") && (last_char != " "))
-            _outputSuffix = "-" + _preset->getSuffix(output);
-        else
-            _outputSuffix = _preset->getSuffix(output);
+        auto last_char = outputFileName_.string().back();
+        if (last_char != '-' || last_char != '_' || last_char != ' ') {
+            path += "-";
+        }
+        path += preset_->getSuffix(output);
 
         // Add the file extension
-        _outputExt = _preset->getExtension(output);
+        path += preset_->getExtension(output);
 
         // Add the output path
-        command.append(" \"" + this->outputPath().string() + "\"");
-        // end this output
+        command.append(" \"" + path.string() + "\"");
     }
 
     return command;
 }
 
 // Check if the file is an approved video format
-QueueItem::Type QueueItem::DetermineType(std::string ext)
+QueueItem::Type QueueItem::DetermineType(fs::path p)
 {
+    auto ext = boost::to_upper_copy<std::string>(p.extension().string());
 
     // Check if video
     for (auto e : FF_VID_EXTENSIONS) {
-        if (ext == e) {
+        if (ext == "." + e) {
             return QueueItem::Type::Video;
         }
     }
 
     // Check if image sequence
     for (auto e : FF_IMG_EXTENSIONS) {
-        if (ext == e) {
+        if (ext == "." + e) {
             return QueueItem::Type::Sequence;
         }
     }

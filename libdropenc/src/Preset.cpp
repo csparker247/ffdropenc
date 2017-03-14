@@ -180,10 +180,10 @@ std::string Preset::construct_filter_graph_(json filters)
 }
 
 // Load any .preset files in the given directory
-std::vector<Preset> Preset::LoadPresetDir(fs::path dir)
+std::vector<Preset::Pointer> Preset::LoadPresetDir(fs::path dir)
 {
 
-    std::vector<Preset> presets;
+    std::vector<Preset::Pointer> presets;
     if (fs::exists(dir)) {
 
         fs::recursive_directory_iterator it(dir);
@@ -191,7 +191,7 @@ std::vector<Preset> Preset::LoadPresetDir(fs::path dir)
 
         while (it != itEnd) {
             if (fs::path(*it).extension() == ".preset") {
-                presets.emplace_back(*it);
+                presets.emplace_back(std::make_shared<Preset>(*it));
             }
             ++it;
         }
