@@ -1,38 +1,30 @@
-// ffdropenc::Video
-// Created by Seth Parker on 6/14/15.
-//
-// This class keeps track of all input videos/image sequences and things we need
-// to know about them
+#pragma once
 
-#ifndef FFDROPENC_VIDEO_H
-#define FFDROPENC_VIDEO_H
-
-#include <string>
-#include <stdio.h>
-#include <unistd.h>
+#include <iostream>
 
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "Preset.hpp"
-#include "ffdefines.h"
+#include "ffdropenc/Filesystem.hpp"
+#include "ffdropenc/Preset.hpp"
 
 namespace ffdropenc
 {
 
-class Video
+class QueueItem
 {
 public:
-    // Constructors
-    Video();
-    Video(std::string inputPath, Preset* preset, bool isImgSeq = false);
+    enum class Type { Undefined, Video, Sequence };
+
+    QueueItem() : type_(Type::Undefined), _progress(0.0), _transcoded(false) {}
+    QueueItem(std::string inputPath, Preset* preset, bool isImgSeq = false);
 
     // Operators
-    bool operator<(const Video&) const;
-    bool operator==(const Video&) const;
+    bool operator<(const QueueItem&) const;
+    bool operator==(const QueueItem&) const;
 
     // Accessors
-    boost::filesystem::path inputPath() { return _inputPath; };
+    boost::filesystem::path inputPath() { return inputPath_; };
     boost::filesystem::path outputPath();
     double progress() { return _progress; };
 
@@ -47,19 +39,22 @@ public:
 
     int transcode();
 
+    static Type DetermineType(std::string ext);
+
 private:
     // input location
-    boost::filesystem::path _inputPath;  // where the file is
+    boost::filesystem::path inputPath_;  // where the file is
+    Type type_;
 
     // output location
-    boost::filesystem::path _outputDir;  // where the file is going
-    std::string _outputFileName;         // what it will be called
+    boost::filesystem::path outputDir_;       // where the file is going
+    boost::filesystem::path outputFileName_;  // what it will be called
     std::string _outputSuffix;  // what will be appended to the filename
     std::string _outputExt;     // what its extension will be
     bool _appendSuffix;  // do we want to append _outputSuffix to the filename?
 
     // metadata
-    int _analyze();  // fills out the metadata
+    int analyze_();  // fills out the metadata
 
     // progress tracking
     double _fps;            // frames per second
@@ -88,5 +83,3 @@ private:
 };  // Video
 
 }  // namespace ffdropenc
-
-#endif  // FFDROPENC_VIDEO_H

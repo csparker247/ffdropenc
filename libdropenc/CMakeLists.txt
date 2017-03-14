@@ -3,8 +3,9 @@ set(module "core")
 set(target "ffde_${module}")
 
 set(srcs
-    src/File.cpp
+    src/Filesystem.cpp
     src/Preset.cpp
+    src/QueueItem.cpp
 )
 
 add_library(${target} ${srcs})
