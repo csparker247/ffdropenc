@@ -186,7 +186,7 @@ fi
 # Make OSX app...
 echo "Making ${buildname}.app..."
 
-platypus -y -D -a "$buildname" -i "$ff_root/extras/graphics/$buildname.icns" -V "$version" -u "Seth Parker" \
+platypus -y -D -a "$buildname" -i "$ff_root/extras/graphics/$buildname.icns" -o 'Progress Bar' -V "$version" -u "Seth Parker" \
 -f "$buildsrc/bin" -f "$buildsrc/presets" -f "$buildsrc/resources" \
 -I "com.ffdropenc.$buildname" $(if [[ "$dev" == 1 ]]; then echo "-d"; fi) \
 "$buildsrc/ffdropenc.sh" "${buildname}.app"
