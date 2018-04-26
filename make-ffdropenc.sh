@@ -19,7 +19,7 @@ if [[ "$PWD" != *ffdropenc ]]; then
 fi
 
 # Get options
-usage() { 
+usage() {
 cat << EOF
 Usage: $0 [options]
 
@@ -27,25 +27,23 @@ This script is used to automatically create ffdropenc.app and distributable DMGs
 
 OPTIONS:
 -h		Show this message.
-	
--b type		Selects which ffmpeg and x264 binaries to use: 
+
+-b type		Selects which ffmpeg and x264 binaries to use:
 			nonfree  	Build new binaries using non-free libfdk-aac.
 					Default value, except when using sym-link (-s) option.
 					You can make new binaries for use with ffdevenc.app by running:
 					'make-ffdropenc.sh -b nonfree -s'
-						
-			free		Build new binaries using free codecs only.
-						
+
 			custom		Use ffmpeg and x264 binaries found in "../ffdropenc/source/bin".
 					Default value when using sym-link (-s) option.
-			
+
 -d		Generate Installer DMG.
 
 -s		Create sym-linked development application, ffdevenc.app, using files in "ffdropenc/source".
   		Disables DMG (-d) output. Defaults to custom binaries. Currently not usable with free encoder option.
-		
-	
-	
+
+
+
 EOF
 exit 1
 }
@@ -66,7 +64,7 @@ while getopts ":hb:ds" arg; do
         b)
             status="$OPTARG"
             case "$status" in
-				nonfree | free | custom) ;;
+				nonfree | custom) ;;
 				*) echo ERROR: Unrecognized value for option -b: "$status"
 				echo
 				usage ;;
@@ -93,12 +91,6 @@ if [[ $dev == 1 ]]; then
 		dmg=0
 		sleep 1
 	fi
-	if [[ $status == "free" ]]; then
-		echo "WARNING: Free binaries are not currently supported in sym-link mode! Defaulting to custom encoders."
-		echo
-		default=1
-		sleep 1
-	fi
 	if [[ $default == 1 ]]; then
 		status="custom"
 	fi
@@ -118,7 +110,7 @@ else
 	exit 1
 fi
 
-if [[ $status == "nonfree" || $status == "free" ]]; then
+if [[ $status == "nonfree" ]]; then
 	if xcode-select -print-path > /dev/null 2>&1; then
 		echo "Xcode compiler found..."
 	else
@@ -152,21 +144,17 @@ fi
 cd build
 
 # Build new encoders
-if [[ $status == "nonfree" || $status == "free" ]]; then
+if [[ $status == "nonfree" ]]; then
 	# Download ffmpeg-static...
 	echo "Building new encoder binaries..."
-	echo "Downloading ffmpeg-static..."
-	curl -s -L https://github.com/csparker247/ffmpeg-static/tarball/master | tar zx
-	mv *ffmpeg-static*/ ffmpeg-static/
+	echo "Downloading sffmpeg..."
+	curl -s -L https://github.com/csparker247/sffmpeg/tarball/master | tar zx
+	mv *sffmpeg*/ sffmpeg/
 
 	# Make ffmpeg-static
-	echo "Building ffmpeg-static..."
-	cd ffmpeg-static
-	if [[ $status == "free" ]]; then
-		./build.sh -f
-	elif [[ $status == "nonfree" ]]; then
-		./build.sh
-	fi
+	echo "Building sffmpeg..."
+	cd sffmpeg
+	make
 	echo
 	echo "New encoder binaries built..."
 fi
@@ -181,23 +169,16 @@ if [[ "$dev" == "0" ]]; then
 	buildsrc="$ff_root/build/appsource"
 	buildname="ffdropenc"
 
-	if [[ "$status" == "nonfree" || "$status" == "free" ]]; then 
-		cp ffmpeg-static/target/bin/ffmpeg "$buildsrc"/bin/ffmpeg
-		cp ffmpeg-static/target/bin/ffprobe "$buildsrc"/bin/ffprobe
-		cp ffmpeg-static/target/bin/x264 "$buildsrc"/bin/x264
-		rm -rf ffmpeg-static/
+	if [[ "$status" == "nonfree" ]]; then
+		cp sffmpeg/build/bin/ffmpeg "$buildsrc"/bin/ffmpeg
+		cp sffmpeg/build/bin/ffprobe "$buildsrc"/bin/ffprobe
+		cp sffmpeg/build/bin/x264 "$buildsrc"/bin/x264
 	fi
-	
-	# Patch presets to use built-in aac when using free binaries
-	if [[ "$status" == "free" ]]; then
-		echo "Patching presets for use with free codecs..."
-		grep -rl "\-c:a libfdk_aac" "$buildsrc"/presets | xargs sed -i "" 's/-c:a libfdk_aac/\-strict experimental \-c:a aac/g'
-	fi
-	
+
 elif [[ "$dev" == "1" ]]; then
 	buildsrc="$ff_root/source"
 	buildname="ffdevenc"
-	
+
 	if [[ "$status" == "nonfree" ]]; then
 		cp ffmpeg-static/target/bin/ffmpeg "$buildsrc"/bin/ffmpeg
 		cp ffmpeg-static/target/bin/ffprobe "$buildsrc"/bin/ffprobe
