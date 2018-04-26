@@ -2,7 +2,7 @@
 PATH=./bin:$PATH
 
 # ffdropenc
-# Version 1.8.1
+# Version 1.8.2
 # This is a droplet to transcode videos and image sequences to preset video types.
 # It uses ffmpeg as its transcoder.
 
@@ -71,17 +71,17 @@ for (( i=0; i<=${argument_count}; i++ )); do
 		tempname=$(basename "$inputName" | sed 's/\(.*\)\..*/\1/')
 		collection=$(echo "$tempname" | sed 's/[0-9]*$//')
 		numtemp=$(echo "$tempname" | grep -o -m 1 -e '[0-9]*$')
-		
+
 		if [[ "$numtemp" != [0-9]* ]]; then
 			continue
 		fi
-		
+
 		charcount=`printf "%02d" ${#numtemp}`
 		outputName="${tempdir}/${collection}%${charcount}d.${tempext}"
 	elif [[ "$inputName" =~ .*\.($mov_exts) ]]; then
 		outputName="$inputName"
 	fi
-		
+
 	args=${#filelist[@]}
 	if [[ $args != "0" ]]; then
 		for (( e=1; e<=${args}; e++ )); do

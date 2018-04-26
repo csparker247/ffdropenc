@@ -135,28 +135,24 @@ fi
 # Create build folder
 echo
 echo "Setting up build folder..."
-if [[ -d build ]]; then
-	rm -rf build/
-	mkdir build
-else
-	mkdir build
-fi
+mkdir -p build
 cd build
 
 # Build new encoders
 if [[ $status == "nonfree" ]]; then
-	# Download ffmpeg-static...
-	echo "Building new encoder binaries..."
-	echo "Downloading sffmpeg..."
-	curl -s -L https://github.com/csparker247/sffmpeg/tarball/master | tar zx
-	mv *sffmpeg*/ sffmpeg/
+
+	if [[ ! -d sffmpeg ]]; then
+		echo "Downloading sffmpeg..."
+		curl -s -L https://github.com/csparker247/sffmpeg/tarball/master | tar zx
+		mv *sffmpeg*/ sffmpeg/
+	fi
 
 	# Make ffmpeg-static
 	echo "Building sffmpeg..."
 	cd sffmpeg
 	make
 	echo
-	echo "New encoder binaries built..."
+	echo "sffmpeg built..."
 fi
 
 cd "$ff_root"/build
@@ -180,9 +176,9 @@ elif [[ "$dev" == "1" ]]; then
 	buildname="ffdevenc"
 
 	if [[ "$status" == "nonfree" ]]; then
-		cp ffmpeg-static/target/bin/ffmpeg "$buildsrc"/bin/ffmpeg
-		cp ffmpeg-static/target/bin/ffprobe "$buildsrc"/bin/ffprobe
-		rm -rf ffmpeg-static/
+		cp sffmpeg/build/bin/ffmpeg "$buildsrc"/bin/ffmpeg
+		cp sffmpeg/build/bin/ffprobe "$buildsrc"/bin/ffprobe
+		cp sffmpeg/build/bin/x264 "$buildsrc"/bin/x264
 	fi
 
 fi
@@ -190,7 +186,7 @@ fi
 # Make OSX app...
 echo "Making ${buildname}.app..."
 
-platypus -D -a "$buildname" -i "$ff_root/extras/graphics/$buildname.icns" -V "$version" -u "Seth Parker" \
+platypus -y -D -a "$buildname" -i "$ff_root/extras/graphics/$buildname.icns" -V "$version" -u "Seth Parker" \
 -f "$buildsrc/bin" -f "$buildsrc/presets" -f "$buildsrc/resources" \
 -I "com.ffdropenc.$buildname" $(if [[ "$dev" == 1 ]]; then echo "-d"; fi) \
 "$buildsrc/ffdropenc.sh" "${buildname}.app"
