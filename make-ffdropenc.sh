@@ -37,6 +37,8 @@ OPTIONS:
 			custom		Use ffmpeg binaries found in "../ffdropenc/source/bin".
 					Default value when using sym-link (-s) option.
 
+-r    Remove build cache. Only valid for non-custom builds.
+
 -d		Generate Installer DMG.
 
 -s		Create sym-linked development application, ffdevenc.app, using files in "ffdropenc/source".
@@ -53,24 +55,28 @@ version=$(sed -n /Version/p "source/ffdropenc.sh" | sed 's/# Version //')
 builddate=$(date +"%Y%m%d")
 default=1
 status="nonfree"
+remove_cache=0
 dmg=0
 dev=0
 
-while getopts ":hb:ds" arg; do
+while getopts ":hb:rds" arg; do
     case "${arg}" in
         h)
         	usage
         	;;
         b)
-            status="$OPTARG"
-            case "$status" in
-				nonfree | custom) ;;
-				*) echo ERROR: Unrecognized value for option -b: "$status"
-				echo
-				usage ;;
-			esac
-            default=0
-            ;;
+          status="$OPTARG"
+          case "$status" in
+				        nonfree | custom) ;;
+		            *) echo ERROR: Unrecognized value for option -b: "$status"
+          				 echo
+          				 usage ;;
+          esac
+          default=0
+          ;;
+        r)
+          remove_cache=1
+          ;;
         d)
         	dmg=1
         	;;
@@ -78,8 +84,8 @@ while getopts ":hb:ds" arg; do
         	dev=1
         	;;
         *)
-            usage
-            ;;
+          usage
+          ;;
     esac
 done
 shift $((OPTIND-1))
@@ -135,17 +141,22 @@ fi
 # Create build folder
 echo
 echo "Setting up build folder..."
-mkdir -p build
+if [[ "$remove_cache" == "1"  ]] && [[ -d build ]]; then
+	rm -rf build/
+fi
+mkdir -p build/
 cd build
 
 # Build new encoders
 if [[ $status == "nonfree" ]]; then
 
-	if [[ ! -d sffmpeg ]]; then
-		echo "Downloading sffmpeg..."
-		curl -s -L https://github.com/csparker247/sffmpeg/tarball/master | tar zx
-		mv *sffmpeg*/ sffmpeg/
-	fi
+  if [[ ! -d sffmpeg ]]; then
+  	# Download ffmpeg-static...
+  	echo "Building new encoder binaries..."
+  	echo "Downloading sffmpeg..."
+  	curl -s -L https://github.com/csparker247/sffmpeg/tarball/master | tar zx
+  	mv *sffmpeg*/ sffmpeg/
+  fi
 
 	# Make ffmpeg-static
 	echo "Building sffmpeg..."
