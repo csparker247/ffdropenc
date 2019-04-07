@@ -37,7 +37,7 @@ OPTIONS:
 			custom		Use ffmpeg binaries found in "../ffdropenc/source/bin".
 					Default value when using sym-link (-s) option.
 
--r    Remove build cache. Only valid for non-custom builds.
+-r		Remove build cache. Only valid for non-custom builds.
 
 -d		Generate Installer DMG.
 
@@ -154,14 +154,14 @@ if [[ $status == "nonfree" ]]; then
   	# Download ffmpeg-static...
   	echo "Building new encoder binaries..."
   	echo "Downloading sffmpeg..."
-  	curl -s -L https://github.com/csparker247/sffmpeg/tarball/master | tar zx
+  	curl -s -L https://github.com/csparker247/sffmpeg/tarball/0a2539e | tar zx
   	mv *sffmpeg*/ sffmpeg/
   fi
 
 	# Make ffmpeg-static
 	echo "Building sffmpeg..."
 	cd sffmpeg
-	make
+	make ffmpeg
 	echo
 	echo "sffmpeg built..."
 fi
