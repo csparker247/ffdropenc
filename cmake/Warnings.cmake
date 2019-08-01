@@ -26,7 +26,6 @@ set(project_warnings
     -Wcomment
     -Wconditional-uninitialized
     -Wconversion                    # Disable ones you don't want
-    -Wcovered-switch-default
     -Wdelete-incomplete
     -Wdelete-non-virtual-dtor
     -Wdeprecated-implementations
