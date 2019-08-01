@@ -17,8 +17,7 @@ target_include_directories(${target}
 )
 target_link_libraries(${target}
     PUBLIC
-        Boost::filesystem
-        ffde::external
+        c++fs
 )
 set_target_properties(${target} PROPERTIES
     VERSION "${PROJECT_VERSION}"

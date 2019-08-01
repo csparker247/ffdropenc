@@ -1,9 +1,10 @@
 #include "ffdropenc/Preset.hpp"
 
+#include <fstream>
 #include <iostream>
 
 using namespace ffdropenc;
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 Preset::Preset(fs::path path)
 {

@@ -1,17 +1,18 @@
 #pragma once
 
+#include <filesystem>
 #include <vector>
-#include <boost/filesystem.hpp>
 
 #include "ffdropenc/QueueItem.hpp"
 
 namespace ffdropenc
 {
 
-namespace filesystem
-{
+using ExtensionList = std::vector<std::string>;
 
-std::vector<boost::filesystem::path> FilterFileList(
-    const std::vector<boost::filesystem::path>& fileList);
-}
+bool FileExtensionFilter(
+    const std::filesystem::path& path, const ExtensionList& exts);
+
+std::vector<std::filesystem::path> FilterFileList(
+    const std::vector<std::filesystem::path>& fileList);
 }

@@ -2,10 +2,8 @@
 
 #include <iostream>
 
-#include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
+#include <filesystem>
 
-#include "ffdropenc/Filesystem.hpp"
 #include "ffdropenc/Preset.hpp"
 
 namespace ffdropenc
@@ -17,36 +15,36 @@ public:
     enum class Type { Undefined, Video, Sequence };
 
     QueueItem() = delete;
-    QueueItem(boost::filesystem::path path, Preset::Pointer preset);
+    QueueItem(std::filesystem::path path, Preset::Pointer preset);
 
     // Operators
     bool operator<(const QueueItem&) const;
     bool operator==(const QueueItem&) const;
 
     // Accessors
-    boost::filesystem::path inputPath() { return inputPath_; }
-    boost::filesystem::path outputPath();
+    std::filesystem::path inputPath() { return inputPath_; }
+    std::filesystem::path outputPath();
     double progress() { return progress_; }
 
     // Modifiers
-    void setOutputDir(boost::filesystem::path d) { outputDir_ = d; }
-    void setOutputFilename(boost::filesystem::path f) { outputFileName_ = f; }
+    void setOutputDir(std::filesystem::path d) { outputDir_ = d; }
+    void setOutputFilename(std::filesystem::path f) { outputFileName_ = f; }
 
     void convertToSeq(std::string fps);
 
     void transcode();
 
-    static Type DetermineType(boost::filesystem::path p);
+    static Type DetermineType(const std::filesystem::path& p);
 
 private:
     // input location
-    boost::filesystem::path inputPath_;
+    std::filesystem::path inputPath_;
     Type type_;
 
     // output directory
-    boost::filesystem::path outputDir_;
+    std::filesystem::path outputDir_;
     // output basename
-    boost::filesystem::path outputFileName_;
+    std::filesystem::path outputFileName_;
 
     // metadata
     void analyze_();
@@ -70,7 +68,7 @@ private:
     bool overwrite_;
 
     // debug log stuff
-    boost::filesystem::path logPath_;
+    std::filesystem::path logPath_;
     bool logCleanup_;
 
     bool transcoded_;

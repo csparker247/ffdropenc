@@ -1,37 +1,36 @@
+#include <regex>
+
 #include "ffdropenc/Filesystem.hpp"
 
-#include <boost/algorithm/string.hpp>
-
-using namespace ffdropenc;
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 // Removes directory entries from a vector of file paths by recursively
 // expanding them
-std::vector<fs::path> filesystem::FilterFileList(
+std::vector<fs::path> ffdropenc::FilterFileList(
     const std::vector<fs::path>& fileList)
 {
     std::vector<fs::path> resolvedFiles;
 
-    for (auto file : fileList) {
+    for (const auto& file : fileList) {
 
         // Skip if it doesn't exist
-        if (!boost::filesystem::exists(file)) {
+        if (!std::filesystem::exists(file)) {
             continue;
         }
 
         // Handle regular files
-        else if (boost::filesystem::is_regular_file(file)) {
+        else if (std::filesystem::is_regular_file(file)) {
             resolvedFiles.emplace_back(file);
         }
 
         // Handle directories
-        else if (boost::filesystem::is_directory(file)) {
+        else if (std::filesystem::is_directory(file)) {
 
-            boost::filesystem::recursive_directory_iterator dir(file);
-            boost::filesystem::recursive_directory_iterator dir_end;
+            std::filesystem::recursive_directory_iterator dir(file);
+            std::filesystem::recursive_directory_iterator dir_end;
 
             while (dir != dir_end) {
-                boost::filesystem::path dir_entry(*dir);
+                std::filesystem::path dir_entry(*dir);
                 if (is_regular_file(dir_entry)) {
                     resolvedFiles.emplace_back(dir_entry);
                 }
@@ -41,4 +40,21 @@ std::vector<fs::path> filesystem::FilterFileList(
     }
 
     return resolvedFiles;
+}
+
+bool ffdropenc::FileExtensionFilter(
+    const fs::path& path, const ExtensionList& exts)
+{
+    std::string regexExpression = ".*\\.(";
+    size_t count = 0;
+    for (const auto& e : exts) {
+        regexExpression.append(e);
+        if (++count < exts.size()) {
+            regexExpression.append("|");
+        }
+    }
+    regexExpression.append(")$");
+
+    std::regex extensions{regexExpression, std::regex::icase};
+    return std::regex_match(path.extension().string(), extensions);
 }

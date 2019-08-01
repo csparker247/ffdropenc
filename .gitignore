@@ -1,5 +1,5 @@
 .DS_Store
-cmake-build-debug/
+cmake-build-*/
 build/
 *.mp4
 *.mkv

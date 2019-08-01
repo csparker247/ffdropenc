@@ -1,15 +1,11 @@
-//
-// Created by Seth Parker on 6/15/15.
-//
-
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
 #include "ffdropenc/Filesystem.hpp"
 #include "ffdropenc/Preset.hpp"
 #include "ffdropenc/QueueItem.hpp"
 
 namespace ffde = ffdropenc;
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 int main(int argc, char* argv[])
 {
@@ -17,7 +13,7 @@ int main(int argc, char* argv[])
     fs::path fileDir = argv[2];
 
     auto presets = ffde::Preset::LoadPresetDir(presetDir);
-    auto files = ffde::filesystem::FilterFileList({fileDir});
+    auto files = ffde::FilterFileList({fileDir});
 
     ffde::Queue queue;
     for (auto& f : files) {
@@ -28,5 +24,5 @@ int main(int argc, char* argv[])
         q.transcode();
     }
 
-    return 1;
+    return EXIT_SUCCESS;
 }
