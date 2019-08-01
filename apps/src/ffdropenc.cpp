@@ -1,28 +1,24 @@
 #include <filesystem>
 
-#include "ffdropenc/Filesystem.hpp"
-#include "ffdropenc/Preset.hpp"
-#include "ffdropenc/QueueItem.hpp"
+#include <QApplication>
+#include <QMainWindow>
 
-namespace ffde = ffdropenc;
-namespace fs = std::filesystem;
+#include "MainLayout.hpp"
 
 int main(int argc, char* argv[])
 {
-    fs::path presetDir = argv[1];
-    fs::path fileDir = argv[2];
+    QApplication app(argc, argv);
+    QMainWindow mainWindow;
 
-    auto presets = ffde::Preset::LoadPresetDir(presetDir);
-    auto files = ffde::FilterFileList({fileDir});
+    // Set the title bar and icon
+    mainWindow.setCentralWidget(new MainLayout());
+    mainWindow.setWindowTitle("ffdropenc");
+    mainWindow.setMinimumWidth(480);
+    mainWindow.setAcceptDrops(true);
+    // mainWindow.setWindowIcon(QIcon{":/logo-s"});
 
-    ffde::Queue queue;
-    for (auto& f : files) {
-        queue.emplace_back(f, presets[4]);
-    }
-
-    for (auto& q : queue) {
-        q.transcode();
-    }
+    mainWindow.show();
+    app.exec();
 
     return EXIT_SUCCESS;
 }

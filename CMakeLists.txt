@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
-project("ffdropenc" VERSION 0.1.0)
+project("ffdropenc" VERSION 2.0.0)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)

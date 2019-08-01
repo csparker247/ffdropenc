@@ -2,7 +2,7 @@
 # Core #
 ########
 
-find_package(Qt5 5.7 QUIET REQUIRED COMPONENTS Widgets Gui Core)
+find_package(Qt5 5.7 QUIET REQUIRED COMPONENTS Core Widgets Gui)
 
 ############
 # Optional #
