@@ -6,21 +6,20 @@ notifications:
 os:
   - osx
 
-dist: trusty
+dist: bionic
 sudo: required
 
 compiler:
-  - gcc
   - clang
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake libboost-all-dev ninja-build; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install ninja; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake qtbase5-dev ninja-build nlohmann-json-dev; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install ninja nlohmann-json qt5; fi
 
 script:
   - mkdir -p build/
   - cd build/
-  - cmake -GNinja ..
+  - cmake -DQt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5/ -GNinja ..
   - ninja
