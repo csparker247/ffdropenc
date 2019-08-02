@@ -1,7 +1,8 @@
 #include "ffdropenc/QueueItem.hpp"
 
+#include <nlohmann/json.hpp>
+
 #include "ffdropenc/Filesystem.hpp"
-#include "ffdropenc/json.hpp"
 
 using namespace ffdropenc;
 namespace fs = std::filesystem;
@@ -14,35 +15,28 @@ static const ExtensionList FF_IMG_EXTENSIONS = {"DPX", "JPG",  "JPEG", "PNG",
                                                 "TIF", "TIFF", "TGA"};
 
 // Constructors
-QueueItem::QueueItem(fs::path path, Preset::Pointer preset)
-    : progress_(0.0)
-    , preset_(preset)
-    , overwrite_(true)
-    , logCleanup_(true)
-    , transcoded_(false)
+QueueItem::QueueItem(const QUrl& path, Preset::Pointer preset)
+    : preset_{std::move(preset)}
 {
     // set the source file
-    inputPath_ = std::filesystem::canonical(path);
+    inputPath_ = path.toString().toStdString();
 
     // set the output file
     outputDir_ = inputPath_.parent_path();
     outputFileName_ = inputPath_.stem();
 
     // Type stuff
-    type_ = DetermineType(path.extension());
+    type_ = determine_type_(inputPath_.extension());
     switch (type_) {
         case Type::Video:
             // analyze_();
             break;
         case Type::Sequence:
-            convertToSeq("30000/1001");
+            convert_to_seq_("30000/1001");
             break;
         case Type::Undefined:
             throw std::runtime_error("Unable to determine type");
     }
-
-    // logs
-    logPath_ = outputDir_;  // Defaults to same as output file
 }
 
 // Operators
@@ -69,8 +63,8 @@ std::filesystem::path QueueItem::outputPath()
     return outputDir_ / path;
 }
 
-// Convert this video into an Img Sequence
-void QueueItem::convertToSeq(std::string fps)
+// Convert this Item into an Img Sequence
+void QueueItem::convert_to_seq_(const std::string& fps)
 {
     outputFPS_ = fps;
 
@@ -94,35 +88,31 @@ void QueueItem::convertToSeq(std::string fps)
     inputPath_ = inputPath_.parent_path() / fileName;
 }
 
-// Do the transcoding
-void QueueItem::transcode() { std::cout << command_() << std::endl; }
-
 // Analyze
 
 // Construct the transcoding command
-std::string QueueItem::command_()
+QStringList QueueItem::encodeArguments()
 {
 
     // The basic transcoder program
-    std::string command = "ffmpeg";
+    QStringList args;
 
     // Settings for img sequences
     if (type_ == Type::Sequence) {
-        command.append(
-            " -r " + outputFPS_ + " -start_number " +
-            std::to_string(startingIndex_));
+        args << "-r" << QString::fromStdString(outputFPS_);
+        args << "-start_number" << QString::number(startingIndex_);
     }
 
     // The input file
-    command.append(" -i \"" + inputPath_.string() + "\"");
+    args << "-i" << QString::fromStdString(inputPath_.string());
 
     // Get the settings for the first output of the selected preset
     for (size_t output = 0; output < preset_->numberOfOutputs(); ++output) {
-        command.append(preset_->getSettings(output));
+        args << preset_->getSettings(output);
 
         // Setting to overwrite the output file if it exists
         if (overwrite_) {
-            command.append(" -y");
+            args << "-y";
         }
 
         auto path = outputDir_ / outputFileName_;
@@ -138,14 +128,14 @@ std::string QueueItem::command_()
         path += preset_->getExtension(output);
 
         // Add the output path
-        command.append(" \"" + path.string() + "\"");
+        args << QString::fromStdString(path.string());
     }
 
-    return command;
+    return args;
 }
 
 // Check if the file is an approved video format
-QueueItem::Type QueueItem::DetermineType(const fs::path& p)
+QueueItem::Type QueueItem::determine_type_(const fs::path& p)
 {
     if (FileExtensionFilter(p, FF_VID_EXTENSIONS)) {
         return QueueItem::Type::Video;

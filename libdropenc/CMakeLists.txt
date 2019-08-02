@@ -17,7 +17,9 @@ target_include_directories(${target}
 )
 target_link_libraries(${target}
     PUBLIC
+        Qt5::Core
         c++fs
+        nlohmann_json::nlohmann_json
 )
 set_target_properties(${target} PROPERTIES
     VERSION "${PROJECT_VERSION}"

@@ -2,7 +2,9 @@
 
 #include <iostream>
 
-#include <filesystem>
+#include <QString>
+#include <QStringList>
+#include <QUrl>
 
 #include "ffdropenc/Preset.hpp"
 
@@ -15,7 +17,7 @@ public:
     enum class Type { Undefined, Video, Sequence };
 
     QueueItem() = delete;
-    QueueItem(std::filesystem::path path, Preset::Pointer preset);
+    QueueItem(const QUrl& path, Preset::Pointer preset);
 
     // Operators
     bool operator<(const QueueItem&) const;
@@ -24,17 +26,15 @@ public:
     // Accessors
     std::filesystem::path inputPath() { return inputPath_; }
     std::filesystem::path outputPath();
-    double progress() { return progress_; }
 
     // Modifiers
-    void setOutputDir(std::filesystem::path d) { outputDir_ = d; }
-    void setOutputFilename(std::filesystem::path f) { outputFileName_ = f; }
+    void setOutputDir(const std::filesystem::path& d) { outputDir_ = d; }
+    void setOutputFilename(const std::filesystem::path& f)
+    {
+        outputFileName_ = f;
+    }
 
-    void convertToSeq(std::string fps);
-
-    void transcode();
-
-    static Type DetermineType(const std::filesystem::path& p);
+    QStringList encodeArguments();
 
 private:
     // input location
@@ -46,32 +46,22 @@ private:
     // output basename
     std::filesystem::path outputFileName_;
 
-    // metadata
-    void analyze_();
-
     // progress tracking
-    double _fps;            // frames per second
-    unsigned long _frames;  // number of frames
-    double _duration;       // length in seconds
-
-    // progress of encoding between 0.0 and 1.0
-    double progress_;
+    double fps_{-1};
+    unsigned long frames_{-1};
+    double duration_{-1};
 
     // image sequence
-    uint64_t startingIndex_;  // what's the first number in the seq? (e.g.
-                              // 0, 50, 121?)
-    std::string outputFPS_;   // the desired frame rate for the output file
+    static Type determine_type_(const std::filesystem::path& p);
+    void convert_to_seq_(const std::string& fps);
+    uint64_t startingIndex_{0};
+    std::string outputFPS_{"30000/1001"};
 
     // encoding parameters
-    Preset::Pointer preset_;
-    std::string command_();
-    bool overwrite_;
+    const Preset::Pointer preset_;
+    bool overwrite_{true};
 
-    // debug log stuff
-    std::filesystem::path logPath_;
-    bool logCleanup_;
-
-    bool transcoded_;
+    bool transcoded_{false};
 };
 
 using Queue = std::vector<QueueItem>;

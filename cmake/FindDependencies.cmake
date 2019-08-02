@@ -3,6 +3,7 @@
 ########
 
 find_package(Qt5 5.7 QUIET REQUIRED COMPONENTS Core Widgets Gui)
+find_package(nlohmann_json 3.2.0 REQUIRED)
 
 ############
 # Optional #
