@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <iostream>
 
 #include <QString>
@@ -16,8 +17,8 @@ class QueueItem
 public:
     enum class Type { Undefined, Video, Sequence };
 
-    QueueItem() = delete;
-    QueueItem(const QString& path, Preset::Pointer preset);
+    QueueItem() = default;
+    QueueItem(const std::filesystem::path& path, Preset::Pointer preset);
 
     // Operators
     bool operator<(const QueueItem&) const;
@@ -34,7 +35,7 @@ public:
         outputFileName_ = f;
     }
 
-    QStringList encodeArguments();
+    QStringList encodeArguments() const;
 
 private:
     // input location

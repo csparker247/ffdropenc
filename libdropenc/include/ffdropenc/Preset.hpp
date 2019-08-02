@@ -32,7 +32,7 @@ private:
     // JSON rep of preset data
     json cfg_;
 
-    static QStringList construct_filter_graph_(json filters);
+    static QString construct_filter_graph_(json filters);
 };
 
 }  // namespace ffdropenc

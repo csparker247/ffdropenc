@@ -144,10 +144,10 @@ std::string Preset::getExtension(size_t index)
     return "." + cfg_["outputs"][index]["extension"].get<std::string>();
 }
 
-QStringList Preset::construct_filter_graph_(json filters)
+QString Preset::construct_filter_graph_(json filters)
 {
     // Output graph
-    QStringList graph;
+    QString graph;
 
     // Iterate over each filter
     for (json& filter : filters) {
@@ -198,7 +198,7 @@ QStringList Preset::construct_filter_graph_(json filters)
         }
 
         // Add this filter to the filter graph
-        if (!command.isEmpty() && graph.empty()) {
+        if (!command.isEmpty() && graph.isEmpty()) {
             graph.append(command);
         } else if (!command.isEmpty()) {
             graph.append("," + command);

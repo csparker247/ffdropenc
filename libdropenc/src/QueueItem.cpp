@@ -15,12 +15,9 @@ static const ExtensionList FF_IMG_EXTENSIONS = {"DPX", "JPG",  "JPEG", "PNG",
                                                 "TIF", "TIFF", "TGA"};
 
 // Constructors
-QueueItem::QueueItem(const QString& path, Preset::Pointer preset)
-    : preset_{std::move(preset)}
+QueueItem::QueueItem(const std::filesystem::path& path, Preset::Pointer preset)
+    : inputPath_{path}, preset_{std::move(preset)}
 {
-    // set the source file
-    inputPath_ = path.toStdString();
-
     // set the output file
     outputDir_ = inputPath_.parent_path();
     outputFileName_ = inputPath_.stem();
@@ -68,13 +65,16 @@ void QueueItem::convert_to_seq_(const std::string& fps)
 {
     outputFPS_ = fps;
 
+    // to-do: This only works if numerical pattern is at end of filename
     auto stem = inputPath_.stem().string();
     auto last_letter_pos = stem.find_last_not_of("0123456789");
     auto fileName = stem.substr(0, last_letter_pos + 1);
     auto seqNumber = stem.substr(last_letter_pos + 1);
 
     startingIndex_ = std::stoull(seqNumber);
-    outputFileName_ = fileName;
+    outputFileName_ = (fileName.empty())
+                          ? inputPath_.parent_path().stem().string()
+                          : fileName;
 
     // Convert seqNumber to the %nd format
     seqNumber = std::to_string(seqNumber.length());
@@ -91,7 +91,7 @@ void QueueItem::convert_to_seq_(const std::string& fps)
 // Analyze
 
 // Construct the transcoding command
-QStringList QueueItem::encodeArguments()
+QStringList QueueItem::encodeArguments() const
 {
     QStringList args;
 
