@@ -1,20 +1,14 @@
-#include <filesystem>
-
-#include <QApplication>
-#include <QMainWindow>
-
+#include "MainApplication.hpp"
 #include "MainLayout.hpp"
 
 int main(int argc, char* argv[])
 {
-    QApplication app(argc, argv);
-    QMainWindow mainWindow;
+    MainApplication app(argc, argv);
+    MainLayout mainWindow;
 
     // Set the title bar and icon
-    mainWindow.setCentralWidget(new MainLayout());
     mainWindow.setWindowTitle("ffdropenc");
     mainWindow.setMinimumWidth(480);
-    mainWindow.setAcceptDrops(true);
     // mainWindow.setWindowIcon(QIcon{":/logo-s"});
 
     mainWindow.show();

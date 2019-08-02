@@ -9,6 +9,7 @@ set(hdrs
 
 set(srcs
     src/ffdropenc.cpp
+    src/MainApplication.cpp
     src/MainLayout.cpp
 )
 
