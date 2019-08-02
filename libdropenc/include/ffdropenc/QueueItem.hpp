@@ -17,15 +17,15 @@ public:
     enum class Type { Undefined, Video, Sequence };
 
     QueueItem() = delete;
-    QueueItem(const QUrl& path, Preset::Pointer preset);
+    QueueItem(const QString& path, Preset::Pointer preset);
 
     // Operators
     bool operator<(const QueueItem&) const;
     bool operator==(const QueueItem&) const;
 
     // Accessors
-    std::filesystem::path inputPath() { return inputPath_; }
-    std::filesystem::path outputPath();
+    std::filesystem::path inputPath() const { return inputPath_; }
+    std::filesystem::path outputPath() const;
 
     // Modifiers
     void setOutputDir(const std::filesystem::path& d) { outputDir_ = d; }
@@ -58,11 +58,9 @@ private:
     std::string outputFPS_{"30000/1001"};
 
     // encoding parameters
-    const Preset::Pointer preset_;
+    Preset::Pointer preset_;
     bool overwrite_{true};
 
     bool transcoded_{false};
 };
-
-using Queue = std::vector<QueueItem>;
 }

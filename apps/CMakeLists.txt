@@ -13,7 +13,7 @@ set(srcs
     src/MainLayout.cpp
 )
 
-set(rccs Resources.qrc)
+set(rccs Resources.qrc Presets.qrc)
 
 # Setup Icon properties
 set(icon_file appicon.icns)
@@ -67,6 +67,7 @@ target_link_libraries(${target}
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
+    ffde::core
 )
 
 install(TARGETS ${target}

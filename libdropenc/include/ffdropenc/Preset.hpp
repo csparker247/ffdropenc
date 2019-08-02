@@ -17,14 +17,14 @@ class Preset
 public:
     using Pointer = std::shared_ptr<Preset>;
 
-    explicit Preset(const std::filesystem::path& path);
+    explicit Preset(const QString& path);
+    static Pointer New(const QString& path);
     size_t numberOfOutputs() { return cfg_["outputs"].size(); }
+    [[nodiscard]] QString getListName() const;
+    [[nodiscard]] QString getConsoleName() const;
     QStringList getSettings(size_t index);
     std::string getSuffix(size_t index);
     std::string getExtension(size_t index);
-
-    static std::vector<Preset::Pointer> LoadPresetDir(
-        const std::filesystem::path& d);
 
 private:
     enum class ScaleMode { SquarePixel = 0, SizeLimited };

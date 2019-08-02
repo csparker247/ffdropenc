@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QStringList>
 
 class MainLayout : public QMainWindow
 {
@@ -12,4 +13,6 @@ public:
     void dragMoveEvent(QDragMoveEvent* event) override;
     void dragLeaveEvent(QDragLeaveEvent* event) override;
     void dropEvent(QDropEvent* event) override;
+
+    void processFiles(const QStringList& files);
 };

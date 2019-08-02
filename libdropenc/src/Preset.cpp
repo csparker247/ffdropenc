@@ -1,21 +1,35 @@
 #include "ffdropenc/Preset.hpp"
 
-#include <fstream>
 #include <iostream>
+
+#include <QFile>
+#include <QTextStream>
 
 using namespace ffdropenc;
 namespace fs = std::filesystem;
 
-Preset::Preset(const fs::path& path)
+Preset::Preset(const QString& path)
 {
-    std::ifstream ifs(path.string());
-    if (!ifs.good()) {
-        throw std::runtime_error("Failed to open preset file");
+    QFile data(path);
+    if (data.open(QFile::ReadOnly)) {
+        QTextStream file(&data);
+        cfg_ = json::parse(file.readAll().toStdString());
     }
+}
 
-    ifs >> cfg_;
+Preset::Pointer Preset::New(const QString& path)
+{
+    return std::make_shared<Preset>(path);
+}
 
-    ifs.close();
+QString Preset::getListName() const
+{
+    return QString::fromStdString(cfg_["listname"].get<std::string>());
+}
+
+QString Preset::getConsoleName() const
+{
+    return QString::fromStdString(cfg_["consolename"].get<std::string>());
 }
 
 QStringList Preset::getSettings(size_t index)
@@ -192,25 +206,4 @@ QStringList Preset::construct_filter_graph_(json filters)
     }
 
     return graph;
-}
-
-// Load any .preset files in the given directory
-std::vector<Preset::Pointer> Preset::LoadPresetDir(const fs::path& dir)
-{
-
-    std::vector<Preset::Pointer> presets;
-    if (fs::exists(dir)) {
-
-        fs::recursive_directory_iterator it(dir);
-        fs::recursive_directory_iterator itEnd;
-
-        while (it != itEnd) {
-            if (fs::path(*it).extension() == ".preset") {
-                presets.emplace_back(std::make_shared<Preset>(*it));
-            }
-            ++it;
-        }
-    }
-
-    return presets;
 }

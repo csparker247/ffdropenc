@@ -15,18 +15,18 @@ static const ExtensionList FF_IMG_EXTENSIONS = {"DPX", "JPG",  "JPEG", "PNG",
                                                 "TIF", "TIFF", "TGA"};
 
 // Constructors
-QueueItem::QueueItem(const QUrl& path, Preset::Pointer preset)
+QueueItem::QueueItem(const QString& path, Preset::Pointer preset)
     : preset_{std::move(preset)}
 {
     // set the source file
-    inputPath_ = path.toString().toStdString();
+    inputPath_ = path.toStdString();
 
     // set the output file
     outputDir_ = inputPath_.parent_path();
     outputFileName_ = inputPath_.stem();
 
     // Type stuff
-    type_ = determine_type_(inputPath_.extension());
+    type_ = determine_type_(inputPath_);
     switch (type_) {
         case Type::Video:
             // analyze_();
@@ -54,7 +54,7 @@ bool QueueItem::operator==(const QueueItem& file) const
 }
 
 // Construct the full output path from all of its requisite parts
-std::filesystem::path QueueItem::outputPath()
+std::filesystem::path QueueItem::outputPath() const
 {
     auto path = outputFileName_;
     path += preset_->getSuffix(0);
@@ -93,8 +93,6 @@ void QueueItem::convert_to_seq_(const std::string& fps)
 // Construct the transcoding command
 QStringList QueueItem::encodeArguments()
 {
-
-    // The basic transcoder program
     QStringList args;
 
     // Settings for img sequences
