@@ -1,5 +1,7 @@
 #include "MainLayout.hpp"
 
+#include <deque>
+
 #include <QDebug>
 #include <QDirIterator>
 #include <QDropEvent>
@@ -25,6 +27,7 @@ namespace fs = std::filesystem;
 
 QMap<QString, Preset::Pointer> PRESETS;
 QStringList PRESET_NAMES;
+std::deque<QueueItem> QUEUE;
 
 MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
 {
@@ -62,6 +65,20 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
 
     setCentralWidget(new QWidget());
     centralWidget()->setLayout(layout);
+
+    // Setup process
+    ffmpeg = new QProcess();
+    ffmpeg->setProgram("echo");
+    connect(ffmpeg, &QProcess::started, this, &MainLayout::onTranscodeStart);
+    connect(
+        ffmpeg, &QProcess::readyReadStandardOutput, this,
+        &MainLayout::onTranscodeUpdateOut);
+    connect(
+        ffmpeg, &QProcess::readyReadStandardError, this,
+        &MainLayout::onTranscodeUpdateErr);
+    connect(
+        ffmpeg, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+        this, &MainLayout::onTranscodeFinished);
 
     // load presets
     load_presets_();
@@ -116,23 +133,24 @@ void MainLayout::processFiles(std::vector<fs::path>& files)
     }
 
     // Create queue
-    std::vector<QueueItem> queue;
     for (const auto& f : files) {
         try {
-            queue.emplace_back(f, preset);
+            QUEUE.emplace_back(f, preset);
         } catch (const std::runtime_error& e) {
             qDebug() << e.what() << ":" << f.c_str();
         }
     }
 
     // Sort queue by name and remove duplicates
-    std::sort(queue.begin(), queue.end());
-    auto duplicateRemover = std::unique(queue.begin(), queue.end());
-    queue.resize(std::distance(queue.begin(), duplicateRemover));
+    std::sort(QUEUE.begin(), QUEUE.end());
+    auto duplicateRemover = std::unique(QUEUE.begin(), QUEUE.end());
+    QUEUE.resize(std::distance(QUEUE.begin(), duplicateRemover));
 
-    for (const auto& q : queue) {
-        qDebug() << "ffmpeg" << q.encodeArguments();
-    }
+    // Start processing the queue
+    auto q = QUEUE.front();
+    QUEUE.pop_front();
+    ffmpeg->setArguments(q.encodeArguments());
+    ffmpeg->start();
 }
 
 void MainLayout::load_presets_()
@@ -148,5 +166,34 @@ void MainLayout::load_presets_()
         auto preset = Preset::New(it.filePath());
         PRESETS[preset->getListName()] = preset;
         PRESET_NAMES.push_back(preset->getListName());
+    }
+}
+
+void MainLayout::onTranscodeStart()
+{
+    qDebug() << "Started";
+    progressBar->setMaximum(100);
+}
+
+void MainLayout::onTranscodeUpdateOut()
+{
+    qDebug() << "Out" << ffmpeg->readAllStandardOutput();
+}
+
+void MainLayout::onTranscodeUpdateErr()
+{
+    qDebug() << "Err" << ffmpeg->readAllStandardError();
+}
+
+void MainLayout::onTranscodeFinished(
+    int exitCode, QProcess::ExitStatus exitStatus)
+{
+    qDebug() << "Finished" << exitCode << exitStatus;
+    progressBar->setMaximum(0);
+    if (!QUEUE.empty()) {
+        auto q = QUEUE.front();
+        QUEUE.pop_front();
+        ffmpeg->setArguments(q.encodeArguments());
+        ffmpeg->start();
     }
 }
