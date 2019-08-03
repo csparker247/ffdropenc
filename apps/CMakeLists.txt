@@ -79,29 +79,16 @@ add_custom_command(TARGET ffdropenc POST_BUILD
 )
 
 ### App Packaging ###
-set(plugins "")
-set(extra_libs "")
-set(extra_dirs "")
-set(request_qt_conf off)
-set(plugins_dir "")
-set(components Programs)
 if (APPLE)
-    set(vc_exe "ffdropenc.app")
-    list(APPEND plugins qcocoa)
+    set(FFDROPENC_PACKAGE "ffdropenc.app")
 elseif (WIN32)
-    set(vc_exe "ffdropenc.exe")
+    set(FFDROPENC_PACKAGE "ffdropenc.exe")
 else ()
-    set(vc_exe "ffdropenc")
+    set(FFDROPENC_PACKAGE "ffdropenc")
 endif()
 if(APPLE OR WIN32)
-    include(DeployQt5)
-    install_qt5_executable(
-        "${vc_exe}"
-        "${plugins}"
-        "${extra_libs}"
-        "${extra_dirs}"
-        "${plugins_dir}"
-        "${request_qt_conf}"
-        "${components}"
+    add_custom_command(
+        TARGET ffdropenc POST_BUILD
+        COMMAND "${DEPLOYQT_EXECUTABLE}" "${EXECUTABLE_OUTPUT_PATH}/${FFDROPENC_PACKAGE}"
     )
 endif()
