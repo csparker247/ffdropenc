@@ -11,5 +11,4 @@
 
 #define FF_ERR_INPUT_OVERWRITE 100;
 
-
 #endif  // FFDROPENC_FFDEFINES_H

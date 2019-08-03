@@ -2,6 +2,7 @@
 
 #include <deque>
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <QDirIterator>
 #include <QDropEvent>
@@ -16,7 +17,6 @@
 #include <QPushButton>
 #include <QTextEdit>
 #include <QVBoxLayout>
-#include <QCoreApplication>
 
 #include "ffdropenc.hpp"
 #include "ffdropenc/Filesystem.hpp"
@@ -81,7 +81,8 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     connect(
         ffmpeg, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         this, &MainLayout::onTranscodeFinished);
-    connect(ffmpeg, &QProcess::errorOccurred, this, &MainLayout::onTranscodeError);
+    connect(
+        ffmpeg, &QProcess::errorOccurred, this, &MainLayout::onTranscodeError);
 
     // load presets
     load_presets_();

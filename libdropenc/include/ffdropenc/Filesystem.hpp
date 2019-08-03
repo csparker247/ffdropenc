@@ -15,4 +15,4 @@ bool FileExtensionFilter(
 
 std::vector<std::filesystem::path> FilterFileList(
     const std::vector<std::filesystem::path>& fileList);
-}
+}  // namespace ffdropenc

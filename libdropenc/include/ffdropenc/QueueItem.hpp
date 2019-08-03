@@ -64,4 +64,4 @@ private:
 
     bool transcoded_{false};
 };
-}
+}  // namespace ffdropenc

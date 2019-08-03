@@ -120,7 +120,8 @@ QStringList Preset::getSettings(size_t index)
             for (json& flag : flags) {
                 settings << QString::fromStdString(
                     flag["key"].get<std::string>());
-                settings << QString::fromStdString(flag["val"].get<std::string>());
+                settings << QString::fromStdString(
+                    flag["val"].get<std::string>());
             }
         }
 
@@ -128,7 +129,8 @@ QStringList Preset::getSettings(size_t index)
 
     // Fast start atom
     if (output["faststart"].get<bool>()) {
-        settings << "-movflags" << "faststart";
+        settings << "-movflags"
+                 << "faststart";
     }
 
     return settings;
