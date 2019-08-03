@@ -20,8 +20,8 @@
               { "filter" : "scale", "mode" : 1, "width" : 1920, "height" : 1080, "dar" : "16/9" }
             ],
             "flags" : [
-              { "flag" : "-preset veryslow" },
-              { "flag" : "-tune grain"}
+              { "key" : "-preset", "val" : "veryslow" },
+              { "key" : "-tune", "val" : "grain"}
             ]
           },
 

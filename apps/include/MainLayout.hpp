@@ -29,6 +29,7 @@ public slots:
     void onTranscodeUpdateOut();
     void onTranscodeUpdateErr();
     void onTranscodeFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void onTranscodeError(QProcess::ProcessError error);
 
 protected:
     QPointer<QLabel> shortLabel;

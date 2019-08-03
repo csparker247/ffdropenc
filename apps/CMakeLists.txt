@@ -1,6 +1,4 @@
 #### App ####
-set(target ffdropenc)
-
 configure_file(include/ffdropenc.hpp.in ffdropenc.hpp)
 
 set(hdrs
@@ -29,21 +27,21 @@ set(MACOSX_BUNDLE_ICON_FILE ${icon_file})
 string(TIMESTAMP year "%Y")
 set(copyright "Copyright ${year} Seth Parker")
 string(CONCAT info_string
-    ${target}${CMAKE_BUILD_TYPE}
+    ffdropenc${CMAKE_BUILD_TYPE}
     " Version ${PROJECT_VERSION}"
     ", "
     ${copyright}
 )
 set(MACOSX_BUNDLE_INFO_STRING ${info_string})
-set(MACOSX_BUNDLE_GUI_IDENTIFIER "${target}")
+set(MACOSX_BUNDLE_GUI_IDENTIFIER "ffdropenc")
 set(MACOSX_BUNDLE_LONG_VERSION_STRING
-        "${target}-${CMAKE_BUILD_TYPE} Version ${PROJECT_VERSION}")
-set(MACOSX_BUNDLE_BUNDLE_NAME ${target})
+        "ffdropenc-${CMAKE_BUILD_TYPE} Version ${PROJECT_VERSION}")
+set(MACOSX_BUNDLE_BUNDLE_NAME ffdropenc)
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
 set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
 set(MACOSX_BUNDLE_COPYRIGHT ${copyright})
 
-add_executable(${target}
+add_executable(ffdropenc
     MACOSX_BUNDLE
     WIN32
     ${hdrs}
@@ -51,28 +49,33 @@ add_executable(${target}
     ${rccs}
     ${icon_path}
 )
-target_include_directories(${target}
+target_include_directories(ffdropenc
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
         ${CMAKE_CURRENT_BINARY_DIR}
 )
-set_target_properties(${target}
+set_target_properties(ffdropenc
     PROPERTIES
         AUTOMOC on
         AUTOUIC on
         AUTORCC on
 )
-target_link_libraries(${target}
+target_link_libraries(ffdropenc
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
     ffde::core
 )
 
-install(TARGETS ${target}
+install(TARGETS ffdropenc
     BUNDLE DESTINATION . COMPONENT Programs
     RUNTIME DESTINATION bin COMPONENT Programs
+)
+
+add_dependencies(ffdropenc ffmpeg)
+add_custom_command(TARGET ffdropenc POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${EXECUTABLE_OUTPUT_PATH}/ffmpeg $<TARGET_FILE_DIR:ffdropenc>
 )
 
 ### App Packaging ###
@@ -83,12 +86,12 @@ set(request_qt_conf off)
 set(plugins_dir "")
 set(components Programs)
 if (APPLE)
-    set(vc_exe "${target}.app")
+    set(vc_exe "ffdropenc.app")
     list(APPEND plugins qcocoa)
 elseif (WIN32)
-    set(vc_exe "${target}.exe")
+    set(vc_exe "ffdropenc.exe")
 else ()
-    set(vc_exe "${target}")
+    set(vc_exe "ffdropenc")
 endif()
 if(APPLE OR WIN32)
     include(DeployQt5)

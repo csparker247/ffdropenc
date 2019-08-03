@@ -1,7 +1,7 @@
 # ffdropenc
 # Written by: Seth Parker
 
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
 project("ffdropenc" VERSION 2.0.0)
 

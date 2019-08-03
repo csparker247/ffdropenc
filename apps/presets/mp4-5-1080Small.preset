@@ -20,7 +20,7 @@
               { "filter" : "scale", "mode" : 1, "width" : 1920, "height" : 1080, "dar" : "16/9" }
             ],
             "flags" : [
-              { "flag" : "-preset veryslow" }
+              { "key" : "-preset", "val" : "veryslow" }
             ]
           },
 

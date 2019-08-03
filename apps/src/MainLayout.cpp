@@ -16,6 +16,7 @@
 #include <QPushButton>
 #include <QTextEdit>
 #include <QVBoxLayout>
+#include <QCoreApplication>
 
 #include "ffdropenc.hpp"
 #include "ffdropenc/Filesystem.hpp"
@@ -68,7 +69,8 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
 
     // Setup process
     ffmpeg = new QProcess();
-    ffmpeg->setProgram("echo");
+    ffmpeg->setWorkingDirectory(QCoreApplication::applicationDirPath());
+    ffmpeg->setProgram("ffmpeg");
     connect(ffmpeg, &QProcess::started, this, &MainLayout::onTranscodeStart);
     connect(
         ffmpeg, &QProcess::readyReadStandardOutput, this,
@@ -79,6 +81,7 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     connect(
         ffmpeg, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         this, &MainLayout::onTranscodeFinished);
+    connect(ffmpeg, &QProcess::errorOccurred, this, &MainLayout::onTranscodeError);
 
     // load presets
     load_presets_();
@@ -196,4 +199,9 @@ void MainLayout::onTranscodeFinished(
         ffmpeg->setArguments(q.encodeArguments());
         ffmpeg->start();
     }
+}
+
+void MainLayout::onTranscodeError(QProcess::ProcessError error)
+{
+    qDebug() << "Error" << error;
 }

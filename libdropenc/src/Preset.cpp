@@ -119,7 +119,8 @@ QStringList Preset::getSettings(size_t index)
             json flags = s["flags"];
             for (json& flag : flags) {
                 settings << QString::fromStdString(
-                    flag["flag"].get<std::string>());
+                    flag["key"].get<std::string>());
+                settings << QString::fromStdString(flag["val"].get<std::string>());
             }
         }
 
@@ -127,8 +128,7 @@ QStringList Preset::getSettings(size_t index)
 
     // Fast start atom
     if (output["faststart"].get<bool>()) {
-        settings << "-movflags"
-                 << "faststart";
+        settings << "-movflags" << "faststart";
     }
 
     return settings;
@@ -177,7 +177,7 @@ QString Preset::construct_filter_graph_(json filters)
                     auto dar = filter["dar"].get<std::string>();
                     command = "scale=iw*sar:ih,";
                     command.append("scale=");
-                    command.append("\"\'w=if(lt(dar, ");
+                    command.append("\'w=if(lt(dar, ");
                     command.append(QString::fromStdString(dar));
                     command.append("), trunc(oh*a/2)*2, min(");
                     command.append(QString::fromStdString(w));
@@ -186,7 +186,7 @@ QString Preset::construct_filter_graph_(json filters)
                     command.append(QString::fromStdString(dar));
                     command.append("), trunc(ow/a/2)*2, min(");
                     command.append(QString::fromStdString(h));
-                    command.append(",ceil(ih/2)*2))\'\",");
+                    command.append(",ceil(ih/2)*2))\',");
                     command.append("setsar=1");
                     break;
             }
