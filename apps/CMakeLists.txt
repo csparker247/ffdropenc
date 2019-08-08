@@ -79,16 +79,6 @@ add_custom_command(TARGET ffdropenc POST_BUILD
 )
 
 ### App Packaging ###
-if (APPLE)
-    set(FFDROPENC_PACKAGE "ffdropenc.app")
-elseif (WIN32)
-    set(FFDROPENC_PACKAGE "ffdropenc.exe")
-else ()
-    set(FFDROPENC_PACKAGE "ffdropenc")
-endif()
 if(APPLE OR WIN32)
-    add_custom_command(
-        TARGET ffdropenc POST_BUILD
-        COMMAND "${DEPLOYQT_EXECUTABLE}" "${EXECUTABLE_OUTPUT_PATH}/${FFDROPENC_PACKAGE}"
-    )
+    qt5_deploy_bundle(ffdropenc)
 endif()
