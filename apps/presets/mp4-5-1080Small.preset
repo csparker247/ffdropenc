@@ -1,6 +1,6 @@
 {
-  "listname" : "MP4 - H.264/AAC [1080p, Very Slow Encode]",
-  "consolename" : "MP4 [Very Slow Encode]",
+  "listname" : "MP4 - H.264/AAC [1080p, Very Slow]",
+  "consolename" : "MP4 [Very Slow]",
 
   "outputs" : [
     { "extension" : "mp4",

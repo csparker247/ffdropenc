@@ -22,9 +22,11 @@ public:
     void dragLeaveEvent(QDragLeaveEvent* event) override;
     void dropEvent(QDropEvent* event) override;
 
-    void processFiles(std::vector<std::filesystem::path>& files);
+signals:
+    void filesDropped(std::vector<std::filesystem::path>);
 
 public slots:
+    void processFiles(std::vector<std::filesystem::path> files);
     void onTranscodeStart();
     void onTranscodeUpdateOut();
     void onTranscodeUpdateErr();
@@ -39,4 +41,5 @@ protected:
     QPointer<QProcess> ffmpeg;
 
     static void load_presets_();
+    void start_or_advance_queue_();
 };

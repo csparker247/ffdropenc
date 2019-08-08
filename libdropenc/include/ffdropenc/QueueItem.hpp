@@ -37,6 +37,8 @@ public:
 
     QStringList encodeArguments() const;
 
+    Preset::Pointer preset() const { return preset_; }
+
 private:
     // input location
     std::filesystem::path inputPath_;
