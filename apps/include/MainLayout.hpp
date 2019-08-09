@@ -11,6 +11,8 @@
 #include <QStringList>
 #include <QTextEdit>
 
+#include "SettingsDialog.hpp"
+
 class MainLayout : public QMainWindow
 {
     Q_OBJECT
@@ -38,8 +40,9 @@ protected:
     QPointer<QProgressBar> progressBar;
     QPointer<QPushButton> cancelBtn;
     QPointer<QTextEdit> details;
+    QPointer<SettingsDialog> settings_;
     QPointer<QProcess> ffmpeg;
 
-    static void load_presets_();
+    void load_presets_();
     void start_or_advance_queue_();
 };

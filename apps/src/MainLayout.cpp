@@ -67,6 +67,9 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     setCentralWidget(new QWidget());
     centralWidget()->setLayout(layout);
 
+    // Settings dialog
+    settings_ = new SettingsDialog(this);
+
     // Setup process
     ffmpeg = new QProcess();
     ffmpeg->setWorkingDirectory(QCoreApplication::applicationDirPath());
@@ -126,6 +129,8 @@ void MainLayout::processFiles(std::vector<fs::path> files)
     files = ffdropenc::FilterFileList(files);
 
     // Select the preset
+    auto result = settings_->exec();
+
     Preset::Pointer preset;
     bool ok;
     auto item = QInputDialog::getItem(
@@ -175,6 +180,8 @@ void MainLayout::load_presets_()
     }
 
     std::sort(PRESET_NAMES.begin(), PRESET_NAMES.end());
+
+    settings_->setPresetList(PRESET_NAMES);
 }
 
 void MainLayout::onTranscodeStart()

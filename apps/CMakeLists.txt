@@ -3,12 +3,14 @@ configure_file(include/ffdropenc.hpp.in ffdropenc.hpp)
 
 set(hdrs
     include/MainLayout.hpp
+    include/SettingsDialog.hpp
 )
 
 set(srcs
     src/ffdropenc.cpp
     src/MainApplication.cpp
     src/MainLayout.cpp
+    src/SettingsDialog.cpp
 )
 
 set(rccs Resources.qrc Presets.qrc)
