@@ -50,3 +50,8 @@ void SettingsDialog::setPresetList(const QStringList& presetIDs)
 {
     presetPicker_->addItems(presetIDs);
 }
+
+QString SettingsDialog::getPreset() const
+{
+    return presetPicker_->currentText();
+}

@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QFileDialog>
 #include <QPointer>
+#include <QString>
 #include <QStringList>
 #include <QWidget>
 
@@ -13,7 +14,9 @@ class SettingsDialog : public QDialog
 public:
     explicit SettingsDialog(QWidget* parent);
 
-    void setPresetList(const QStringList& presetIDs);
+    void setPresetList(const QStringList& presets);
+
+    QString getPreset() const;
 
 private:
     QPointer<QComboBox> presetPicker_;

@@ -7,7 +7,6 @@
 #include <QDirIterator>
 #include <QDropEvent>
 #include <QHBoxLayout>
-#include <QInputDialog>
 #include <QLabel>
 #include <QList>
 #include <QMap>
@@ -130,17 +129,12 @@ void MainLayout::processFiles(std::vector<fs::path> files)
 
     // Select the preset
     auto result = settings_->exec();
-
-    Preset::Pointer preset;
-    bool ok;
-    auto item = QInputDialog::getItem(
-        this, "ffdropenc", "Select output preset:", PRESET_NAMES, 0, false,
-        &ok);
-    if (ok && !item.isEmpty()) {
-        preset = PRESETS[item];
-    } else {
+    if (result == QDialog::Rejected) {
         return;
     }
+
+    // Preset
+    auto preset = PRESETS[settings_->getPreset()];
 
     // Create temp queue
     std::vector<QueueItem> tempQueue;
