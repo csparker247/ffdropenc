@@ -18,9 +18,14 @@ public:
 
     QString getPreset() const;
 
+public slots:
+    void onDirPicked(const QString& t);
+
 private:
     QPointer<QComboBox> presetPicker_;
     QPointer<QComboBox> inputFPSPicker_;
+    QPointer<QComboBox> outputFPSPicker_;
     QPointer<QComboBox> outputDirList_;
+    QString currentDir_;
     QPointer<QFileDialog> outputDirPicker_;
 };
