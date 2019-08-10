@@ -10,6 +10,7 @@
 
 const QString SAME_AS_SOURCE_TEXT("[Same as source]");
 const QString SELECT_DIR_TEXT("Browse...");
+const QStringList FPS_OPTS{"10", "24", "25", "29.97", "30", "60", "120"};
 
 SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
 {
@@ -42,7 +43,8 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     inputFPSLayout->setLayout(new QVBoxLayout());
     inputFPSLayout->layout()->addWidget(new QLabel("Input FPS:"));
     inputFPSPicker_ = new QComboBox();
-    inputFPSPicker_->addItem("30");
+    inputFPSPicker_->addItems(FPS_OPTS);
+    inputFPSPicker_->setCurrentText("30");
     inputFPSLayout->layout()->addWidget(inputFPSPicker_);
     frameRateGroup->layout()->addWidget(inputFPSLayout);
 
@@ -51,7 +53,7 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     outputFPSLayout->setLayout(new QVBoxLayout());
     outputFPSLayout->layout()->addWidget(new QLabel("Output FPS:"));
     outputFPSPicker_ = new QComboBox();
-    // outputFPSPicker_->addItem("30");
+    outputFPSPicker_->addItem("---");
     outputFPSLayout->layout()->addWidget(outputFPSPicker_);
     frameRateGroup->layout()->addWidget(outputFPSLayout);
     outputFPSLayout->setEnabled(false);
@@ -95,11 +97,6 @@ void SettingsDialog::setPresetList(const QStringList& presetIDs)
     presetPicker_->addItems(presetIDs);
 }
 
-QString SettingsDialog::getPreset() const
-{
-    return presetPicker_->currentText();
-}
-
 void SettingsDialog::onDirPicked(const QString& t)
 {
     if (t != SELECT_DIR_TEXT) {
@@ -125,4 +122,24 @@ void SettingsDialog::onDirPicked(const QString& t)
     } else {
         outputDirList_->setCurrentText(currentDir_);
     }
+}
+
+QString SettingsDialog::getPreset() const
+{
+    return presetPicker_->currentText();
+}
+
+QString SettingsDialog::getInputFPS() const
+{
+    return inputFPSPicker_->currentText();
+}
+
+QString SettingsDialog::getOutputFPS() const
+{
+    return outputFPSPicker_->currentText();
+}
+
+QString SettingsDialog::getOutputDir() const
+{
+    return outputDirList_->currentText();
 }

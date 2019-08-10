@@ -17,6 +17,9 @@ public:
     void setPresetList(const QStringList& presets);
 
     QString getPreset() const;
+    QString getInputFPS() const;
+    QString getOutputFPS() const;
+    QString getOutputDir() const;
 
 public slots:
     void onDirPicked(const QString& t);
