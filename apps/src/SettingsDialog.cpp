@@ -1,5 +1,6 @@
 #include "SettingsDialog.hpp"
 
+#include <QDialogButtonBox>
 #include <QLabel>
 #include <QSpacerItem>
 #include <QVBoxLayout>
@@ -36,6 +37,13 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     outputDirList_->addItem("Same as source");
     layout->addWidget(outputDirList_);
     layout->addStretch(1);
+
+    // Standard buttons
+    auto buttonBox =
+        new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    layout->addWidget(buttonBox);
 }
 
 void SettingsDialog::setPresetList(const QStringList& presetIDs)
