@@ -18,16 +18,18 @@
 #include <QVBoxLayout>
 
 #include "ffdropenc.hpp"
+#include "ffdropenc/EncodeSettings.hpp"
 #include "ffdropenc/Filesystem.hpp"
 #include "ffdropenc/Preset.hpp"
 #include "ffdropenc/QueueItem.hpp"
+#include "EncodingQueue.hpp"
 
 using namespace ffdropenc;
 namespace fs = std::filesystem;
 
 QMap<QString, Preset::Pointer> PRESETS;
 QStringList PRESET_NAMES;
-std::deque<QueueItem> QUEUE;
+EncodingQueue QUEUE;
 
 MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
 {
@@ -69,23 +71,6 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     // Settings dialog
     settings_ = new SettingsDialog(this);
 
-    // Setup process
-    ffmpeg = new QProcess();
-    ffmpeg->setWorkingDirectory(QCoreApplication::applicationDirPath());
-    ffmpeg->setProgram("ffmpeg");
-    connect(ffmpeg, &QProcess::started, this, &MainLayout::onTranscodeStart);
-    connect(
-        ffmpeg, &QProcess::readyReadStandardOutput, this,
-        &MainLayout::onTranscodeUpdateOut);
-    connect(
-        ffmpeg, &QProcess::readyReadStandardError, this,
-        &MainLayout::onTranscodeUpdateErr);
-    connect(
-        ffmpeg, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-        this, &MainLayout::onTranscodeFinished);
-    connect(
-        ffmpeg, &QProcess::errorOccurred, this, &MainLayout::onTranscodeError);
-
     connect(this, &MainLayout::filesDropped, this, &MainLayout::processFiles);
 
     // load presets
@@ -124,38 +109,17 @@ void MainLayout::dropEvent(QDropEvent* event)
 
 void MainLayout::processFiles(std::vector<fs::path> files)
 {
-    // Expand directories and filter bad files
-    files = ffdropenc::FilterFileList(files);
-
     // Select the preset
     auto result = settings_->exec();
     if (result == QDialog::Rejected) {
         return;
     }
 
-    // Preset
-    auto preset = PRESETS[settings_->getPreset()];
+    // Get encode settings
+    EncodeSettings settings;
+    settings.preset = PRESETS[settings_->getPreset()];
 
-    // Create temp queue
-    std::vector<QueueItem> tempQueue;
-    for (const auto& f : files) {
-        try {
-            tempQueue.emplace_back(f, preset);
-        } catch (const std::runtime_error& e) {
-            qDebug() << e.what() << ":" << f.c_str();
-        }
-    }
-
-    // Sort queue by name and remove duplicates
-    std::sort(tempQueue.begin(), tempQueue.end());
-    auto duplicateRemover = std::unique(tempQueue.begin(), tempQueue.end());
-    tempQueue.resize(std::distance(tempQueue.begin(), duplicateRemover));
-
-    // insert items into global queue
-    QUEUE.insert(QUEUE.end(), tempQueue.begin(), tempQueue.end());
-
-    // Start processing the queue
-    start_or_advance_queue_();
+    QUEUE.insert(std::move(files), settings);
 }
 
 void MainLayout::load_presets_()
@@ -176,51 +140,4 @@ void MainLayout::load_presets_()
     std::sort(PRESET_NAMES.begin(), PRESET_NAMES.end());
 
     settings_->setPresetList(PRESET_NAMES);
-}
-
-void MainLayout::onTranscodeStart()
-{
-    qDebug() << "Started";
-    progressBar->setMaximum(100);
-}
-
-void MainLayout::onTranscodeUpdateOut()
-{
-    qDebug() << "Out" << ffmpeg->readAllStandardOutput();
-}
-
-void MainLayout::onTranscodeUpdateErr()
-{
-    qDebug() << "Err" << ffmpeg->readAllStandardError();
-}
-
-void MainLayout::onTranscodeFinished(
-    int exitCode, QProcess::ExitStatus exitStatus)
-{
-    qDebug() << "Finished" << exitCode << exitStatus;
-    progressBar->setMaximum(0);
-    start_or_advance_queue_();
-}
-
-void MainLayout::onTranscodeError(QProcess::ProcessError error)
-{
-    qDebug() << "Error" << error;
-}
-
-void MainLayout::start_or_advance_queue_()
-{
-    if (!QUEUE.empty() && ffmpeg->state() == QProcess::NotRunning) {
-        auto q = QUEUE.front();
-        QUEUE.pop_front();
-
-        progressBar->setMaximum(100);
-        shortLabel->setText(
-            "Transcoding " + q.preset()->getConsoleName() + " version of " +
-            q.inputPath().stem().c_str() + "...");
-
-        ffmpeg->setArguments(q.encodeArguments());
-        ffmpeg->start();
-    } else {
-        shortLabel->setText("Drag files to window to begin...");
-    }
 }

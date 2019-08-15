@@ -4,6 +4,7 @@ configure_file(include/ffdropenc.hpp.in ffdropenc.hpp)
 set(hdrs
     include/MainLayout.hpp
     include/SettingsDialog.hpp
+    include/EncodingQueue.hpp
 )
 
 set(srcs
@@ -11,6 +12,7 @@ set(srcs
     src/MainApplication.cpp
     src/MainLayout.cpp
     src/SettingsDialog.cpp
+    src/EncodingQueue.cpp
 )
 
 set(rccs Resources.qrc Presets.qrc)
@@ -75,9 +77,11 @@ install(TARGETS ffdropenc
     RUNTIME DESTINATION bin COMPONENT Programs
 )
 
-add_dependencies(ffdropenc ffmpeg)
+add_dependencies(ffdropenc ffmpeg x264)
 add_custom_command(TARGET ffdropenc POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${EXECUTABLE_OUTPUT_PATH}/ffmpeg $<TARGET_FILE_DIR:ffdropenc>
+    COMMAND ${CMAKE_COMMAND} -E copy ${EXECUTABLE_OUTPUT_PATH}/ffprobe $<TARGET_FILE_DIR:ffdropenc>
+    COMMAND ${CMAKE_COMMAND} -E copy ${EXECUTABLE_OUTPUT_PATH}/x264 $<TARGET_FILE_DIR:ffdropenc>
 )
 
 ### App Packaging ###

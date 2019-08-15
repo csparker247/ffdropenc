@@ -8,6 +8,7 @@
 #include <QUrl>
 
 #include "ffdropenc/Preset.hpp"
+#include "ffdropenc/EncodeSettings.hpp"
 
 namespace ffdropenc
 {

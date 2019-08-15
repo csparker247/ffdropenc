@@ -5,7 +5,6 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QPointer>
-#include <QProcess>
 #include <QProgressBar>
 #include <QPushButton>
 #include <QStringList>
@@ -29,11 +28,6 @@ signals:
 
 public slots:
     void processFiles(std::vector<std::filesystem::path> files);
-    void onTranscodeStart();
-    void onTranscodeUpdateOut();
-    void onTranscodeUpdateErr();
-    void onTranscodeFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    void onTranscodeError(QProcess::ProcessError error);
 
 protected:
     QPointer<QLabel> shortLabel;
@@ -41,7 +35,6 @@ protected:
     QPointer<QPushButton> cancelBtn;
     QPointer<QTextEdit> details;
     QPointer<SettingsDialog> settings_;
-    QPointer<QProcess> ffmpeg;
 
     void load_presets_();
     void start_or_advance_queue_();
