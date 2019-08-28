@@ -7,8 +7,8 @@
 #include <QStringList>
 #include <QUrl>
 
-#include "ffdropenc/Preset.hpp"
 #include "ffdropenc/EncodeSettings.hpp"
+#include "ffdropenc/Preset.hpp"
 
 namespace ffdropenc
 {
@@ -17,9 +17,14 @@ class QueueItem
 {
 public:
     enum class Type { Undefined, Video, Sequence };
+    enum class Status { Error = -1, ReadyAnalysis, ReadyEncode, Done };
+    using Pointer = std::shared_ptr<QueueItem>;
 
     QueueItem() = default;
-    QueueItem(const std::filesystem::path& path, Preset::Pointer preset);
+    QueueItem(std::filesystem::path path, Preset::Pointer preset);
+
+    static Pointer New();
+    static Pointer New(std::filesystem::path path, Preset::Pointer preset);
 
     // Operators
     bool operator<(const QueueItem&) const;
@@ -28,6 +33,9 @@ public:
     // Accessors
     std::filesystem::path inputPath() const { return inputPath_; }
     std::filesystem::path outputPath() const;
+
+    void setStatus(Status s) { status_ = s; }
+    Status status() const { return status_; }
 
     // Modifiers
     void setOutputDir(const std::filesystem::path& d) { outputDir_ = d; }
@@ -43,7 +51,8 @@ public:
 private:
     // input location
     std::filesystem::path inputPath_;
-    Type type_;
+    Type type_{Type::Undefined};
+    Status status_{Status::ReadyAnalysis};
 
     // output directory
     std::filesystem::path outputDir_;

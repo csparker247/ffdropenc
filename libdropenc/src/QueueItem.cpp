@@ -15,8 +15,8 @@ static const ExtensionList FF_IMG_EXTENSIONS = {"DPX", "JPG",  "JPEG", "PNG",
                                                 "TIF", "TIFF", "TGA"};
 
 // Constructors
-QueueItem::QueueItem(const std::filesystem::path& path, Preset::Pointer preset)
-    : inputPath_{path}, preset_{std::move(preset)}
+QueueItem::QueueItem(std::filesystem::path path, Preset::Pointer preset)
+    : inputPath_{std::move(path)}, preset_{std::move(preset)}
 {
     // set the output file
     outputDir_ = inputPath_.parent_path();
@@ -34,6 +34,14 @@ QueueItem::QueueItem(const std::filesystem::path& path, Preset::Pointer preset)
         case Type::Undefined:
             throw std::runtime_error("Unable to determine type");
     }
+}
+
+QueueItem::Pointer QueueItem::New() { return std::make_shared<QueueItem>(); }
+
+QueueItem::Pointer QueueItem::New(
+    std::filesystem::path path, ffdropenc::Preset::Pointer preset)
+{
+    return std::make_shared<QueueItem>(path, preset);
 }
 
 // Operators

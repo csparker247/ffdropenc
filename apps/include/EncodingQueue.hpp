@@ -1,12 +1,11 @@
 #pragma once
 
-#include <deque>
-#include <vector>
 #include <filesystem>
+#include <vector>
 
 #include <QObject>
-#include <QProcess>
 #include <QPointer>
+#include <QProcess>
 
 #include "ffdropenc/EncodeSettings.hpp"
 #include "ffdropenc/QueueItem.hpp"
@@ -17,7 +16,9 @@ class EncodingQueue : public QObject
 public:
     EncodingQueue();
 
-    void insert(std::vector<std::filesystem::path> files, const ffdropenc::EncodeSettings& s);
+    void insert(
+        std::vector<std::filesystem::path> files,
+        const ffdropenc::EncodeSettings& s);
     void start();
     void stop();
 
@@ -43,11 +44,12 @@ signals:
     void allStopped();
 
 protected:
-    std::deque<ffdropenc::QueueItem> analysisQueue_;
-    std::deque<ffdropenc::QueueItem> encodeQueue_;
+    std::vector<ffdropenc::QueueItem::Pointer> queue_;
 
     QPointer<QProcess> analyzer_;
+    ffdropenc::QueueItem::Pointer analyzerCurrentItem_;
     QPointer<QProcess> encoder_;
+    ffdropenc::QueueItem::Pointer encoderCurrentItem_;
 
     void start_or_advance_queue_();
 };

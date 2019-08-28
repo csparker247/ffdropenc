@@ -12,4 +12,4 @@ struct EncodeSettings {
     float outputFPS{30};
     std::filesystem::path outputDir;
 };
-}
+}  // namespace ffdropenc

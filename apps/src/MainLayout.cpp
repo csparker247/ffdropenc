@@ -17,12 +17,12 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
+#include "EncodingQueue.hpp"
 #include "ffdropenc.hpp"
 #include "ffdropenc/EncodeSettings.hpp"
 #include "ffdropenc/Filesystem.hpp"
 #include "ffdropenc/Preset.hpp"
 #include "ffdropenc/QueueItem.hpp"
-#include "EncodingQueue.hpp"
 
 using namespace ffdropenc;
 namespace fs = std::filesystem;
