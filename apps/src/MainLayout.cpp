@@ -72,6 +72,14 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     settings_ = new SettingsDialog(this);
 
     connect(this, &MainLayout::filesDropped, this, &MainLayout::processFiles);
+    connect(
+        &QUEUE, &EncodingQueue::queueRunning, this,
+        &MainLayout::encodingStarted);
+    connect(
+        &QUEUE, &EncodingQueue::queueStopped, this, &MainLayout::encodingDone);
+    connect(
+        &QUEUE, &EncodingQueue::progressUpdated, this,
+        &MainLayout::updateProgress);
 
     // load presets
     load_presets_();
@@ -104,7 +112,7 @@ void MainLayout::dropEvent(QDropEvent* event)
     }
 
     event->accept();
-    emit(filesDropped(paths));
+    emit filesDropped(paths);
 }
 
 void MainLayout::processFiles(std::vector<fs::path> files)
@@ -120,6 +128,16 @@ void MainLayout::processFiles(std::vector<fs::path> files)
     settings.preset = PRESETS[settings_->getPreset()];
 
     QUEUE.insert(std::move(files), settings);
+}
+
+void MainLayout::encodingStarted() { progressBar->setMaximum(100); }
+
+void MainLayout::encodingDone() { progressBar->setMaximum(0); }
+
+void MainLayout::updateProgress(float percent)
+{
+    qDebug() << "Progress: " << static_cast<int>(std::floor(percent));
+    progressBar->setValue(static_cast<int>(std::floor(percent)));
 }
 
 void MainLayout::load_presets_()

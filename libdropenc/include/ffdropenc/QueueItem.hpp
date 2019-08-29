@@ -37,6 +37,9 @@ public:
     void setStatus(Status s) { status_ = s; }
     Status status() const { return status_; }
 
+    void setDuration(float d) { duration_ = d; }
+    float duration() const { return duration_; }
+
     // Modifiers
     void setOutputDir(const std::filesystem::path& d) { outputDir_ = d; }
     void setOutputFilename(const std::filesystem::path& f)
@@ -60,9 +63,8 @@ private:
     std::filesystem::path outputFileName_;
 
     // progress tracking
-    double fps_{-1};
-    unsigned long frames_{-1};
-    double duration_{-1};
+    float fps_{-1};
+    float duration_{-1};
 
     // image sequence
     static Type determine_type_(const std::filesystem::path& p);
@@ -73,7 +75,5 @@ private:
     // encoding parameters
     Preset::Pointer preset_;
     bool overwrite_{true};
-
-    bool transcoded_{false};
 };
 }  // namespace ffdropenc

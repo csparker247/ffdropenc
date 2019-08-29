@@ -36,12 +36,13 @@ public slots:
     void onEncodeError(QProcess::ProcessError error);
 
 signals:
-    void progressUpdated();
     void encodeStarted();
     void encodeCompleted();
     void analysisStarted();
     void analysisCompleted();
-    void allStopped();
+    void queueRunning();
+    void queueStopped();
+    void progressUpdated(float percent);
 
 protected:
     std::vector<ffdropenc::QueueItem::Pointer> queue_;

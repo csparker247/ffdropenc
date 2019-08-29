@@ -28,6 +28,9 @@ signals:
 
 public slots:
     void processFiles(std::vector<std::filesystem::path> files);
+    void encodingStarted();
+    void encodingDone();
+    void updateProgress(float percent);
 
 protected:
     QPointer<QLabel> shortLabel;
@@ -37,5 +40,4 @@ protected:
     QPointer<SettingsDialog> settings_;
 
     void load_presets_();
-    void start_or_advance_queue_();
 };

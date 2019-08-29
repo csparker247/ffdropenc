@@ -3,19 +3,23 @@
 #include <algorithm>
 
 #include "ffdropenc/Filesystem.hpp"
+#include "ffdropenc/TimeTools.hpp"
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QDebug>
+#include <QRegExp>
 
 using namespace ffdropenc;
 
 namespace fs = std::filesystem;
 
+QRegExp ENCODER_TIME{".*time=(\\d+:\\d+:\\d+.\\d+).*(\n|\r|\r\f)"};
+
 EncodingQueue::EncodingQueue()
 {
     // Setup analyzer
     analyzer_ = new QProcess();
-    analyzer_->setWorkingDirectory(QCoreApplication::applicationDirPath());
+    analyzer_->setWorkingDirectory(QApplication::applicationDirPath());
     analyzer_->setProgram("sleep");
     connect(
         analyzer_, &QProcess::started, this, &EncodingQueue::onAnalyzeStart);
@@ -35,7 +39,7 @@ EncodingQueue::EncodingQueue()
 
     // Setup encoder
     encoder_ = new QProcess();
-    encoder_->setWorkingDirectory(QCoreApplication::applicationDirPath());
+    encoder_->setWorkingDirectory(QApplication::applicationDirPath());
     encoder_->setProgram("ffmpeg");
     connect(encoder_, &QProcess::started, this, &EncodingQueue::onEncodeStart);
     connect(
@@ -63,7 +67,7 @@ void EncodingQueue::stop()
     encoder_->kill();
     encoderCurrentItem_->setStatus(QueueItem::Status::ReadyEncode);
     encoderCurrentItem_ = nullptr;
-    emit(allStopped());
+    emit queueStopped();
 }
 
 void EncodingQueue::insert(std::vector<fs::path> files, const EncodeSettings& s)
@@ -97,7 +101,6 @@ void EncodingQueue::onAnalyzeStart()
 {
     qDebug() << "Analysis started:"
              << analyzerCurrentItem_->inputPath().stem().c_str();
-    // progressBar->setMaximum(100);
 }
 
 void EncodingQueue::onAnalyzeUpdateOut()
@@ -114,7 +117,6 @@ void EncodingQueue::onAnalyzeFinished(
     int exitCode, QProcess::ExitStatus exitStatus)
 {
     qDebug() << "Analyze Finished" << exitCode << exitStatus;
-    // progressBar->setMaximum(0);
 
     // Update status
     analyzerCurrentItem_->setStatus(QueueItem::Status::ReadyEncode);
@@ -131,7 +133,7 @@ void EncodingQueue::onEncodeStart()
 {
     qDebug() << "Encode started:"
              << encoderCurrentItem_->inputPath().stem().c_str();
-    // progressBar->setMaximum(100);
+    emit progressUpdated(0);
 }
 
 void EncodingQueue::onEncodeUpdateOut()
@@ -141,14 +143,21 @@ void EncodingQueue::onEncodeUpdateOut()
 
 void EncodingQueue::onEncodeUpdateErr()
 {
-    qDebug() << "Encode Err:" << encoder_->readAllStandardError();
+    auto line = encoder_->readAllStandardError();
+    int pos = 0;
+    while ((pos = ENCODER_TIME.indexIn(line, pos)) != -1) {
+        auto time = DurationStringToSeconds(ENCODER_TIME.cap(1));
+        emit progressUpdated(time / encoderCurrentItem_->duration() * 100);
+        pos += ENCODER_TIME.matchedLength();
+    }
+    // qDebug() << "Encode Err:" << line;
 }
 
 void EncodingQueue::onEncodeFinished(
     int exitCode, QProcess::ExitStatus exitStatus)
 {
     qDebug() << "Encode Finished" << exitCode << exitStatus;
-    // progressBar->setMaximum(0);
+    emit progressUpdated(100);
     encoderCurrentItem_->setStatus(QueueItem::Status::Done);
     queue_.erase(
         std::remove(queue_.begin(), queue_.end(), encoderCurrentItem_),
@@ -164,6 +173,12 @@ void EncodingQueue::onEncodeError(QProcess::ProcessError error)
 
 void EncodingQueue::start_or_advance_queue_()
 {
+    if (queue_.empty()) {
+        emit queueStopped();
+    } else {
+        emit queueRunning();
+    }
+
     // Advance the analysis queue
     if (!queue_.empty() && analyzer_->state() == QProcess::NotRunning) {
         for (auto& q : queue_) {
@@ -174,7 +189,7 @@ void EncodingQueue::start_or_advance_queue_()
             analyzerCurrentItem_ = q;
             analyzer_->setArguments({"5"});
             analyzer_->start();
-            emit(analysisStarted());
+            emit analysisStarted();
         }
     }
 
@@ -187,7 +202,7 @@ void EncodingQueue::start_or_advance_queue_()
             encoderCurrentItem_ = q;
             encoder_->setArguments(q->encodeArguments());
             encoder_->start();
-            emit(encodeStarted());
+            emit encodeStarted();
         }
     }
 }

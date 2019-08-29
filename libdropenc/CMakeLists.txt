@@ -6,6 +6,7 @@ set(srcs
     src/Filesystem.cpp
     src/Preset.cpp
     src/QueueItem.cpp
+    src/TimeTools.cpp
 )
 
 add_library(${target} ${srcs})

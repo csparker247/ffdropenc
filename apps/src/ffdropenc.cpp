@@ -1,9 +1,11 @@
 #include "MainApplication.hpp"
 #include "MainLayout.hpp"
 
+#include <QScopedPointer>
+
 int main(int argc, char* argv[])
 {
-    MainApplication app(argc, argv);
+    QPointer<MainApplication> app = new MainApplication(argc, argv);
     MainLayout mainWindow;
 
     // Set the title bar and icon
@@ -12,7 +14,7 @@ int main(int argc, char* argv[])
     // mainWindow.setWindowIcon(QIcon{":/logo-s"});
 
     mainWindow.show();
-    app.exec();
+    app->exec();
 
     return EXIT_SUCCESS;
 }
