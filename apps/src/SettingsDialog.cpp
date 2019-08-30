@@ -53,10 +53,10 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     outputFPSLayout->setLayout(new QVBoxLayout());
     outputFPSLayout->layout()->addWidget(new QLabel("Output FPS:"));
     outputFPSPicker_ = new QComboBox();
-    outputFPSPicker_->addItem("---");
+    outputFPSPicker_->addItems(FPS_OPTS);
+    outputFPSPicker_->setCurrentText("30");
     outputFPSLayout->layout()->addWidget(outputFPSPicker_);
     frameRateGroup->layout()->addWidget(outputFPSLayout);
-    outputFPSLayout->setEnabled(false);
 
     // Output directory
     auto outputOptsGroup = new QGroupBox();
@@ -141,5 +141,9 @@ QString SettingsDialog::getOutputFPS() const
 
 QString SettingsDialog::getOutputDir() const
 {
-    return outputDirList_->currentText();
+    if (outputDirList_->currentText() == SAME_AS_SOURCE_TEXT) {
+        return "";
+    } else {
+        return outputDirList_->currentText();
+    }
 }

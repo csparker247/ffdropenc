@@ -21,10 +21,10 @@ public:
     using Pointer = std::shared_ptr<QueueItem>;
 
     QueueItem() = default;
-    QueueItem(std::filesystem::path path, Preset::Pointer preset);
+    QueueItem(std::filesystem::path path, EncodeSettings settings);
 
     static Pointer New();
-    static Pointer New(std::filesystem::path path, Preset::Pointer preset);
+    static Pointer New(std::filesystem::path path, EncodeSettings settings);
 
     // Operators
     bool operator<(const QueueItem&) const;
@@ -63,14 +63,14 @@ private:
     std::filesystem::path outputFileName_;
 
     // progress tracking
-    float fps_{-1};
+    QString inputFPS_;
+    QString outputFPS_;
     float duration_{-1};
 
     // image sequence
     static Type determine_type_(const std::filesystem::path& p);
-    void convert_to_seq_(const std::string& fps);
+    void convert_to_seq_();
     uint64_t startingIndex_{0};
-    std::string outputFPS_{"30000/1001"};
 
     // encoding parameters
     Preset::Pointer preset_;

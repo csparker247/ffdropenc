@@ -126,6 +126,9 @@ void MainLayout::processFiles(std::vector<fs::path> files)
     // Get encode settings
     EncodeSettings settings;
     settings.preset = PRESETS[settings_->getPreset()];
+    settings.inputFPS = settings_->getInputFPS();
+    settings.outputFPS = settings_->getOutputFPS();
+    settings.outputDir = settings_->getOutputDir().toStdString();
 
     QUEUE.insert(std::move(files), settings);
 }

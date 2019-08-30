@@ -2,14 +2,16 @@
 
 #include <filesystem>
 
+#include <QString>
+
 #include "ffdropenc/Preset.hpp"
 
 namespace ffdropenc
 {
 struct EncodeSettings {
     Preset::Pointer preset;
-    float inputFPS{30};
-    float outputFPS{30};
+    QString inputFPS{"30"};
+    QString outputFPS{"30"};
     std::filesystem::path outputDir;
 };
 }  // namespace ffdropenc

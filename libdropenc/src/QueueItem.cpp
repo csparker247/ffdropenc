@@ -15,21 +15,26 @@ static const ExtensionList FF_IMG_EXTENSIONS = {"DPX", "JPG",  "JPEG", "PNG",
                                                 "TIF", "TIFF", "TGA"};
 
 // Constructors
-QueueItem::QueueItem(std::filesystem::path path, Preset::Pointer preset)
-    : inputPath_{std::move(path)}, preset_{std::move(preset)}
+QueueItem::QueueItem(std::filesystem::path path, EncodeSettings settings)
+    : inputPath_{std::move(path)}, preset_{std::move(settings.preset)}
 {
     // set the output file
-    outputDir_ = inputPath_.parent_path();
+    if (settings.outputDir.empty()) {
+        outputDir_ = inputPath_.parent_path();
+    } else {
+        outputDir_ = settings.outputDir;
+    }
     outputFileName_ = inputPath_.stem();
 
     // Type stuff
     type_ = determine_type_(inputPath_);
     switch (type_) {
         case Type::Video:
-            // analyze_();
             break;
         case Type::Sequence:
-            convert_to_seq_("30000/1001");
+            inputFPS_ = settings.inputFPS;
+            outputFPS_ = settings.outputFPS;
+            convert_to_seq_();
             break;
         case Type::Undefined:
             throw std::runtime_error("Unable to determine type");
@@ -39,9 +44,9 @@ QueueItem::QueueItem(std::filesystem::path path, Preset::Pointer preset)
 QueueItem::Pointer QueueItem::New() { return std::make_shared<QueueItem>(); }
 
 QueueItem::Pointer QueueItem::New(
-    std::filesystem::path path, ffdropenc::Preset::Pointer preset)
+    std::filesystem::path path, EncodeSettings settings)
 {
-    return std::make_shared<QueueItem>(path, preset);
+    return std::make_shared<QueueItem>(path, settings);
 }
 
 // Operators
@@ -69,10 +74,8 @@ std::filesystem::path QueueItem::outputPath() const
 }
 
 // Convert this Item into an Img Sequence
-void QueueItem::convert_to_seq_(const std::string& fps)
+void QueueItem::convert_to_seq_()
 {
-    outputFPS_ = fps;
-
     // to-do: This only works if numerical pattern is at end of filename
     auto stem = inputPath_.stem().string();
     auto last_letter_pos = stem.find_last_not_of("0123456789");
@@ -105,12 +108,17 @@ QStringList QueueItem::encodeArguments() const
 
     // Settings for img sequences
     if (type_ == Type::Sequence) {
-        args << "-r" << QString::fromStdString(outputFPS_);
+        args << "-framerate" << inputFPS_;
         args << "-start_number" << QString::number(startingIndex_);
     }
 
     // The input file
     args << "-i" << QString::fromStdString(inputPath_.string());
+
+    // Output framerate
+    if (type_ == Type::Sequence && inputFPS_ != outputFPS_) {
+        args << "-r" << outputFPS_;
+    }
 
     // Get the settings for the first output of the selected preset
     for (size_t output = 0; output < preset_->numberOfOutputs(); ++output) {
