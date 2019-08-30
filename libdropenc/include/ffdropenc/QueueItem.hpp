@@ -55,7 +55,7 @@ private:
     // input location
     std::filesystem::path inputPath_;
     Type type_{Type::Undefined};
-    Status status_{Status::ReadyAnalysis};
+    Status status_{Status::ReadyEncode};
 
     // output directory
     std::filesystem::path outputDir_;

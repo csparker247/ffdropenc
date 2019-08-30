@@ -77,11 +77,9 @@ install(TARGETS ffdropenc
     RUNTIME DESTINATION bin COMPONENT Programs
 )
 
-add_dependencies(ffdropenc ffmpeg x264)
+add_dependencies(ffdropenc ffmpeg)
 add_custom_command(TARGET ffdropenc POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${EXECUTABLE_OUTPUT_PATH}/ffmpeg $<TARGET_FILE_DIR:ffdropenc>
-    COMMAND ${CMAKE_COMMAND} -E copy ${EXECUTABLE_OUTPUT_PATH}/ffprobe $<TARGET_FILE_DIR:ffdropenc>
-    COMMAND ${CMAKE_COMMAND} -E copy ${EXECUTABLE_OUTPUT_PATH}/x264 $<TARGET_FILE_DIR:ffdropenc>
 )
 
 ### App Packaging ###

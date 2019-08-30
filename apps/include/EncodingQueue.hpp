@@ -23,12 +23,6 @@ public:
     void stop();
 
 public slots:
-    void onAnalyzeStart();
-    void onAnalyzeUpdateOut();
-    void onAnalyzeUpdateErr();
-    void onAnalyzeFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    void onAnalyzeError(QProcess::ProcessError error);
-
     void onEncodeStart();
     void onEncodeUpdateOut();
     void onEncodeUpdateErr();
@@ -38,19 +32,15 @@ public slots:
 signals:
     void encodeStarted();
     void encodeCompleted();
-    void analysisStarted();
-    void analysisCompleted();
     void queueRunning();
     void queueStopped();
     void progressUpdated(float percent);
 
 protected:
     std::vector<ffdropenc::QueueItem::Pointer> queue_;
-
-    QPointer<QProcess> analyzer_;
-    ffdropenc::QueueItem::Pointer analyzerCurrentItem_;
     QPointer<QProcess> encoder_;
     ffdropenc::QueueItem::Pointer encoderCurrentItem_;
 
     void start_or_advance_queue_();
+    void eject_current_item_();
 };

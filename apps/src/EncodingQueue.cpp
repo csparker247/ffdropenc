@@ -13,30 +13,11 @@ using namespace ffdropenc;
 
 namespace fs = std::filesystem;
 
+QRegExp ENCODER_DURATION{".*Duration:\\s(\\d+:\\d+:\\d+.\\d+).*(\n|\r|\r\f)"};
 QRegExp ENCODER_TIME{".*time=(\\d+:\\d+:\\d+.\\d+).*(\n|\r|\r\f)"};
 
 EncodingQueue::EncodingQueue()
 {
-    // Setup analyzer
-    analyzer_ = new QProcess();
-    analyzer_->setWorkingDirectory(QApplication::applicationDirPath());
-    analyzer_->setProgram("sleep");
-    connect(
-        analyzer_, &QProcess::started, this, &EncodingQueue::onAnalyzeStart);
-    connect(
-        analyzer_, &QProcess::readyReadStandardOutput, this,
-        &EncodingQueue::onAnalyzeUpdateOut);
-    connect(
-        analyzer_, &QProcess::readyReadStandardError, this,
-        &EncodingQueue::onAnalyzeUpdateErr);
-    connect(
-        analyzer_,
-        QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
-        &EncodingQueue::onAnalyzeFinished);
-    connect(
-        analyzer_, &QProcess::errorOccurred, this,
-        &EncodingQueue::onAnalyzeError);
-
     // Setup encoder
     encoder_ = new QProcess();
     encoder_->setWorkingDirectory(QApplication::applicationDirPath());
@@ -60,13 +41,9 @@ void EncodingQueue::start() { start_or_advance_queue_(); }
 
 void EncodingQueue::stop()
 {
-    analyzer_->kill();
-    analyzerCurrentItem_->setStatus(QueueItem::Status::ReadyAnalysis);
-    analyzerCurrentItem_ = nullptr;
-
     encoder_->kill();
     encoderCurrentItem_->setStatus(QueueItem::Status::ReadyEncode);
-    encoderCurrentItem_ = nullptr;
+    eject_current_item_();
     emit queueStopped();
 }
 
@@ -97,38 +74,6 @@ void EncodingQueue::insert(std::vector<fs::path> files, const EncodeSettings& s)
     start_or_advance_queue_();
 }
 
-void EncodingQueue::onAnalyzeStart()
-{
-    qDebug() << "Analysis started:"
-             << analyzerCurrentItem_->inputPath().stem().c_str();
-}
-
-void EncodingQueue::onAnalyzeUpdateOut()
-{
-    qDebug() << "Analyze Out:" << analyzer_->readAllStandardOutput();
-}
-
-void EncodingQueue::onAnalyzeUpdateErr()
-{
-    qDebug() << "Analyze Err:" << analyzer_->readAllStandardError();
-}
-
-void EncodingQueue::onAnalyzeFinished(
-    int exitCode, QProcess::ExitStatus exitStatus)
-{
-    qDebug() << "Analyze Finished" << exitCode << exitStatus;
-
-    // Update status
-    analyzerCurrentItem_->setStatus(QueueItem::Status::ReadyEncode);
-    analyzerCurrentItem_ = nullptr;
-    start_or_advance_queue_();
-}
-
-void EncodingQueue::onAnalyzeError(QProcess::ProcessError error)
-{
-    qDebug() << "Analyze Error" << error;
-}
-
 void EncodingQueue::onEncodeStart()
 {
     qDebug() << "Encode started:"
@@ -145,6 +90,13 @@ void EncodingQueue::onEncodeUpdateErr()
 {
     auto line = encoder_->readAllStandardError();
     int pos = 0;
+    while ((pos = ENCODER_DURATION.indexIn(line, pos)) != -1) {
+        auto duration = DurationStringToSeconds(ENCODER_DURATION.cap(1));
+        encoderCurrentItem_->setDuration(duration);
+        pos += ENCODER_TIME.matchedLength();
+    }
+
+    pos = 0;
     while ((pos = ENCODER_TIME.indexIn(line, pos)) != -1) {
         auto time = DurationStringToSeconds(ENCODER_TIME.cap(1));
         emit progressUpdated(time / encoderCurrentItem_->duration() * 100);
@@ -159,16 +111,17 @@ void EncodingQueue::onEncodeFinished(
     qDebug() << "Encode Finished" << exitCode << exitStatus;
     emit progressUpdated(100);
     encoderCurrentItem_->setStatus(QueueItem::Status::Done);
-    queue_.erase(
-        std::remove(queue_.begin(), queue_.end(), encoderCurrentItem_),
-        queue_.end());
-    encoderCurrentItem_ = nullptr;
+    eject_current_item_();
     start_or_advance_queue_();
 }
 
 void EncodingQueue::onEncodeError(QProcess::ProcessError error)
 {
-    qDebug() << "Error" << error;
+    qDebug() << "Encoder Error:" << error;
+    encoderCurrentItem_->setStatus(QueueItem::Status::Error);
+    eject_current_item_();
+    // To-Do: Emit message to console
+    start_or_advance_queue_();
 }
 
 void EncodingQueue::start_or_advance_queue_()
@@ -177,20 +130,6 @@ void EncodingQueue::start_or_advance_queue_()
         emit queueStopped();
     } else {
         emit queueRunning();
-    }
-
-    // Advance the analysis queue
-    if (!queue_.empty() && analyzer_->state() == QProcess::NotRunning) {
-        for (auto& q : queue_) {
-            if (q->status() != QueueItem::Status::ReadyAnalysis) {
-                continue;
-            }
-
-            analyzerCurrentItem_ = q;
-            analyzer_->setArguments({"5"});
-            analyzer_->start();
-            emit analysisStarted();
-        }
     }
 
     // Advance the encoder queue
@@ -205,4 +144,12 @@ void EncodingQueue::start_or_advance_queue_()
             emit encodeStarted();
         }
     }
+}
+
+void EncodingQueue::eject_current_item_()
+{
+    queue_.erase(
+        std::remove(queue_.begin(), queue_.end(), encoderCurrentItem_),
+        queue_.end());
+    encoderCurrentItem_ = nullptr;
 }
