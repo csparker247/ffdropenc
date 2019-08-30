@@ -4,7 +4,7 @@
 
   "outputs" : [
     { "extension" : "mp4",
-      "suffix" : "Vimeo",
+      "suffix" : "YouTube",
       "faststart" : true,
       "streams" : [
           { "type" : "video",
