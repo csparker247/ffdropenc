@@ -33,6 +33,7 @@ public:
     // Accessors
     std::filesystem::path inputPath() const { return inputPath_; }
     std::filesystem::path outputPath() const;
+    QString inputFileName() const { return inputPath_.filename().c_str(); }
 
     void setStatus(Status s) { status_ = s; }
     Status status() const { return status_; }

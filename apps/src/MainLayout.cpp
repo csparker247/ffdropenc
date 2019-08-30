@@ -30,6 +30,7 @@ namespace fs = std::filesystem;
 QMap<QString, Preset::Pointer> PRESETS;
 QStringList PRESET_NAMES;
 EncodingQueue QUEUE;
+QString READY_MESSAGE{"Drag files to window to begin..."};
 
 MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
 {
@@ -38,32 +39,32 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     QPointer<QVBoxLayout> layout = new QVBoxLayout();
     layout->setAlignment(Qt::AlignTop);
     // Label
-    shortLabel = new QLabel("Drag files to window to begin...");
-    layout->addWidget(shortLabel);
+    shortLabel_ = new QLabel(READY_MESSAGE);
+    layout->addWidget(shortLabel_);
 
     // Progress bar
     QPointer<QWidget> info = new QWidget();
     info->setLayout(new QHBoxLayout());
     info->layout()->setMargin(0);
-    progressBar = new QProgressBar();
-    progressBar->setMinimum(0);
-    progressBar->setMaximum(0);
-    info->layout()->addWidget(progressBar);
+    progressBar_ = new QProgressBar();
+    progressBar_->setMinimum(0);
+    progressBar_->setMaximum(0);
+    info->layout()->addWidget(progressBar_);
 
-    cancelBtn = new QPushButton("Cancel");
-    cancelBtn->setEnabled(false);
-    info->layout()->addWidget(cancelBtn);
+    cancelBtn_ = new QPushButton("Cancel");
+    cancelBtn_->setEnabled(false);
+    info->layout()->addWidget(cancelBtn_);
 
     layout->addWidget(info);
 
     // Details block
-    details = new QTextEdit();
-    details->setReadOnly(true);
+    details_ = new QTextEdit();
+    details_->setReadOnly(true);
     QString appname = "ffdropenc v";
     appname.append(FFDROPENC_VER);
-    details->append(appname);
-    details->append(QString("-").repeated(appname.size()));
-    layout->addWidget(details);
+    details_->append(appname);
+    details_->append(QString("-").repeated(appname.size()));
+    layout->addWidget(details_);
 
     setCentralWidget(new QWidget());
     centralWidget()->setLayout(layout);
@@ -80,6 +81,12 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     connect(
         &QUEUE, &EncodingQueue::progressUpdated, this,
         &MainLayout::updateProgress);
+    connect(
+        &QUEUE, &EncodingQueue::newShortMessage, this,
+        &MainLayout::shortMessage);
+    connect(
+        &QUEUE, &EncodingQueue::newDetailMessage, this,
+        &MainLayout::detailMessage);
 
     // load presets
     load_presets_();
@@ -133,15 +140,23 @@ void MainLayout::processFiles(std::vector<fs::path> files)
     QUEUE.insert(std::move(files), settings);
 }
 
-void MainLayout::encodingStarted() { progressBar->setMaximum(100); }
+void MainLayout::encodingStarted() { progressBar_->setMaximum(100); }
 
-void MainLayout::encodingDone() { progressBar->setMaximum(0); }
+void MainLayout::encodingDone()
+{
+    progressBar_->setMaximum(0);
+    shortLabel_->setText(READY_MESSAGE);
+}
 
 void MainLayout::updateProgress(float percent)
 {
     qDebug() << "Progress: " << static_cast<int>(std::floor(percent));
-    progressBar->setValue(static_cast<int>(std::floor(percent)));
+    progressBar_->setValue(static_cast<int>(std::floor(percent)));
 }
+
+void MainLayout::shortMessage(const QString& msg) { shortLabel_->setText(msg); }
+
+void MainLayout::detailMessage(const QString& msg) { details_->append(msg); }
 
 void MainLayout::load_presets_()
 {

@@ -31,12 +31,14 @@ public slots:
     void encodingStarted();
     void encodingDone();
     void updateProgress(float percent);
+    void shortMessage(const QString& msg);
+    void detailMessage(const QString& msg);
 
 protected:
-    QPointer<QLabel> shortLabel;
-    QPointer<QProgressBar> progressBar;
-    QPointer<QPushButton> cancelBtn;
-    QPointer<QTextEdit> details;
+    QPointer<QLabel> shortLabel_;
+    QPointer<QProgressBar> progressBar_;
+    QPointer<QPushButton> cancelBtn_;
+    QPointer<QTextEdit> details_;
     QPointer<SettingsDialog> settings_;
 
     void load_presets_();

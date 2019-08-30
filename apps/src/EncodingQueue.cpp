@@ -64,7 +64,11 @@ void EncodingQueue::insert(std::vector<fs::path> files, const EncodeSettings& s)
 
     // Sort queue by name and remove duplicates
     std::sort(tempQueue.begin(), tempQueue.end());
-    auto last = std::unique(tempQueue.begin(), tempQueue.end());
+    auto last = std::unique(
+        tempQueue.begin(), tempQueue.end(),
+        [](const QueueItem::Pointer& l, const QueueItem::Pointer& r) {
+            return *l == *r;
+        });
     tempQueue.erase(last, tempQueue.end());
 
     // insert items into analysis queue
@@ -76,8 +80,15 @@ void EncodingQueue::insert(std::vector<fs::path> files, const EncodeSettings& s)
 
 void EncodingQueue::onEncodeStart()
 {
-    qDebug() << "Encode started:"
-             << encoderCurrentItem_->inputPath().stem().c_str();
+    // qDebug() << "Encode started:"
+    //         << encoderCurrentItem_->inputPath().stem().c_str();
+    QString msg{"Encoding "};
+    msg.append(encoderCurrentItem_->preset()->getConsoleName());
+    msg.append(" version of ");
+    msg.append(encoderCurrentItem_->inputFileName());
+    msg.append("...");
+    emit newShortMessage(msg);
+    emit newDetailMessage(msg);
     emit progressUpdated(0);
 }
 
@@ -109,6 +120,11 @@ void EncodingQueue::onEncodeFinished(
     int exitCode, QProcess::ExitStatus exitStatus)
 {
     qDebug() << "Encode Finished" << exitCode << exitStatus;
+    QString msg{"Finished encoding "};
+    msg.append(encoderCurrentItem_->preset()->getConsoleName());
+    msg.append(" version of ");
+    msg.append(encoderCurrentItem_->inputFileName());
+    emit newDetailMessage(msg);
     emit progressUpdated(100);
     encoderCurrentItem_->setStatus(QueueItem::Status::Done);
     eject_current_item_();
@@ -141,7 +157,6 @@ void EncodingQueue::start_or_advance_queue_()
             encoderCurrentItem_ = q;
             encoder_->setArguments(q->encodeArguments());
             encoder_->start();
-            emit encodeStarted();
         }
     }
 }
