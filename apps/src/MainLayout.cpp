@@ -17,7 +17,6 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
-#include "EncodingQueue.hpp"
 #include "ffdropenc.hpp"
 #include "ffdropenc/EncodeSettings.hpp"
 #include "ffdropenc/Filesystem.hpp"
@@ -29,7 +28,6 @@ namespace fs = std::filesystem;
 
 QMap<QString, Preset::Pointer> PRESETS;
 QStringList PRESET_NAMES;
-EncodingQueue QUEUE;
 QString READY_MESSAGE{"Drag files to window to begin..."};
 
 MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
@@ -74,18 +72,18 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
 
     connect(this, &MainLayout::filesDropped, this, &MainLayout::processFiles);
     connect(
-        &QUEUE, &EncodingQueue::queueRunning, this,
+        &queue_, &EncodingQueue::queueRunning, this,
         &MainLayout::encodingStarted);
     connect(
-        &QUEUE, &EncodingQueue::queueStopped, this, &MainLayout::encodingDone);
+        &queue_, &EncodingQueue::queueStopped, this, &MainLayout::encodingDone);
     connect(
-        &QUEUE, &EncodingQueue::progressUpdated, this,
+        &queue_, &EncodingQueue::progressUpdated, this,
         &MainLayout::updateProgress);
     connect(
-        &QUEUE, &EncodingQueue::newShortMessage, this,
+        &queue_, &EncodingQueue::newShortMessage, this,
         &MainLayout::shortMessage);
     connect(
-        &QUEUE, &EncodingQueue::newDetailMessage, this,
+        &queue_, &EncodingQueue::newDetailMessage, this,
         &MainLayout::detailMessage);
 
     // load presets
@@ -137,7 +135,7 @@ void MainLayout::processFiles(std::vector<fs::path> files)
     settings.outputFPS = settings_->getOutputFPS();
     settings.outputDir = settings_->getOutputDir().toStdString();
 
-    QUEUE.insert(std::move(files), settings);
+    queue_.insert(std::move(files), settings);
 }
 
 void MainLayout::encodingStarted() { progressBar_->setMaximum(100); }

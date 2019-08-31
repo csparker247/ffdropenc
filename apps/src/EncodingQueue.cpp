@@ -2,12 +2,12 @@
 
 #include <algorithm>
 
-#include "ffdropenc/Filesystem.hpp"
-#include "ffdropenc/TimeTools.hpp"
-
-#include <QApplication>
 #include <QDebug>
 #include <QRegExp>
+
+#include "MainApplication.hpp"
+#include "ffdropenc/Filesystem.hpp"
+#include "ffdropenc/TimeTools.hpp"
 
 using namespace ffdropenc;
 

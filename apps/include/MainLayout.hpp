@@ -10,6 +10,7 @@
 #include <QStringList>
 #include <QTextEdit>
 
+#include "EncodingQueue.hpp"
 #include "SettingsDialog.hpp"
 
 class MainLayout : public QMainWindow
@@ -40,6 +41,8 @@ protected:
     QPointer<QPushButton> cancelBtn_;
     QPointer<QTextEdit> details_;
     QPointer<SettingsDialog> settings_;
+
+    EncodingQueue queue_;
 
     void load_presets_();
 };
