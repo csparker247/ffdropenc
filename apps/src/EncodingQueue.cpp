@@ -80,8 +80,7 @@ void EncodingQueue::insert(std::vector<fs::path> files, const EncodeSettings& s)
 
 void EncodingQueue::onEncodeStart()
 {
-    // qDebug() << "Encode started:"
-    //         << encoderCurrentItem_->inputPath().stem().c_str();
+    qDebug() << "encoder started:" << encoderCurrentItem_->inputFileName();
     QString msg{"Encoding "};
     msg.append(encoderCurrentItem_->preset()->getConsoleName());
     msg.append(" version of ");
@@ -94,7 +93,7 @@ void EncodingQueue::onEncodeStart()
 
 void EncodingQueue::onEncodeUpdateOut()
 {
-    qDebug() << "Encode Out:" << encoder_->readAllStandardOutput();
+    qDebug() << "encoder stdout:" << encoder_->readAllStandardOutput();
 }
 
 void EncodingQueue::onEncodeUpdateErr()
@@ -113,13 +112,13 @@ void EncodingQueue::onEncodeUpdateErr()
         emit progressUpdated(time / encoderCurrentItem_->duration() * 100);
         pos += ENCODER_TIME.matchedLength();
     }
-    // qDebug() << "Encode Err:" << line;
+    qDebug() << "encoder stderr:" << line;
 }
 
 void EncodingQueue::onEncodeFinished(
     int exitCode, QProcess::ExitStatus exitStatus)
 {
-    qDebug() << "Encode Finished" << exitCode << exitStatus;
+    qDebug() << "encoder finished:" << exitCode << "-" << exitStatus;
     QString msg{"Finished encoding "};
     msg.append(encoderCurrentItem_->preset()->getConsoleName());
     msg.append(" version of ");
@@ -133,7 +132,7 @@ void EncodingQueue::onEncodeFinished(
 
 void EncodingQueue::onEncodeError(QProcess::ProcessError error)
 {
-    qDebug() << "Encoder Error:" << error;
+    qDebug() << "encoder error:" << error;
     encoderCurrentItem_->setStatus(QueueItem::Status::Error);
     eject_current_item_();
     // To-Do: Emit message to console
@@ -156,6 +155,8 @@ void EncodingQueue::start_or_advance_queue_()
             }
             encoderCurrentItem_ = q;
             encoder_->setArguments(q->encodeArguments());
+            qDebug() << "encoder cmd:" << encoder_->program()
+                     << encoder_->arguments();
             encoder_->start();
         }
     }

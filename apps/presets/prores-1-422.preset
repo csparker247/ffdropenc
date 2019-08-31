@@ -12,7 +12,7 @@
             "mode" : "default",
             "pixfmt" : "yuv422p10le",
             "flags" : [
-              { "key" : "-qscale:v", "val" : "10" },
+              { "key" : "-qscale:v", "val" : "11" },
               { "key" : "-vendor", "val" : "ap10" }
             ]
           },
@@ -21,7 +21,7 @@
             "codec" : "pcm_s16le",
             "bitrate" : "default",
             "flags" : [
-              { "key" : "-filter_complex", "val" : "asetnsamples:n:16384:p:0" },
+              { "key" : "-filter_complex", "val" : "asetnsamples=n=16384:p=0" },
               { "key" : "-ar", "val" : "48k" }
             ]
           }

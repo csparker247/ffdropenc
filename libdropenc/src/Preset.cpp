@@ -73,7 +73,7 @@ QStringList Preset::getSettings(size_t index)
             // Some codec specific options (mostly H.264 things)
             if (!s["profile"].is_null()) {
                 auto profile = s["profile"].get<std::string>();
-                settings << "-profile" << QString::fromStdString(profile);
+                settings << "-profile:v" << QString::fromStdString(profile);
             }
             if (!s["level"].is_null()) {
                 auto level = s["level"].get<std::string>();
