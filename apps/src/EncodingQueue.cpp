@@ -37,13 +37,18 @@ EncodingQueue::EncodingQueue()
         &EncodingQueue::onEncodeError);
 }
 
-void EncodingQueue::start() { start_or_advance_queue_(); }
-
-void EncodingQueue::stop()
+void EncodingQueue::startQueue()
 {
-    encoder_->kill();
-    encoderCurrentItem_->setStatus(QueueItem::Status::ReadyEncode);
-    eject_current_item_();
+    status_ = Status::Running;
+    advance_queue_();
+}
+
+void EncodingQueue::stopQueue()
+{
+    status_ = Status::Stopped;
+    encoder_->terminate();
+    emit newDetailMessage("Encoding cancelled.");
+    eject_all_items_();
     emit queueStopped();
 }
 
@@ -75,7 +80,7 @@ void EncodingQueue::insert(std::vector<fs::path> files, const EncodeSettings& s)
     queue_.insert(queue_.end(), tempQueue.begin(), tempQueue.end());
 
     // Start processing the queue
-    start_or_advance_queue_();
+    startQueue();
 }
 
 void EncodingQueue::onEncodeStart()
@@ -99,6 +104,11 @@ void EncodingQueue::onEncodeUpdateOut()
 void EncodingQueue::onEncodeUpdateErr()
 {
     auto line = encoder_->readAllStandardError();
+    qDebug() << "encoder stderr:" << line;
+    if (status_ == Status::Stopped || !encoderCurrentItem_) {
+        return;
+    }
+
     int pos = 0;
     while ((pos = ENCODER_DURATION.indexIn(line, pos)) != -1) {
         auto duration = DurationStringToSeconds(ENCODER_DURATION.cap(1));
@@ -112,34 +122,34 @@ void EncodingQueue::onEncodeUpdateErr()
         emit progressUpdated(time / encoderCurrentItem_->duration() * 100);
         pos += ENCODER_TIME.matchedLength();
     }
-    qDebug() << "encoder stderr:" << line;
 }
 
 void EncodingQueue::onEncodeFinished(
     int exitCode, QProcess::ExitStatus exitStatus)
 {
     qDebug() << "encoder finished:" << exitCode << "-" << exitStatus;
-    QString msg{"Finished encoding "};
-    msg.append(encoderCurrentItem_->preset()->getConsoleName());
-    msg.append(" version of ");
-    msg.append(encoderCurrentItem_->inputFileName());
-    emit newDetailMessage(msg);
-    emit progressUpdated(100);
-    encoderCurrentItem_->setStatus(QueueItem::Status::Done);
-    eject_current_item_();
-    start_or_advance_queue_();
+    if (encoderCurrentItem_) {
+        QString msg{"Finished encoding "};
+        msg.append(encoderCurrentItem_->preset()->getConsoleName());
+        msg.append(" version of ");
+        msg.append(encoderCurrentItem_->inputFileName());
+        emit newDetailMessage(msg);
+        emit progressUpdated(100);
+        encoderCurrentItem_->setStatus(QueueItem::Status::Done);
+        eject_current_item_();
+    }
+    advance_queue_();
 }
 
 void EncodingQueue::onEncodeError(QProcess::ProcessError error)
 {
     qDebug() << "encoder error:" << error;
-    encoderCurrentItem_->setStatus(QueueItem::Status::Error);
     eject_current_item_();
     // To-Do: Emit message to console
-    start_or_advance_queue_();
+    advance_queue_();
 }
 
-void EncodingQueue::start_or_advance_queue_()
+void EncodingQueue::advance_queue_()
 {
     if (queue_.empty()) {
         emit queueStopped();
@@ -148,7 +158,8 @@ void EncodingQueue::start_or_advance_queue_()
     }
 
     // Advance the encoder queue
-    if (!queue_.empty() && encoder_->state() == QProcess::NotRunning) {
+    if (status_ == Status::Running && !queue_.empty() &&
+        encoder_->state() == QProcess::NotRunning) {
         for (auto& q : queue_) {
             if (q->status() != QueueItem::Status::ReadyEncode) {
                 continue;
@@ -164,8 +175,17 @@ void EncodingQueue::start_or_advance_queue_()
 
 void EncodingQueue::eject_current_item_()
 {
-    queue_.erase(
-        std::remove(queue_.begin(), queue_.end(), encoderCurrentItem_),
-        queue_.end());
+    if (encoderCurrentItem_) {
+        queue_.erase(
+            std::remove(queue_.begin(), queue_.end(), encoderCurrentItem_),
+            queue_.end());
+        encoderCurrentItem_ = nullptr;
+    }
+}
+
+void EncodingQueue::eject_all_items_()
+{
+    queue_.clear();
     encoderCurrentItem_ = nullptr;
+    emit newDetailMessage("Queue cleared.");
 }

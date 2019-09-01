@@ -3,6 +3,7 @@
 #include <deque>
 
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QDebug>
 #include <QDirIterator>
 #include <QDropEvent>
@@ -29,6 +30,7 @@ namespace fs = std::filesystem;
 QMap<QString, Preset::Pointer> PRESETS;
 QStringList PRESET_NAMES;
 QString READY_MESSAGE{"Drag files to window to begin..."};
+QString DATETIME_FMT{"[MM/dd/yy hh:mm:ss] "};
 
 MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
 {
@@ -52,6 +54,8 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     cancelBtn_ = new QPushButton("Cancel");
     cancelBtn_->setEnabled(false);
     info->layout()->addWidget(cancelBtn_);
+    connect(
+        cancelBtn_, &QPushButton::clicked, &queue_, &EncodingQueue::stopQueue);
 
     layout->addWidget(info);
 
@@ -138,12 +142,17 @@ void MainLayout::processFiles(std::vector<fs::path> files)
     queue_.insert(std::move(files), settings);
 }
 
-void MainLayout::encodingStarted() { progressBar_->setMaximum(100); }
+void MainLayout::encodingStarted()
+{
+    progressBar_->setMaximum(100);
+    cancelBtn_->setEnabled(true);
+}
 
 void MainLayout::encodingDone()
 {
     progressBar_->setMaximum(0);
     shortLabel_->setText(READY_MESSAGE);
+    cancelBtn_->setEnabled(false);
 }
 
 void MainLayout::updateProgress(float percent)
@@ -154,7 +163,10 @@ void MainLayout::updateProgress(float percent)
 
 void MainLayout::shortMessage(const QString& msg) { shortLabel_->setText(msg); }
 
-void MainLayout::detailMessage(const QString& msg) { details_->append(msg); }
+void MainLayout::detailMessage(const QString& msg)
+{
+    details_->append(QDateTime::currentDateTime().toString(DATETIME_FMT) + msg);
+}
 
 void MainLayout::load_presets_()
 {

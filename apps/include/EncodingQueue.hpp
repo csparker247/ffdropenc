@@ -14,15 +14,16 @@ class EncodingQueue : public QObject
 {
     Q_OBJECT
 public:
+    enum class Status { Stopped, Running };
     EncodingQueue();
 
     void insert(
         std::vector<std::filesystem::path> files,
         const ffdropenc::EncodeSettings& s);
-    void start();
-    void stop();
 
 public slots:
+    void startQueue();
+    void stopQueue();
     void onEncodeStart();
     void onEncodeUpdateOut();
     void onEncodeUpdateErr();
@@ -41,6 +42,9 @@ protected:
     QPointer<QProcess> encoder_;
     ffdropenc::QueueItem::Pointer encoderCurrentItem_;
 
-    void start_or_advance_queue_();
+    Status status_{Status::Stopped};
+
+    void advance_queue_();
     void eject_current_item_();
+    void eject_all_items_();
 };
