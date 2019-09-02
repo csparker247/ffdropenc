@@ -18,6 +18,7 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
+#include "CollapsibleGroupBox.hpp"
 #include "ffdropenc.hpp"
 #include "ffdropenc/EncodeSettings.hpp"
 #include "ffdropenc/Filesystem.hpp"
@@ -60,13 +61,18 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     layout->addWidget(info);
 
     // Details block
+    auto collapseBox = new CollapsibleGroupBox();
+    collapseBox->setContentLayout(new QVBoxLayout());
+    collapseBox->contentLayout()->setMargin(0);
     details_ = new QTextEdit();
     details_->setReadOnly(true);
     QString appname = "ffdropenc v";
     appname.append(FFDROPENC_VER);
     details_->append(appname);
     details_->append(QString("-").repeated(appname.size()));
-    layout->addWidget(details_);
+    collapseBox->contentLayout()->addWidget(details_);
+
+    layout->addWidget(collapseBox);
 
     setCentralWidget(new QWidget());
     centralWidget()->setLayout(layout);
