@@ -6,6 +6,7 @@ set(hdrs
     include/SettingsDialog.hpp
     include/EncodingQueue.hpp
     include/CollapsibleGroupBox.hpp
+    include/ClickableLabel.hpp
 )
 
 set(srcs
@@ -15,6 +16,7 @@ set(srcs
     src/SettingsDialog.cpp
     src/EncodingQueue.cpp
     src/CollapsibleGroupBox.cpp
+    src/ClickableLabel.cpp
 )
 
 set(rccs Resources.qrc Presets.qrc)

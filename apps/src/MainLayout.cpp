@@ -2,7 +2,6 @@
 
 #include <deque>
 
-#include <QCoreApplication>
 #include <QDateTime>
 #include <QDebug>
 #include <QDirIterator>
@@ -19,6 +18,7 @@
 #include <QVBoxLayout>
 
 #include "CollapsibleGroupBox.hpp"
+#include "MainApplication.hpp"
 #include "ffdropenc.hpp"
 #include "ffdropenc/EncodeSettings.hpp"
 #include "ffdropenc/Filesystem.hpp"
@@ -39,9 +39,12 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
 
     QPointer<QVBoxLayout> layout = new QVBoxLayout();
     layout->setAlignment(Qt::AlignTop);
+    sizePolicy().setVerticalPolicy(QSizePolicy::MinimumExpanding);
     // Label
     shortLabel_ = new QLabel(READY_MESSAGE);
     layout->addWidget(shortLabel_);
+
+    setStyleSheet("border: 1px solid green;");
 
     // Progress bar
     QPointer<QWidget> info = new QWidget();
@@ -64,6 +67,12 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     auto collapseBox = new CollapsibleGroupBox();
     collapseBox->setContentLayout(new QVBoxLayout());
     collapseBox->contentLayout()->setMargin(0);
+    collapseBox->setTitle("Details");
+    connect(collapseBox, &CollapsibleGroupBox::toggled, this, [this]() {
+        QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+        resize(sizeHint());
+    });
+
     details_ = new QTextEdit();
     details_->setReadOnly(true);
     QString appname = "ffdropenc v";
