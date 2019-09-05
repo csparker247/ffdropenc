@@ -42,9 +42,8 @@ CollapsibleGroupBox::CollapsibleGroupBox(QWidget* parent) : QWidget(parent)
     layout()->addWidget(header);
 
     content_ = new QWidget();
-    layout()->addWidget(content_);
-    content_->sizePolicy().setRetainSizeWhenHidden(false);
     content_->setHidden(true);
+    layout()->addWidget(content_);
 
     connect(this, &CollapsibleGroupBox::expanded, [this]() { emit toggled(); });
     connect(
@@ -67,7 +66,6 @@ void CollapsibleGroupBox::expand()
     expander_->setText(DOWN);
     content_->setVisible(true);
     adjustSize();
-    update();
     emit expanded();
 }
 
@@ -76,7 +74,6 @@ void CollapsibleGroupBox::collapse()
     expander_->setText(RIGHT);
     content_->setVisible(false);
     adjustSize();
-    update();
     emit collapsed();
 }
 

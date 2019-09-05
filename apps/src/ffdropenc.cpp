@@ -11,6 +11,7 @@ int main(int argc, char* argv[])
     // Set the title bar and icon
     mainWindow.setWindowTitle("ffdropenc");
     mainWindow.setMinimumWidth(480);
+    mainWindow.setMinimumHeight(mainWindow.minimumSizeHint().height());
     // mainWindow.setWindowIcon(QIcon{":/logo-s"});
 
     mainWindow.show();

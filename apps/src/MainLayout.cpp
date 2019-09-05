@@ -39,12 +39,10 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
 
     QPointer<QVBoxLayout> layout = new QVBoxLayout();
     layout->setAlignment(Qt::AlignTop);
-    sizePolicy().setVerticalPolicy(QSizePolicy::MinimumExpanding);
+
     // Label
     shortLabel_ = new QLabel(READY_MESSAGE);
     layout->addWidget(shortLabel_);
-
-    setStyleSheet("border: 1px solid green;");
 
     // Progress bar
     QPointer<QWidget> info = new QWidget();
@@ -68,9 +66,12 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     collapseBox->setContentLayout(new QVBoxLayout());
     collapseBox->contentLayout()->setMargin(0);
     collapseBox->setTitle("Details");
+
+    // Ensures the window gets resized on collapse
     connect(collapseBox, &CollapsibleGroupBox::toggled, this, [this]() {
         QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-        resize(sizeHint());
+        setMinimumHeight(minimumSizeHint().height());
+        resize(size().width(), sizeHint().height());
     });
 
     details_ = new QTextEdit();
