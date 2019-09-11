@@ -90,6 +90,11 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     // Settings dialog
     settings_ = new SettingsDialog(this);
 
+    // connect
+    connect(
+        dynamic_cast<MainApplication*>(MainApplication::instance()),
+        &MainApplication::filesDropped, this, &MainLayout::processFiles);
+
     connect(this, &MainLayout::filesDropped, this, &MainLayout::processFiles);
     connect(
         &queue_, &EncodingQueue::queueRunning, this,

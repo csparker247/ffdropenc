@@ -1,7 +1,7 @@
 #include "MainApplication.hpp"
 #include "MainLayout.hpp"
 
-#include <QScopedPointer>
+#include <QPointer>
 
 int main(int argc, char* argv[])
 {

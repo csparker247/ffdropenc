@@ -2,6 +2,7 @@
 configure_file(include/ffdropenc.hpp.in ffdropenc.hpp)
 
 set(hdrs
+    include/MainApplication.hpp
     include/MainLayout.hpp
     include/SettingsDialog.hpp
     include/EncodingQueue.hpp
