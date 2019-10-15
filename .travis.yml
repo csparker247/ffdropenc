@@ -6,6 +6,8 @@ notifications:
 os:
   - osx
 
+osx_image: xcode11
+
 dist: bionic
 sudo: required
 

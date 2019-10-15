@@ -13,6 +13,7 @@ find_package(nlohmann_json 3.2.0 REQUIRED)
 FetchContent_Declare(
     sffmpeg
     GIT_REPOSITORY https://github.com/csparker247/sffmpeg.git
+    GIT_TAG update-deps
 )
 if(NOT sffmpeg_POPULATED)
     FetchContent_Populate(sffmpeg)

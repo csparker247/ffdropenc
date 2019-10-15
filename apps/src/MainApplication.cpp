@@ -10,12 +10,13 @@ MainApplication::MainApplication(int& argc, char* argv[])
 
 bool MainApplication::event(QEvent* event)
 {
+    /* See issue #27
     if (event->type() == QEvent::FileOpen) {
         auto openEvent = dynamic_cast<QFileOpenEvent*>(event);
         qDebug() << "Open file" << openEvent->file();
         emit filesDropped({openEvent->file().toStdString()});
         return true;
-    }
+    } */
 
     return QApplication::event(event);
 }
