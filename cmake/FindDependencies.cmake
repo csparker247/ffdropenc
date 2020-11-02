@@ -7,7 +7,24 @@ if(APPLE OR WIN32)
 endif()
 
 # JSON
-find_package(nlohmann_json 3.2.0 REQUIRED)
+option(SMGL_BUILD_JSON "Build in-source JSON library" ON)
+if(SMGL_BUILD_JSON)
+    FetchContent_Declare(
+        json
+        URL https://github.com/nlohmann/json/archive/v3.9.1.tar.gz
+        CMAKE_CACHE_ARGS
+            -DJSON_BuildTests:BOOL=OFF
+    )
+
+    FetchContent_GetProperties(json)
+    if(NOT json_POPULATED)
+        set(JSON_BuildTests OFF CACHE INTERNAL "")
+        FetchContent_Populate(json)
+        add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif()
+else()
+    find_package(nlohmann_json 3.9.1 REQUIRED)
+endif()
 
 # sffmpeg
 FetchContent_Declare(
