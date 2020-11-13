@@ -7,15 +7,25 @@ if(APPLE OR WIN32)
 endif()
 
 # JSON
-find_package(nlohmann_json 3.2.0 REQUIRED)
+## Modern JSON ##
+FetchContent_Declare(
+        json
+        GIT_REPOSITORY https://github.com/nlohmann/json
+        GIT_TAG v3.7.3
+)
+
+FetchContent_GetProperties(json)
+if(NOT json_POPULATED)
+    set(JSON_BuildTests OFF CACHE INTERNAL "")
+    FetchContent_Populate(json)
+    add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 # sffmpeg
 FetchContent_Declare(
     sffmpeg
     GIT_REPOSITORY https://github.com/csparker247/sffmpeg.git
     GIT_TAG update-deps
+    EXCLUDE_FROM_ALL
 )
-if(NOT sffmpeg_POPULATED)
-    FetchContent_Populate(sffmpeg)
-    add_subdirectory(${sffmpeg_SOURCE_DIR} ${sffmpeg_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
+FetchContent_MakeAvailable(sffmpeg)
