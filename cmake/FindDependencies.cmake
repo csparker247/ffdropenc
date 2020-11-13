@@ -7,18 +7,23 @@ if(APPLE OR WIN32)
 endif()
 
 # JSON
-## Modern JSON ##
-FetchContent_Declare(
+option(FFDE_BUILD_JSON "Build in-source JSON library" ON)
+if(FFDE_BUILD_JSON)
+    FetchContent_Declare(
         json
-        GIT_REPOSITORY https://github.com/nlohmann/json
-        GIT_TAG v3.7.3
-)
+        URL https://github.com/nlohmann/json/archive/v3.9.1.tar.gz
+        CMAKE_CACHE_ARGS
+            -DJSON_BuildTests:BOOL=OFF
+    )
 
-FetchContent_GetProperties(json)
-if(NOT json_POPULATED)
-    set(JSON_BuildTests OFF CACHE INTERNAL "")
-    FetchContent_Populate(json)
-    add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+    FetchContent_GetProperties(json)
+    if(NOT json_POPULATED)
+        set(JSON_BuildTests OFF CACHE INTERNAL "")
+        FetchContent_Populate(json)
+        add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif()
+else()
+    find_package(nlohmann_json 3.9.1 REQUIRED)
 endif()
 
 # sffmpeg
