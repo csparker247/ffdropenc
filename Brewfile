@@ -1,3 +1,3 @@
 brew 'ninja'
-brew 'qt5'
+brew 'qt'
 brew 'nlohmann-json'
