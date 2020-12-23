@@ -62,7 +62,7 @@ jobs:
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
       env:
-        - Qt5_DIR: ${{matrix.Qt5_DIR}}
+        Qt5_DIR: ${{matrix.Qt5_DIR}}
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
