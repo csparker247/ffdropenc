@@ -1,3 +1,6 @@
+brew 'autoconf'
+brew 'automake'
+brew 'libtool'
 brew 'ninja'
-brew 'qt'
 brew 'nlohmann-json'
+brew 'qt'
