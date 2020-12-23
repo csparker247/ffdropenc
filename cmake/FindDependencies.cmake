@@ -1,5 +1,3 @@
-include(FetchContent)
-
 # QT
 find_package(Qt5 5.7 QUIET REQUIRED COMPONENTS Core Widgets Gui)
 if(APPLE OR WIN32)

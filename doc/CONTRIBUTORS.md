@@ -1,3 +1,0 @@
-Project Contributors
------------------------
-* Seth Parker
