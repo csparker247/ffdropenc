@@ -25,17 +25,3 @@ set_target_properties(${target} PROPERTIES
     VERSION "${PROJECT_VERSION}"
     EXPORT_NAME "${module}"
 )
-
-install(
-    TARGETS "${target}"
-    EXPORT "${targets_export_name}"
-    ARCHIVE DESTINATION "lib"
-    LIBRARY DESTINATION "lib"
-    INCLUDES DESTINATION "${include_install_dir}"
-    RUNTIME DESTINATION "bin"
-)
-install(
-    DIRECTORY "include/ffdropenc"
-    DESTINATION "${include_install_dir}"
-    FILES_MATCHING REGEX ".*\.(h|hpp)$"
-)

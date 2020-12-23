@@ -176,19 +176,13 @@ QString Preset::construct_filter_graph_(json filters)
                 case ScaleMode::SizeLimited:
                     auto w = std::to_string(filter["width"].get<int>());
                     auto h = std::to_string(filter["height"].get<int>());
-                    auto dar = filter["dar"].get<std::string>();
                     command = "scale=iw*sar:ih,";
-                    command.append("scale=");
-                    command.append("\'w=if(lt(dar, ");
-                    command.append(QString::fromStdString(dar));
-                    command.append("), trunc(oh*a/2)*2, min(");
+                    command.append("scale=w=");
                     command.append(QString::fromStdString(w));
-                    command.append(",ceil(iw/2)*2)):");
-                    command.append("h=if(gte(dar, ");
-                    command.append(QString::fromStdString(dar));
-                    command.append("), trunc(ow/a/2)*2, min(");
+                    command.append(":h=");
                     command.append(QString::fromStdString(h));
-                    command.append(",ceil(ih/2)*2))\',");
+                    command.append(":force_original_aspect_ratio=decrease");
+                    command.append(":force_divisible_by=2,");
                     command.append("setsar=1");
                     break;
             }
