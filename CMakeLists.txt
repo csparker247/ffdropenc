@@ -15,7 +15,6 @@ set(CXX_STANDARD_REQUIRED on)
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
 # Choose what to build
-option(BUILD_APPS     "Compile core programs"    on)
 option(BUILD_DOC      "Compile documentation"    off)
 
 # Choose what to install
@@ -40,9 +39,7 @@ include(Warnings)
 add_subdirectory(libdropenc)
 
 ## Core Apps ##
-if (BUILD_APPS)
-    add_subdirectory(apps)
-endif()
+add_subdirectory(apps)
 
 ## Documentation
 if (BUILD_DOC)
