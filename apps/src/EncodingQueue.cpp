@@ -47,7 +47,7 @@ void EncodingQueue::stopQueue()
 {
     status_ = Status::Stopped;
     encoder_->terminate();
-    emit newDetailMessage("Encoding cancelled.");
+    emit newDetailInfo("Encoding cancelled.");
     eject_all_items_();
     emit queueStopped();
 }
@@ -90,7 +90,7 @@ void EncodingQueue::onEncodeStart()
     msg.append(encoderCurrentItem_->inputFileName());
     msg.append("...");
     emit newShortMessage(msg);
-    emit newDetailMessage(msg);
+    emit newDetailInfo(msg);
     emit progressUpdated(0);
 }
 
@@ -126,17 +126,24 @@ void EncodingQueue::onEncodeFinished(
     int exitCode, QProcess::ExitStatus exitStatus)
 {
     qDebug() << "encoder finished:" << exitCode << "-" << exitStatus;
-    if (exitCode != 0) {
-        // TODO: Emit message to console
-    }
     if (encoderCurrentItem_) {
-        QString msg{"Finished encoding "};
+        QString msg;
+        if (exitCode != 0) {
+            msg.append("Error encoding ");
+        } else {
+            msg.append("Finished encoding ");
+        }
         msg.append(encoderCurrentItem_->preset()->getConsoleName());
         msg.append(" version of ");
         msg.append(encoderCurrentItem_->inputFileName());
-        emit newDetailMessage(msg);
+        if (exitCode != 0) {
+            emit newDetailError(msg);
+            encoderCurrentItem_->setStatus(QueueItem::Status::Error);
+        } else {
+            emit newDetailSuccess(msg);
+            encoderCurrentItem_->setStatus(QueueItem::Status::Done);
+        }
         emit progressUpdated(100);
-        encoderCurrentItem_->setStatus(QueueItem::Status::Done);
         eject_current_item_();
     }
     advance_queue_();
@@ -188,5 +195,5 @@ void EncodingQueue::eject_all_items_()
 {
     queue_.clear();
     encoderCurrentItem_ = nullptr;
-    emit newDetailMessage("Queue cleared.");
+    emit newDetailInfo("Queue cleared.");
 }

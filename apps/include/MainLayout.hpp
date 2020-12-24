@@ -34,6 +34,8 @@ public slots:
     void updateProgress(float percent);
     void shortMessage(const QString& msg);
     void detailMessage(const QString& msg);
+    void errorMessage(const QString& msg);
+    void successMessage(const QString& msg);
 
 protected:
     QPointer<QLabel> shortLabel_;

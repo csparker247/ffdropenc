@@ -35,7 +35,9 @@ signals:
     void queueStopped();
     void progressUpdated(float percent);
     void newShortMessage(const QString& msg);
-    void newDetailMessage(const QString& msg);
+    void newDetailInfo(const QString& msg);
+    void newDetailError(const QString& msg);
+    void newDetailSuccess(const QString& msg);
 
 protected:
     std::vector<ffdropenc::QueueItem::Pointer> queue_;

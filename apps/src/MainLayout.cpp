@@ -108,8 +108,14 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
         &queue_, &EncodingQueue::newShortMessage, this,
         &MainLayout::shortMessage);
     connect(
-        &queue_, &EncodingQueue::newDetailMessage, this,
+        &queue_, &EncodingQueue::newDetailInfo, this,
         &MainLayout::detailMessage);
+    connect(
+        &queue_, &EncodingQueue::newDetailError, this,
+        &MainLayout::errorMessage);
+    connect(
+        &queue_, &EncodingQueue::newDetailSuccess, this,
+        &MainLayout::successMessage);
 
     // load presets
     load_presets_();
@@ -186,7 +192,26 @@ void MainLayout::shortMessage(const QString& msg) { shortLabel_->setText(msg); }
 
 void MainLayout::detailMessage(const QString& msg)
 {
-    details_->append(QDateTime::currentDateTime().toString(DATETIME_FMT) + msg);
+    QString m("<font color=\"Gray\">");
+    m.append(QDateTime::currentDateTime().toString(DATETIME_FMT) + msg);
+    m.append("</font>");
+    details_->append(m);
+}
+
+void MainLayout::errorMessage(const QString& msg)
+{
+    QString m("<font color=\"Red\">");
+    m.append(QDateTime::currentDateTime().toString(DATETIME_FMT) + msg);
+    m.append("</font>");
+    details_->append(m);
+}
+
+void MainLayout::successMessage(const QString& msg)
+{
+    QString m("<font color=\"Green\">");
+    m.append(QDateTime::currentDateTime().toString(DATETIME_FMT) + msg);
+    m.append("</font>");
+    details_->append(m);
 }
 
 void MainLayout::load_presets_()
