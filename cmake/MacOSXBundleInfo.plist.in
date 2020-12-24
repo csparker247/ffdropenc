@@ -37,7 +37,7 @@
         <key>CFBundleDocumentTypes</key>
             <array>
                 <dict>
-                    <key>public.filename-extension</key>
+                    <key>CFBundleTypeExtensions</key>
                     <array>
                         <string>avi</string>
                         <string>gif</string>
