@@ -91,9 +91,9 @@ jobs:
       run: cmake --build . --config $BUILD_TYPE --target package
 
     - name: Upload Installer
-        uses: actions/upload-artifact@v2
-        working-directory: ${{runner.workspace}}/build
-        if: matrix.os == 'macos-10.15'
-        with:
-          name: macOS 10.15+ (x86_64)
-          path: 'ffdropenc-*.dmg'
+      uses: actions/upload-artifact@v2
+      working-directory: ${{runner.workspace}}/build
+      if: matrix.os == 'macos-10.15'
+      with:
+        name: macOS 10.15+ (x86_64)
+        path: 'ffdropenc-*.dmg'
