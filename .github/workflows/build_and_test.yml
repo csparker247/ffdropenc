@@ -22,10 +22,10 @@ jobs:
               Qt5_DIR: /usr/local/opt/qt/lib/cmake/Qt5/
               MACOSX_DEPLOYMENT_TARGET: 10.15
               SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
-            - os: macos-11.0
-              Qt5_DIR: /usr/local/opt/qt/lib/cmake/Qt5/
-              MACOSX_DEPLOYMENT_TARGET: 11.0
-              SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+#            - os: macos-11.0
+#              Qt5_DIR: /usr/local/opt/qt/lib/cmake/Qt5/
+#              MACOSX_DEPLOYMENT_TARGET: 11.0
+#              SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
 
     steps:
     - uses: actions/checkout@v2
