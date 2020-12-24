@@ -106,7 +106,6 @@ void QueueItem::convert_to_seq_()
             if (match.size() != 2) {
                 continue;
             }
-            std::cout << match[0] << " " << match[1] << std::endl;
             // Get minimum and maximum sequence number from list
             size_t idx{std::stoull(match[1])};
             startingIndex_ = std::min(startingIndex_, idx);

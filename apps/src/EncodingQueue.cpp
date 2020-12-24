@@ -126,6 +126,9 @@ void EncodingQueue::onEncodeFinished(
     int exitCode, QProcess::ExitStatus exitStatus)
 {
     qDebug() << "encoder finished:" << exitCode << "-" << exitStatus;
+    if (exitCode != 0) {
+        // TODO: Emit message to console
+    }
     if (encoderCurrentItem_) {
         QString msg{"Finished encoding "};
         msg.append(encoderCurrentItem_->preset()->getConsoleName());
@@ -143,7 +146,7 @@ void EncodingQueue::onEncodeError(QProcess::ProcessError error)
 {
     qDebug() << "encoder error:" << error;
     eject_current_item_();
-    // To-Do: Emit message to console
+    // TODO: Emit message to console
     advance_queue_();
 }
 
