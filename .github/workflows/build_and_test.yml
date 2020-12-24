@@ -20,8 +20,12 @@ jobs:
           include:
             - os: macos-10.15
               Qt5_DIR: /usr/local/opt/qt/lib/cmake/Qt5/
+              MACOSX_DEPLOYMENT_TARGET: 10.15
+              SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
             - os: macos-11.0
               Qt5_DIR: /usr/local/opt/qt/lib/cmake/Qt5/
+              MACOSX_DEPLOYMENT_TARGET: 11.0
+              SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
 
     steps:
     - uses: actions/checkout@v2
@@ -80,3 +84,16 @@ jobs:
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -V -C $BUILD_TYPE
+
+    - name: Package
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: cmake --build . --config $BUILD_TYPE --target package
+
+    - name: Upload Installer
+        uses: actions/upload-artifact@v2
+        working-directory: ${{runner.workspace}}/build
+        if: matrix.os == 'macos-10.15'
+        with:
+          name: macOS 10.15+ (x86_64)
+          path: 'ffdropenc-*.dmg'
