@@ -71,7 +71,7 @@ private:
     // image sequence
     static Type determine_type_(const std::filesystem::path& p);
     void convert_to_seq_();
-    uint64_t startingIndex_{0};
+    size_t startingIndex_{0};
 
     // encoding parameters
     Preset::Pointer preset_;

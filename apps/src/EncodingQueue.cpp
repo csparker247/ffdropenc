@@ -71,9 +71,7 @@ void EncodingQueue::insert(std::vector<fs::path> files, const EncodeSettings& s)
     std::sort(tempQueue.begin(), tempQueue.end());
     auto last = std::unique(
         tempQueue.begin(), tempQueue.end(),
-        [](const QueueItem::Pointer& l, const QueueItem::Pointer& r) {
-            return *l == *r;
-        });
+        [](const auto& l, const auto& r) { return *l == *r; });
     tempQueue.erase(last, tempQueue.end());
 
     // insert items into analysis queue

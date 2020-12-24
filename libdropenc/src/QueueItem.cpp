@@ -1,5 +1,8 @@
 #include "ffdropenc/QueueItem.hpp"
 
+#include <cmath>
+#include <regex>
+
 #include <nlohmann/json.hpp>
 
 #include "ffdropenc/Filesystem.hpp"
@@ -76,16 +79,39 @@ std::filesystem::path QueueItem::outputPath() const
 // Convert this Item into an Img Sequence
 void QueueItem::convert_to_seq_()
 {
-    // to-do: This only works if numerical pattern is at end of filename
+    // TODO: This only works if numerical pattern is at end of filename
     auto stem = inputPath_.stem().string();
     auto last_letter_pos = stem.find_last_not_of("0123456789");
     auto fileName = stem.substr(0, last_letter_pos + 1);
     auto seqNumber = stem.substr(last_letter_pos + 1);
 
-    startingIndex_ = std::stoull(seqNumber);
+    // Set the output filename
     outputFileName_ = (fileName.empty())
                           ? inputPath_.parent_path().stem().string()
                           : fileName;
+
+    // Get list of all paths matching prefix in parent path
+    std::regex prefix{fileName + "([0-9]+)"};
+    std::smatch match;
+    startingIndex_ = std::stoull(seqNumber);
+    for (const auto& it : fs::directory_iterator(inputPath_.parent_path())) {
+        // Skip entries that aren't files
+        if (not it.is_regular_file()) {
+            continue;
+        }
+
+        //
+        auto fn = fs::path(it).stem().string();
+        if (std::regex_match(fn, match, prefix)) {
+            if (match.size() != 2) {
+                continue;
+            }
+            std::cout << match[0] << " " << match[1] << std::endl;
+            // Get minimum and maximum sequence number from list
+            size_t idx{std::stoull(match[1])};
+            startingIndex_ = std::min(startingIndex_, idx);
+        }
+    }
 
     // Convert seqNumber to the %nd format
     seqNumber = std::to_string(seqNumber.length());
@@ -94,8 +120,8 @@ void QueueItem::convert_to_seq_()
     }
     seqNumber = "%" + seqNumber + "d";
 
+    // Final file name
     fileName += seqNumber + inputPath_.extension().string();
-
     inputPath_ = inputPath_.parent_path() / fileName;
 }
 
