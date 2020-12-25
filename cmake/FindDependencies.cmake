@@ -23,12 +23,3 @@ if(FFDE_BUILD_JSON)
 else()
     find_package(nlohmann_json 3.9.1 REQUIRED)
 endif()
-
-# sffmpeg
-FetchContent_Declare(
-    sffmpeg
-    GIT_REPOSITORY https://github.com/csparker247/sffmpeg.git
-    GIT_TAG update-deps
-    EXCLUDE_FROM_ALL
-)
-FetchContent_MakeAvailable(sffmpeg)
