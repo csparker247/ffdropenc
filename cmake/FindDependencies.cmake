@@ -23,3 +23,12 @@ if(FFDE_BUILD_JSON)
 else()
     find_package(nlohmann_json 3.9.1 REQUIRED)
 endif()
+
+FetchContent_Declare(
+    ffmpeg
+    UPDATE_DISCONNECTED true
+    URL ${CMAKE_SOURCE_DIR}/3rdparty/ffmpeg_macos.zip
+    URL_HASH SHA256=8f3e9fca63a76d9f69bc60daf5aa8b524178de0e425452a2ecd872a9fd2eb9f6
+    SOURCE_DIR ${EXECUTABLE_OUTPUT_PATH}
+)
+FetchContent_MakeAvailable(ffmpeg)

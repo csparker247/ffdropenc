@@ -82,6 +82,15 @@ install(TARGETS ffdropenc
     RUNTIME DESTINATION bin COMPONENT Programs
 )
 
+# ffmpeg binary (macOS)
+add_custom_command(TARGET ffdropenc POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${EXECUTABLE_OUTPUT_PATH}/ffmpeg $<TARGET_FILE_DIR:ffdropenc>
+)
+# binary info (macOS)
+add_custom_command(TARGET ffdropenc POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/3rdparty/ffmpeg_macos.json $<TARGET_FILE_DIR:ffdropenc>/ffmpeg_details.json
+)
+
 ### App Packaging ###
 if(APPLE OR WIN32)
     qt5_deploy_bundle(ffdropenc)

@@ -89,6 +89,9 @@ QStringList Preset::getSettings(size_t index)
         else if (type == "audio") {
             // Add the codec
             auto codec = s["codec"].get<std::string>();
+            if(codec == "aac") {
+                // TODO: Replace with user-selected library
+            }
             settings << "-c:a" << QString::fromStdString(codec);
 
             // Skip the rest of this loop if we're copying the input stream

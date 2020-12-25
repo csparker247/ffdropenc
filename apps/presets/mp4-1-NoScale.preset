@@ -19,7 +19,7 @@
           },
 
           { "type" : "audio",
-            "codec" : "libfdk_aac",
+            "codec" : "aac",
             "bitrate" : "320k"
           }
       ]
