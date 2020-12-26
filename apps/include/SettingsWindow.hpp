@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QLabel>
 #include <QPointer>
+#include <QString>
 #include <QWidget>
 
 class SettingsWindow : public QDialog
@@ -13,6 +14,9 @@ class SettingsWindow : public QDialog
 public:
     explicit SettingsWindow(
         QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+
+signals:
+    void ExecutableChanged(QString);
 
 private:
     QPointer<QComboBox> execSelector_;
@@ -23,4 +27,6 @@ private:
     void exec_test_(const QString& path);
     void exec_msg_success_(const QString& msg);
     void exec_msg_error_(const QString& msg);
+    void on_select_exec_(QString exec);
+    QString current_exec_;
 };

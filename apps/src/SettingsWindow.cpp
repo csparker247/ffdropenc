@@ -10,6 +10,7 @@
 #include <QStandardPaths>
 
 const QString BUNDLED("Bundled");
+const QString BROWSE("Browse...");
 QRegExp VERSION{"version\\s(\\d+.\\d+.\\d+)"};
 
 SettingsWindow::SettingsWindow(QWidget* parent, Qt::WindowFlags f)
@@ -30,15 +31,25 @@ SettingsWindow::SettingsWindow(QWidget* parent, Qt::WindowFlags f)
     execGroup->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     layout->addWidget(execGroup);
 
+    current_exec_ = BUNDLED;
     execSelector_ = new QComboBox();
     execSelector_->addItem(BUNDLED);
     execSelector_->insertSeparator(1);
-    execSelector_->addItem("Browse...");
+    execSelector_->addItem(BROWSE);
     execSelector_->setMaxCount(7);
     execLayout->addWidget(execSelector_);
     execLabel_ = new QLabel();
     execLabel_->setTextFormat(Qt::RichText);
     execLayout->addWidget(execLabel_);
+
+    execPicker_ = new QFileDialog();
+    execPicker_->setFileMode(QFileDialog::ExistingFile);
+    connect(
+        execSelector_, &QComboBox::currentTextChanged, this,
+        &SettingsWindow::on_select_exec_);
+    connect(
+        this, &SettingsWindow::ExecutableChanged, this,
+        &SettingsWindow::exec_test_);
 
     // Scan for system ffmpeg and test bundled
     // TODO: Test setting saved exec
@@ -79,10 +90,11 @@ void SettingsWindow::exec_test_(const QString& path)
     // Setup encoder
     auto encoder = new QProcess();
     if (path == BUNDLED) {
-        encoder->setWorkingDirectory(QApplication::applicationDirPath());
-        encoder->setProgram("ffmpeg");
+        encoder->setProgram(QApplication::applicationDirPath() + "/ffmpeg");
+        qDebug() << QApplication::applicationDirPath() + "/ffmpeg";
     } else {
         encoder->setProgram(path);
+        qDebug() << path;
     }
 
     encoder->setArguments({"-codecs"});
@@ -104,15 +116,17 @@ void SettingsWindow::exec_test_(const QString& path)
         return;
     } else {
         exec_msg_success_("Version " + VERSION.cap(1));
+        current_exec_ = path;
     }
 
     // TODO: stdout contains available codecs
+    qDebug() << "encoder stderr:" << line;
     qDebug() << "encoder stdout:" << encoder->readAllStandardOutput();
 }
 
 void SettingsWindow::exec_msg_success_(const QString& msg)
 {
-    QString m("<small><font color=\"Green\">");
+    QString m("<small><font color=\"Green\">✓ ");
     m.append(msg);
     m.append("</font></small>");
     execLabel_->setText(m);
@@ -120,8 +134,28 @@ void SettingsWindow::exec_msg_success_(const QString& msg)
 
 void SettingsWindow::exec_msg_error_(const QString& msg)
 {
-    QString m("<small><font color=\"Red\">");
+    QString m("<small><font color=\"Red\">✖ ");
     m.append(msg);
     m.append("</font></small>");
     execLabel_->setText(m);
+}
+
+void SettingsWindow::on_select_exec_(QString exec)
+{
+    if (exec == BROWSE) {
+        if (execPicker_->exec()) {
+            exec = execPicker_->selectedFiles()[0];
+            if (execSelector_->findText(exec) == -1) {
+                execSelector_->insertItem(3, exec);
+            }
+            execSelector_->setCurrentText(exec);
+        } else {
+            execSelector_->setCurrentText(current_exec_);
+            return;
+        }
+    }
+
+    if (exec != current_exec_) {
+        emit ExecutableChanged(exec);
+    }
 }
