@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QLabel>
 #include <QPointer>
+#include <QPushButton>
 #include <QString>
 #include <QWidget>
 
@@ -22,11 +23,13 @@ private:
     QPointer<QComboBox> execSelector_;
     QPointer<QLabel> execLabel_;
     QPointer<QFileDialog> execPicker_;
+    QPointer<QPushButton> saveBtn_;
 
     void exec_scan_();
-    void exec_test_(const QString& path);
+    std::tuple<bool, QString> exec_test_(const QString& path);
     void exec_msg_success_(const QString& msg);
     void exec_msg_error_(const QString& msg);
-    void on_select_exec_(QString exec);
-    QString current_exec_;
+    void on_browse_exec_();
+    void change_exec_(const QString& execOpt);
+    QString current_exec_opt_;
 };
