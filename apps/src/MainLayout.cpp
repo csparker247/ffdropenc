@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QList>
 #include <QMap>
+#include <QMenuBar>
 #include <QMimeData>
 #include <QPointer>
 #include <QProgressBar>
@@ -38,7 +39,16 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     setAcceptDrops(true);
 
     QPointer<QVBoxLayout> layout = new QVBoxLayout();
-    layout->setAlignment(Qt::AlignTop);
+    layout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+
+    // Settings
+    auto fileMenu = this->menuBar()->addMenu(" &File");
+    settingsWindow_ = new SettingsWindow();
+
+    auto prefsAction = new QAction("&Preferences", this);
+    prefsAction->setStatusTip("Open the preferences menu");
+    connect(prefsAction, &QAction::triggered, settingsWindow_, &QDialog::show);
+    fileMenu->addAction(prefsAction);
 
     // Label
     shortLabel_ = new QLabel(READY_MESSAGE);

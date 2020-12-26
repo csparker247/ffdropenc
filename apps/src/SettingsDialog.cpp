@@ -17,7 +17,7 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     QPointer<QVBoxLayout> layout = new QVBoxLayout();
     setLayout(layout);
     setModal(true);
-    setSizePolicy({QSizePolicy::Fixed, QSizePolicy::Fixed});
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setWindowTitle("ffdropenc");
 
     // Preset picker
@@ -87,8 +87,10 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     // Standard buttons
     auto buttonBox =
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(
+        buttonBox, &QDialogButtonBox::accepted, this, &SettingsDialog::accept);
+    connect(
+        buttonBox, &QDialogButtonBox::rejected, this, &SettingsDialog::reject);
     layout->addWidget(buttonBox);
 }
 

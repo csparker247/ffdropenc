@@ -12,6 +12,7 @@
 
 #include "EncodingQueue.hpp"
 #include "SettingsDialog.hpp"
+#include "SettingsWindow.hpp"
 
 class MainLayout : public QMainWindow
 {
@@ -38,6 +39,7 @@ public slots:
     void successMessage(const QString& msg);
 
 protected:
+    QPointer<SettingsWindow> settingsWindow_;
     QPointer<QLabel> shortLabel_;
     QPointer<QProgressBar> progressBar_;
     QPointer<QPushButton> cancelBtn_;
