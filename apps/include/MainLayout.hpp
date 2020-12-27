@@ -10,6 +10,7 @@
 #include <QStringList>
 #include <QTextEdit>
 
+#include "CollapsibleGroupBox.hpp"
 #include "EncodingQueue.hpp"
 #include "SettingsDialog.hpp"
 #include "SettingsWindow.hpp"
@@ -24,6 +25,7 @@ public:
     void dragMoveEvent(QDragMoveEvent* event) override;
     void dragLeaveEvent(QDragLeaveEvent* event) override;
     void dropEvent(QDropEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 
 signals:
     void filesDropped(std::vector<std::filesystem::path>);
@@ -45,8 +47,12 @@ protected:
     QPointer<QPushButton> cancelBtn_;
     QPointer<QTextEdit> details_;
     QPointer<SettingsDialog> settings_;
+    QPointer<CollapsibleGroupBox> collapseBox_;
 
     EncodingQueue queue_;
 
+    void save_settings_();
+    void load_settings_();
     void load_presets_();
+    void on_executable_changed_(const QString& path);
 };

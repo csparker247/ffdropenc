@@ -1,13 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
-        <!-- App
-        <file alias="logo_xxs">images/icons/logo_xxs.png</file>
-        <file alias="logo_xs">images/icons/logo_xs.png</file>
-        <file alias="logo_s">images/icons/logo_s.png</file>
-        <file alias="logo_m">images/icons/logo_m.png</file>
-        <file alias="logo_l">images/icons/logo_l.png</file>
-        <file alias="logo_xl">images/icons/logo_xl.png</file>
-        <file alias="logo_xxl">images/icons/logo_xxl.png</file>
-        -->
+        <file alias="logo">images/logo.png</file>
     </qresource>
 </RCC>

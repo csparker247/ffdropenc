@@ -29,6 +29,7 @@ public slots:
     void onEncodeUpdateErr();
     void onEncodeFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void onEncodeError(QProcess::ProcessError error);
+    void setExecutablePath(const QString& path);
 
 signals:
     void queueRunning();

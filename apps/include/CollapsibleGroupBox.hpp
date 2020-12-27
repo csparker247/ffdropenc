@@ -20,6 +20,9 @@ public:
     void setTitle(const QString& t);
     QString title() const;
 
+    bool isExpanded() const;
+    void setExpanded(bool b);
+
 public slots:
     void expand();
     void collapse();

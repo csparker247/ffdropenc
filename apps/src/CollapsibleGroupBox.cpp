@@ -61,6 +61,20 @@ void CollapsibleGroupBox::setTitle(const QString& t) { title_->setText(t); }
 
 QString CollapsibleGroupBox::title() const { return title_->text(); }
 
+bool CollapsibleGroupBox::isExpanded() const
+{
+    return not content_->isHidden();
+}
+
+void CollapsibleGroupBox::setExpanded(bool b)
+{
+    if (b) {
+        expand();
+    } else {
+        collapse();
+    }
+}
+
 void CollapsibleGroupBox::expand()
 {
     expander_->setText(DOWN);

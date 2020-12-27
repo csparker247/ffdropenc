@@ -5,6 +5,8 @@
 
 int main(int argc, char* argv[])
 {
+    QApplication::setOrganizationName("ffdropenc");
+    QApplication::setApplicationName("ffdropenc");
     QPointer<MainApplication> app = new MainApplication(argc, argv);
     MainLayout mainWindow;
 
@@ -12,7 +14,6 @@ int main(int argc, char* argv[])
     mainWindow.setWindowTitle("ffdropenc");
     mainWindow.setMinimumWidth(480);
     mainWindow.setMinimumHeight(mainWindow.minimumSizeHint().height());
-    // mainWindow.setWindowIcon(QIcon{":/logo-s"});
 
     mainWindow.show();
     app->exec();

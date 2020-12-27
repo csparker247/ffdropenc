@@ -8,15 +8,17 @@
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QMessageBox>
 #include <QProcess>
+#include <QSettings>
 #include <QStandardPaths>
 
 #include "LayoutUtils.hpp"
 
-const QString BUNDLED("Bundled");
-QRegExp VERSION{"ffmpeg\\sversion\\s(\\d+.\\d+.\\d+)"};
-
 namespace fs = std::filesystem;
+
+QRegExp VERSION{R"(ffmpeg\sversion\s(\d+.\d+.\d+))"};
+static const QString BUNDLED = "Bundled";
 
 static QString BundledExecPath()
 {
@@ -72,6 +74,7 @@ SettingsWindow::SettingsWindow(QWidget* parent, Qt::WindowFlags f)
     execLayout->addWidget(execLabel_);
 
     execPicker_ = new QFileDialog();
+    execPicker_->setWindowTitle("Select custom FFmpeg");
     execPicker_->setDirectory(
         QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     execPicker_->setFileMode(QFileDialog::ExistingFile);
@@ -95,12 +98,6 @@ SettingsWindow::SettingsWindow(QWidget* parent, Qt::WindowFlags f)
     saveBtn_ = btnBox->button(QDialogButtonBox::Ok);
     layout->addWidget(btnBox);
 
-    // Load settings
-    // Scan for system ffmpeg and test bundled
-    // TODO: Test setting saved exec
-    exec_scan_();
-    change_exec_(BUNDLED);
-
     // Connect signals
     connect(
         execSelector_, &QComboBox::currentTextChanged, this,
@@ -108,8 +105,17 @@ SettingsWindow::SettingsWindow(QWidget* parent, Qt::WindowFlags f)
     connect(
         browseBtn, &QPushButton::clicked, this,
         &SettingsWindow::on_browse_exec_);
-    connect(btnBox, &QDialogButtonBox::accepted, this, &SettingsWindow::accept);
-    connect(btnBox, &QDialogButtonBox::rejected, this, &SettingsWindow::reject);
+    connect(
+        btnBox, &QDialogButtonBox::accepted, this,
+        &SettingsWindow::close_and_save_);
+    connect(
+        btnBox, &QDialogButtonBox::rejected, this,
+        &SettingsWindow::close_and_reset_);
+
+    // Scan for system ffmpeg and test bundled
+    exec_scan_();
+    // Load settings
+    load_settings_();
 }
 
 void SettingsWindow::exec_scan_()
@@ -125,11 +131,13 @@ std::tuple<bool, QString> SettingsWindow::exec_test_(const QString& path)
     // Setup encoder
     auto encoder = new QProcess();
     encoder->setProgram(path);
-    qDebug() << path;
 
     encoder->setArguments({"-codecs"});
     encoder->start();
     encoder->waitForFinished();
+    if (encoder->isOpen()) {
+        encoder->kill();
+    }
 
     // TODO: stdout contains available codecs
     auto line = encoder->readAllStandardError();
@@ -167,6 +175,12 @@ void SettingsWindow::exec_msg_error_(const QString& msg)
 
 void SettingsWindow::on_browse_exec_()
 {
+    QMessageBox::warning(
+        this, tr("ffdropenc"),
+        tr("You are about to select a custom FFmpeg executable.  This "
+           "application makes no attempt to verify the identity of the "
+           "selected file.  For your own safety,  only select a trusted "
+           "executable."));
     if (execPicker_->exec()) {
         auto execOpt = execPicker_->selectedFiles()[0];
         if (execSelector_->findText(execOpt) == -1) {
@@ -180,7 +194,6 @@ void SettingsWindow::on_browse_exec_()
 
 void SettingsWindow::change_exec_(const QString& execOpt)
 {
-    qDebug() << execOpt << current_exec_opt_;
     if (execOpt == current_exec_opt_) {
         return;
     }
@@ -191,8 +204,54 @@ void SettingsWindow::change_exec_(const QString& execOpt)
     if (success) {
         current_exec_opt_ = execOpt;
         exec_msg_success_(msg);
-        emit ExecutableChanged(execPath);
     } else {
         exec_msg_error_(msg);
     }
+}
+
+void SettingsWindow::save_settings_()
+{
+    QSettings settings;
+    settings.setValue("ffmpeg/path", current_exec_opt_);
+}
+
+void SettingsWindow::load_settings_()
+{
+    QSettings settings;
+
+    // Load the executable
+    auto exec = settings.value("ffmpeg/path", BUNDLED).toString();
+    if (fs::exists(ResolveExecPath(exec).toStdString())) {
+        if (execSelector_->findText(exec) == -1) {
+            execSelector_->insertItem(2, exec);
+        }
+        execSelector_->setCurrentText(exec);
+    } else {
+        exec = BUNDLED;
+    }
+    change_exec_(exec);
+}
+
+void SettingsWindow::closeEvent(QCloseEvent* event)
+{
+    save_settings_();
+    event->accept();
+}
+
+void SettingsWindow::close_and_save_()
+{
+    save_settings_();
+    emit ExecutableChanged(ResolveExecPath(current_exec_opt_));
+    accept();
+}
+
+void SettingsWindow::close_and_reset_()
+{
+    load_settings_();
+    reject();
+}
+
+QString SettingsWindow::currentExecutablePath() const
+{
+    return ResolveExecPath(current_exec_opt_);
 }

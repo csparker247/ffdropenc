@@ -157,6 +157,12 @@ void EncodingQueue::onEncodeError(QProcess::ProcessError error)
     advance_queue_();
 }
 
+void EncodingQueue::setExecutablePath(const QString& path)
+{
+    qDebug() << "executable changed: " << path;
+    encoder_->setProgram(path);
+}
+
 void EncodingQueue::advance_queue_()
 {
     if (queue_.empty()) {

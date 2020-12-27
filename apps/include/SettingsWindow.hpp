@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QCloseEvent>
 #include <QComboBox>
 #include <QDialog>
 #include <QFileDialog>
@@ -15,6 +16,9 @@ class SettingsWindow : public QDialog
 public:
     explicit SettingsWindow(
         QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+
+    void closeEvent(QCloseEvent*) override;
+    QString currentExecutablePath() const;
 
 signals:
     void ExecutableChanged(QString);
@@ -32,4 +36,9 @@ private:
     void on_browse_exec_();
     void change_exec_(const QString& execOpt);
     QString current_exec_opt_;
+
+    void save_settings_();
+    void load_settings_();
+    void close_and_save_();
+    void close_and_reset_();
 };
