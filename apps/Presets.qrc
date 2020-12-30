@@ -1,21 +1,22 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
+        <file>presets/appletv.preset</file>
+        <file>presets/chromecast-1-720.preset</file>
         <file>presets/chromecast-2-1080.preset</file>
-        <file>presets/youtube.preset</file>
+        <file>presets/ipad.preset</file>
+        <file>presets/mkv-1-SqPx-Apass.preset</file>
+        <file>presets/mp3.preset</file>
         <file>presets/mp4-1-NoScale.preset</file>
+        <file>presets/mp4-2-SqPx.preset</file>
         <file>presets/mp4-3-SD.preset</file>
+        <file>presets/mp4-4-720Small.preset</file>
+        <file>presets/mp4-5-1080Small.preset</file>
+        <file>presets/mp4-6-720Deint.preset</file>
+        <file>presets/mp4-7-1080Deint.preset</file>
         <file>presets/mp4-8-1080Grain.preset</file>
         <file>presets/prores-1-422.preset</file>
-        <file>presets/appletv.preset</file>
-        <file>presets/mp4-5-1080Small.preset</file>
-        <file>presets/mp4-7-1080Deint.preset</file>
         <file>presets/prores-1-4444.preset</file>
-        <file>presets/mp4-6-720Deint.preset</file>
-        <file>presets/chromecast-1-720.preset</file>
-        <file>presets/mkv-1-SqPx-Apass.preset</file>
-        <file>presets/ipad.preset</file>
         <file>presets/vimeo.preset</file>
-        <file>presets/mp4-4-720Small.preset</file>
-        <file>presets/mp4-2-SqPx.preset</file>
+        <file>presets/youtube.preset</file>
     </qresource>
 </RCC>
