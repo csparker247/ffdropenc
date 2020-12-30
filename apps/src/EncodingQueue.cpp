@@ -183,6 +183,7 @@ void EncodingQueue::advance_queue_()
             qDebug() << "encoder cmd:" << encoder_->program()
                      << encoder_->arguments();
             encoder_->start();
+            break;
         }
     }
 }
