@@ -1,0 +1,35 @@
+{
+  "listname" : "MP4 - H.264/AAC [1080p, Deinterlaced]",
+  "consolename" : "Deinterlaced",
+
+  "outputs" : [
+    { "extension" : "mp4",
+      "suffix" : "Deint",
+      "faststart" : true,
+      "streams" : [
+          { "type" : "video",
+            "codec" : "libx264",
+            "mode" : "crf",
+            "quality" : 16,
+            "bitrate" : "20M",
+            "buffer" : "20M",
+            "profile" : "high",
+            "level" : "4.2",
+            "pixfmt" : "yuv420p",
+            "filters" : [
+              { "filter" : "yadif", "data" : "yadif" },
+              { "filter" : "scale", "mode" : 1, "width" : 1920, "height" : 1080, "dar" : "16/9" }
+            ],
+            "flags" : [
+              { "key" : "-preset", "val" : "veryslow" }
+            ]
+          },
+
+          { "type" : "audio",
+            "codec" : "aac",
+            "bitrate" : "320k"
+          }
+      ]
+    }
+  ]
+}

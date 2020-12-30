@@ -1,0 +1,32 @@
+{
+  "listname" : "ProRes 4444",
+  "consolename" : "ProRes 4444",
+
+  "outputs" : [
+    { "extension" : "mov",
+      "suffix" : "ProRes",
+      "faststart" : false,
+      "streams" : [
+          { "type" : "video",
+            "codec" : "prores_ks",
+            "mode" : "default",
+            "pixfmt" : "yuva444p10le",
+            "profile" : "4",
+            "flags" : [
+              { "key" : "-qscale:v", "val" : "11" },
+              { "key" : "-vendor", "val" : "ap10" }
+            ]
+          },
+
+          { "type" : "audio",
+            "codec" : "pcm_s16le",
+            "bitrate" : "default",
+            "flags" : [
+              { "key" : "-af", "val" : "asetnsamples=n=16384:p=0" },
+              { "key" : "-ar", "val" : "48k" }
+            ]
+          }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "listname" : "MP4 - H.264/AAC [720p, Very Slow]",
+  "consolename" : "MP4 [Very Slow]",
+
+  "outputs" : [
+    { "extension" : "mp4",
+      "suffix" : "Small",
+      "faststart" : true,
+      "streams" : [
+          { "type" : "video",
+            "codec" : "libx264",
+            "mode" : "crf",
+            "quality" : 18,
+            "bitrate" : "2M",
+            "buffer" : "6M",
+            "profile" : "high",
+            "level" : "4.2",
+            "pixfmt" : "yuv420p",
+            "filters" : [
+              { "filter" : "scale", "mode" : 1, "width" : 1280, "height" : 720, "dar" : "16/9" }
+            ],
+            "flags" : [
+              { "key" : "-preset", "val" : "veryslow" }
+            ]
+          },
+
+          { "type" : "audio",
+            "codec" : "aac",
+            "bitrate" : "192k"
+          }
+      ]
+    }
+  ]
+}

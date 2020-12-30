@@ -1,0 +1,34 @@
+{
+  "listname" : "Chromecast [1080p]",
+  "consolename" : "Chromecast",
+
+  "outputs" : [
+    { "extension" : "mp4",
+      "suffix" : "CC",
+      "faststart" : true,
+      "streams" : [
+          { "type" : "video",
+            "codec" : "libx264",
+            "mode" : "crf",
+            "quality" : 18,
+            "bitrate" : "10M",
+            "buffer" : "16M",
+            "profile" : "high",
+            "level" : "4.2",
+            "pixfmt" : "yuv420p",
+            "filters" : [
+              { "filter" : "scale", "mode" : 1, "width" : 1920, "height" : 1080, "dar" : "16/9" }
+            ],
+            "flags" : [
+              { "key" : "-x264-params", "val" : "bframes=3:cabac=1" }
+            ]
+          },
+
+          { "type" : "audio",
+            "codec" : "aac",
+            "bitrate" : "320k"
+          }
+      ]
+    }
+  ]
+}

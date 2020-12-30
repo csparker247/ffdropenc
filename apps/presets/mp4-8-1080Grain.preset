@@ -1,0 +1,35 @@
+{
+  "listname" : "MP4 - H.264/AAC [1080p, Preserve Grain]",
+  "consolename" : "MP4 w/Grain",
+
+  "outputs" : [
+    { "extension" : "mp4",
+      "suffix" : "Grain",
+      "faststart" : true,
+      "streams" : [
+          { "type" : "video",
+            "codec" : "libx264",
+            "mode" : "crf",
+            "quality" : 16,
+            "bitrate" : "10M",
+            "buffer" : "15M",
+            "profile" : "high",
+            "level" : "4.2",
+            "pixfmt" : "yuv420p",
+            "filters" : [
+              { "filter" : "scale", "mode" : 1, "width" : 1920, "height" : 1080, "dar" : "16/9" }
+            ],
+            "flags" : [
+              { "key" : "-preset", "val" : "veryslow" },
+              { "key" : "-tune", "val" : "grain"}
+            ]
+          },
+
+          { "type" : "audio",
+            "codec" : "aac",
+            "bitrate" : "320k"
+          }
+      ]
+    }
+  ]
+}

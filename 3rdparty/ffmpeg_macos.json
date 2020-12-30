@@ -1,0 +1,298 @@
+{
+  "name": "ffmpeg",
+  "type": "release",
+  "version": "4.3.1",
+  "size": 74419128,
+  "download": {
+    "7z": {
+      "url": "https://evermeet.cx/ffmpeg/ffmpeg-4.3.1.7z",
+      "size": 15657108,
+      "sig": "https://evermeet.cx/ffmpeg/ffmpeg-4.3.1.7z.sig"
+    },
+    "zip": {
+      "url": "https://evermeet.cx/ffmpeg/ffmpeg-4.3.1.zip",
+      "size": 23107412,
+      "sig": "https://evermeet.cx/ffmpeg/ffmpeg-4.3.1.zip.sig"
+    }
+  },
+  "libraries": {
+    "internal": [
+      {
+        "name": "libavutil",
+        "version": "56.51.100"
+      },
+      {
+        "name": "libavcodec",
+        "version": "58.91.100"
+      },
+      {
+        "name": "libavformat",
+        "version": "58.45.100"
+      },
+      {
+        "name": "libavdevice",
+        "version": "58.10.100"
+      },
+      {
+        "name": "libavfilter",
+        "version": "7.85.100"
+      },
+      {
+        "name": "libswscale",
+        "version": "5.7.100"
+      },
+      {
+        "name": "libswresample",
+        "version": "3.7.100"
+      },
+      {
+        "name": "libpostproc",
+        "version": "55.7.100"
+      }
+    ],
+    "external": [
+      {
+        "name": "aom",
+        "version": "20200710-dee179da7 2.0.0-586",
+        "url": "https://aomedia.googlesource.com/aom"
+      },
+      {
+        "name": "ass",
+        "version": "0.14.0",
+        "url": "https://github.com/libass/libass"
+      },
+      {
+        "name": "bluray",
+        "version": "1.2.0",
+        "url": "https://www.videolan.org/developers/libbluray.html"
+      },
+      {
+        "name": "bzip2",
+        "version": "1.0.8",
+        "url": "https://sourceware.org/bzip2/"
+      },
+      {
+        "name": "dav1d",
+        "version": "20200710-dfb22e5 0.7.1-31",
+        "url": "https://code.videolan.org/videolan/dav1d"
+      },
+      {
+        "name": "expat",
+        "version": "2.2.9",
+        "url": "https://github.com/libexpat/libexpat"
+      },
+      {
+        "name": "faac",
+        "version": "1.30",
+        "url": "https://sourceforge.net/projects/faac/"
+      },
+      {
+        "name": "faad2",
+        "version": "2.8.8",
+        "url": "https://sourceforge.net/projects/faac/"
+      },
+      {
+        "name": "flac",
+        "version": "1.3.3",
+        "url": "https://xiph.org/flac/"
+      },
+      {
+        "name": "fontconfig",
+        "version": "2.13.92",
+        "url": "https://www.fontconfig.org"
+      },
+      {
+        "name": "freetype",
+        "version": "2.10.1",
+        "url": "https://www.freetype.org"
+      },
+      {
+        "name": "fribidi",
+        "version": "1.0.10",
+        "url": "https://github.com/fribidi/fribidi"
+      },
+      {
+        "name": "gsm",
+        "version": "1.0.18",
+        "url": "http://www.quut.com/gsm/"
+      },
+      {
+        "name": "iconv",
+        "version": "1.16",
+        "url": "https://www.gnu.org/software/libiconv/"
+      },
+      {
+        "name": "lame",
+        "version": "3.100",
+        "url": "http://lame.sourceforge.net"
+      },
+      {
+        "name": "modplug",
+        "version": "0.8.8.4",
+        "url": "http://modplug-xmms.sourceforge.net"
+      },
+      {
+        "name": "mysofa",
+        "version": "20200710-6f4f25e 1.1-14",
+        "url": "https://github.com/hoene/libmysofa"
+      },
+      {
+        "name": "ogg",
+        "version": "1.3.4",
+        "url": "https://www.xiph.org/downloads/"
+      },
+      {
+        "name": "openal-soft",
+        "version": "1.20.0",
+        "url": "https://openal-soft.org"
+      },
+      {
+        "name": "opencore-amr",
+        "version": "0.1.5",
+        "url": "https://sourceforge.net/projects/opencore-amr/"
+      },
+      {
+        "name": "openh264",
+        "version": "20200708-d5baa225 2.0.0-102",
+        "url": "http://www.openh264.org"
+      },
+      {
+        "name": "openjpeg",
+        "version": "20200630-cbee7891 2.3.1-57",
+        "url": "https://github.com/uclouvain/openjpeg"
+      },
+      {
+        "name": "opus",
+        "version": "1.3.1",
+        "url": "http://www.opus-codec.org"
+      },
+      {
+        "name": "orc",
+        "version": "0.4.31",
+        "url": "https://gstreamer.freedesktop.org/src/orc/"
+      },
+      {
+        "name": "rubberband",
+        "version": "1.8.2",
+        "url": "https://breakfastquay.com/rubberband/"
+      },
+      {
+        "name": "shine",
+        "version": "3.1.1",
+        "url": "https://github.com/toots/shine"
+      },
+      {
+        "name": "snappy",
+        "version": "20190215-d4be414 1.1.7-35",
+        "url": "https://github.com/google/snappy"
+      },
+      {
+        "name": "soxr",
+        "version": "0.1.3",
+        "url": "https://sourceforge.net/projects/soxr/files/"
+      },
+      {
+        "name": "speex",
+        "version": "1.2.0",
+        "url": "https://www.speex.org"
+      },
+      {
+        "name": "theora",
+        "version": "1.1.1",
+        "url": "https://www.theora.org"
+      },
+      {
+        "name": "twolame",
+        "version": "0.4.0",
+        "url": "http://twolame.org"
+      },
+      {
+        "name": "uuid",
+        "version": "1.6.2",
+        "url": "http://www.ossp.org/pkg/lib/uuid/"
+      },
+      {
+        "name": "vid.stab",
+        "version": "20190213-aeabc8d 1.1.0-22",
+        "url": "https://github.com/georgmartius/vid.stab"
+      },
+      {
+        "name": "vmaf",
+        "version": "20200710-461cf32 1.5.2-11",
+        "url": "https://github.com/Netflix/vmaf"
+      },
+      {
+        "name": "vo-aacenc",
+        "version": "0.1.3",
+        "url": "https://sourceforge.net/projects/opencore-amr/"
+      },
+      {
+        "name": "vo-amrwbenc",
+        "version": "0.1.3",
+        "url": "https://sourceforge.net/projects/opencore-amr/"
+      },
+      {
+        "name": "vorbis",
+        "version": "1.3.7",
+        "url": "https://xiph.org/vorbis/"
+      },
+      {
+        "name": "vpx",
+        "version": "20200710-bf3fe26f7 1.8.2-217",
+        "url": "https://github.com/webmproject/libvpx"
+      },
+      {
+        "name": "wavpack",
+        "version": "5.3.0",
+        "url": "http://www.wavpack.com"
+      },
+      {
+        "name": "webp",
+        "version": "20200617-cf2f88b3 1.1.0-25",
+        "url": "https://github.com/webmproject/libwebp"
+      },
+      {
+        "name": "x264",
+        "version": "20200702-4c2aafd8 0.161.3015",
+        "url": "https://www.videolan.org/developers/x264.html"
+      },
+      {
+        "name": "x265",
+        "version": "20200529-73ca1d7be377 3.4+2-73ca1d7be377",
+        "url": "https://bitbucket.org/multicoreware/x265/overview"
+      },
+      {
+        "name": "xavs",
+        "version": "20110821-r55",
+        "url": "http://xavs.sourceforge.net/"
+      },
+      {
+        "name": "xvidcore",
+        "version": "1.3.7",
+        "url": "https://labs.xvid.com/source/"
+      },
+      {
+        "name": "z.lib (zimg)",
+        "version": "2.9.3",
+        "url": "https://github.com/sekrit-twc/zimg"
+      },
+      {
+        "name": "zeromq",
+        "version": "4.3.2",
+        "url": "http://zeromq.org"
+      },
+      {
+        "name": "zlib",
+        "version": "1.2.11",
+        "url": "http://zlib.net"
+      },
+      {
+        "name": "zvbi",
+        "version": "0.2.35",
+        "url": "http://zapping.sourceforge.net/ZVBI/"
+      }
+    ]
+  },
+  "rssfeed": "https://evermeet.cx/ffmpeg/rss.xml",
+  "configuration": "--cc=/usr/bin/clang --prefix=/opt/ffmpeg --extra-version=tessus --enable-avisynth --enable-fontconfig --enable-gpl --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libfreetype --enable-libgsm --enable-libmodplug --enable-libmp3lame --enable-libmysofa --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenh264 --enable-libopenjpeg --enable-libopus --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvmaf --enable-libvo-amrwbenc --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxavs --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-version3 --pkg-config-flags=--static --disable-ffplay"
+}
