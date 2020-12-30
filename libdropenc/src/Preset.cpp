@@ -43,7 +43,7 @@ QStringList Preset::getSettings(size_t index)
 
     // Iterate through all of the stream types
     json streams = output["streams"];
-    for (json& s : streams) {
+    for (const json& s : streams) {
 
         // What sort of stream is this?
         auto type = s["type"].get<std::string>();
@@ -71,15 +71,15 @@ QStringList Preset::getSettings(size_t index)
             }
 
             // Some codec specific options (mostly H.264 things)
-            if (!s["profile"].is_null()) {
+            if (s.contains("profile")) {
                 auto profile = s["profile"].get<std::string>();
                 settings << "-profile:v" << QString::fromStdString(profile);
             }
-            if (!s["level"].is_null()) {
+            if (s.contains("level")) {
                 auto level = s["level"].get<std::string>();
                 settings << "-level" << QString::fromStdString(level);
             }
-            if (!s["pixfmt"].is_null()) {
+            if (s.contains("pixfmt")) {
                 auto pixfmt = s["pixfmt"].get<std::string>();
                 settings << "-pix_fmt" << QString::fromStdString(pixfmt);
             }
@@ -87,12 +87,14 @@ QStringList Preset::getSettings(size_t index)
 
         // Handle audio streams
         else if (type == "audio") {
+            std::cout << s << std::endl;
             // Add the codec
             auto codec = s["codec"].get<std::string>();
             if(codec == "aac") {
                 // TODO: Replace with user-selected library
             }
             settings << "-c:a" << QString::fromStdString(codec);
+            std::cout << codec << " ";
 
             // Skip the rest of this loop if we're copying the input stream
             if (codec == "copy") {
@@ -100,14 +102,21 @@ QStringList Preset::getSettings(size_t index)
             }
 
             // Append the output bitrate if we need it
-            if (s["bitrate"].get<std::string>() != "default") {
+            if (s.contains("bitrate")) {
                 auto bitrate = s["bitrate"].get<std::string>();
+                std::cout << bitrate << " ";
                 settings << "-b:a" << QString::fromStdString(bitrate);
+            }
+
+            if(s.contains("quality")) {
+                auto quality = s["quality"].get<std::string>();
+                std::cout << quality << " ";
+                settings << "-q:a" << QString::fromStdString(quality);
             }
         }
 
         // Handle filters on the stream
-        if (!s["filters"].is_null()) {
+        if (s.contains("filters")) {
             json filters = s["filters"];
             if (type == "video") {
                 settings << "-vf";
@@ -118,7 +127,7 @@ QStringList Preset::getSettings(size_t index)
         }
 
         // Handle flags on the stream
-        if (!s["flags"].is_null()) {
+        if (s.contains("flags")) {
             json flags = s["flags"];
             for (json& flag : flags) {
                 settings << QString::fromStdString(
@@ -131,7 +140,7 @@ QStringList Preset::getSettings(size_t index)
     }  // Stream Iterator
 
     // Fast start atom
-    if (output["faststart"].get<bool>()) {
+    if (output.contains("faststart") and output["faststart"].get<bool>()) {
         settings << "-movflags"
                  << "faststart";
     }

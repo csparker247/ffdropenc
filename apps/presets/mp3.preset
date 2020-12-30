@@ -1,0 +1,16 @@
+{
+  "listname" : "MP3 [Audio Only]",
+  "consolename" : "MP3",
+
+  "outputs" : [
+    { "extension" : "mp3",
+      "suffix" : "AudioOnly",
+      "streams" : [
+        { "type" : "audio",
+          "codec" : "libmp3lame",
+          "quality" : "0"
+        }
+      ]
+    }
+  ]
+}
