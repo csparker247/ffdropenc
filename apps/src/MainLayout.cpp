@@ -40,6 +40,8 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
 {
     setAcceptDrops(true);
     setWindowIcon(QIcon{":/logo"});
+    setWindowTitle("ffdropenc");
+    setMinimumWidth(480);
 
     QPointer<QVBoxLayout> layout = new QVBoxLayout();
     layout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
@@ -162,14 +164,18 @@ void MainLayout::save_settings_()
 void MainLayout::load_settings_()
 {
     QSettings settings;
+
+    // Restore this first because it causes a window resize
+    collapseBox_->setExpanded(
+        settings.value("window/expandDetails", false).toBool());
+
+    // Restore window geometry and state
     if (settings.contains("window/geometry")) {
         restoreGeometry(settings.value("window/geometry").toByteArray());
     }
     if (settings.contains("window/state")) {
         restoreState(settings.value("window/state").toByteArray());
     }
-    collapseBox_->setExpanded(
-        settings.value("window/expandDetails", false).toBool());
 }
 
 void MainLayout::dragEnterEvent(QDragEnterEvent* event)
