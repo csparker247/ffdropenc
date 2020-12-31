@@ -36,7 +36,7 @@ set_source_files_properties(
 # Setup Info.plist
 set(MACOSX_BUNDLE_ICON_FILE ${icon_file})
 string(TIMESTAMP year "%Y")
-set(copyright "Copyright ${year} Seth Parker")
+set(copyright "Copyright ${year} C. Seth Parker")
 string(CONCAT info_string
     ffdropenc${CMAKE_BUILD_TYPE}
     " Version ${PROJECT_VERSION}"
