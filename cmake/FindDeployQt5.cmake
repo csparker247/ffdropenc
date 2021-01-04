@@ -13,7 +13,7 @@ endif()
 find_package_handle_standard_args(DeployQt5 DEFAULT_MSG DeployQt5_EXECUTABLE)
 
 function(qt5_deploy_bundle TARGET)
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
         set(DeployFlags -no-strip)
     endif()
     message("Deploy flags: ${DeployFlags}")
