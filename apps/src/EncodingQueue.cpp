@@ -40,7 +40,7 @@ EncodingQueue::EncodingQueue()
 EncodingQueue::~EncodingQueue()
 {
     if (encoder_ and encoder_->state() != QProcess::NotRunning) {
-        encoder_->kill();
+        encoder_->terminate();
         encoder_->waitForFinished();
     }
 }
