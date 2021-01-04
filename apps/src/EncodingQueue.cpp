@@ -68,7 +68,9 @@ void EncodingQueue::insert(std::vector<fs::path> files, const EncodeSettings& s)
     }
 
     // Sort queue by name and remove duplicates
-    std::sort(tempQueue.begin(), tempQueue.end());
+    std::sort(
+        tempQueue.begin(), tempQueue.end(),
+        [](const auto& l, const auto& r) { return *l < *r; });
     auto last = std::unique(
         tempQueue.begin(), tempQueue.end(),
         [](const auto& l, const auto& r) { return *l == *r; });

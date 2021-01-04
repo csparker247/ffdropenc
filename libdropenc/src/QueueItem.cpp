@@ -55,15 +55,12 @@ QueueItem::Pointer QueueItem::New(
 // Operators
 bool QueueItem::operator<(const QueueItem& file) const
 {
-    if (inputPath_ == file.inputPath_ && type_ == file.type_)
-        return (startingIndex_ < file.startingIndex_);
-    else
-        return (inputPath_ < file.inputPath_);
+    return inputPath_ < file.inputPath_;
 }
 
 bool QueueItem::operator==(const QueueItem& file) const
 {
-    return (inputPath_ == file.inputPath_);
+    return inputPath_ == file.inputPath_;
 }
 
 // Construct the full output path from all of its requisite parts
@@ -123,8 +120,6 @@ void QueueItem::convert_to_seq_()
     fileName += seqNumber + inputPath_.extension().string();
     inputPath_ = inputPath_.parent_path() / fileName;
 }
-
-// Analyze
 
 // Construct the transcoding command
 QStringList QueueItem::encodeArguments() const
