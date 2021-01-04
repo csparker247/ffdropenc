@@ -87,14 +87,12 @@ QStringList Preset::getSettings(size_t index)
 
         // Handle audio streams
         else if (type == "audio") {
-            std::cout << s << std::endl;
             // Add the codec
             auto codec = s["codec"].get<std::string>();
             if(codec == "aac") {
                 // TODO: Replace with user-selected library
             }
             settings << "-c:a" << QString::fromStdString(codec);
-            std::cout << codec << " ";
 
             // Skip the rest of this loop if we're copying the input stream
             if (codec == "copy") {
@@ -104,13 +102,11 @@ QStringList Preset::getSettings(size_t index)
             // Append the output bitrate if we need it
             if (s.contains("bitrate")) {
                 auto bitrate = s["bitrate"].get<std::string>();
-                std::cout << bitrate << " ";
                 settings << "-b:a" << QString::fromStdString(bitrate);
             }
 
             if(s.contains("quality")) {
                 auto quality = s["quality"].get<std::string>();
-                std::cout << quality << " ";
                 settings << "-q:a" << QString::fromStdString(quality);
             }
         }
