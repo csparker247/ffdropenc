@@ -75,6 +75,7 @@ void EncodingQueue::insert(std::vector<fs::path> files, const EncodeSettings& s)
         tempQueue.begin(), tempQueue.end(),
         [](const auto& l, const auto& r) { return *l == *r; });
     tempQueue.erase(last, tempQueue.end());
+    qDebug() << "Adding" << tempQueue.size() << "items to queue.";
 
     // insert items into analysis queue
     queue_.insert(queue_.end(), tempQueue.begin(), tempQueue.end());
