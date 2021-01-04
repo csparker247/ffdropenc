@@ -55,15 +55,12 @@ QueueItem::Pointer QueueItem::New(
 // Operators
 bool QueueItem::operator<(const QueueItem& file) const
 {
-    if (inputPath_ == file.inputPath_ && type_ == file.type_)
-        return (startingIndex_ < file.startingIndex_);
-    else
-        return (inputPath_ < file.inputPath_);
+    return inputPath_ < file.inputPath_;
 }
 
 bool QueueItem::operator==(const QueueItem& file) const
 {
-    return (inputPath_ == file.inputPath_);
+    return inputPath_ == file.inputPath_;
 }
 
 // Construct the full output path from all of its requisite parts
@@ -82,25 +79,40 @@ void QueueItem::convert_to_seq_()
     // TODO: This only works if numerical pattern is at end of filename
     auto stem = inputPath_.stem().string();
     auto last_letter_pos = stem.find_last_not_of("0123456789");
-    auto fileName = stem.substr(0, last_letter_pos + 1);
-    auto seqNumber = stem.substr(last_letter_pos + 1);
+    nameStem_ = stem.substr(0, last_letter_pos + 1);
+    seqNumStr_ = stem.substr(last_letter_pos + 1);
 
     // Set the output filename
-    outputFileName_ = (fileName.empty())
+    outputFileName_ = (nameStem_.empty())
                           ? inputPath_.parent_path().stem().string()
-                          : fileName;
+                          : nameStem_;
+
+    // Convert seqNumber to the %nd format
+    auto seqNumber = std::to_string(seqNumStr_.length());
+    if (seqNumber.length() < 2) {
+        seqNumber.insert(0, "0");
+    }
+    seqNumber = "%" + seqNumber + "d";
+
+    // Final file name
+    auto completeStem = nameStem_ + seqNumber + inputPath_.extension().string();
+    inputPath_ = inputPath_.parent_path() / completeStem;
+}
+
+size_t QueueItem::determine_starting_index_() const
+{
+    // TODO: This only works if numerical pattern is at end of filename
 
     // Get list of all paths matching prefix in parent path
-    std::regex prefix{fileName + "([0-9]+)"};
+    std::regex prefix{nameStem_ + "([0-9]+)"};
     std::smatch match;
-    startingIndex_ = std::stoull(seqNumber);
+    size_t startIdx = std::stoull(seqNumStr_);
     for (const auto& it : fs::directory_iterator(inputPath_.parent_path())) {
         // Skip entries that aren't files
         if (not it.is_regular_file()) {
             continue;
         }
 
-        //
         auto fn = fs::path(it).stem().string();
         if (std::regex_match(fn, match, prefix)) {
             if (match.size() != 2) {
@@ -108,23 +120,11 @@ void QueueItem::convert_to_seq_()
             }
             // Get minimum and maximum sequence number from list
             size_t idx{std::stoull(match[1])};
-            startingIndex_ = std::min(startingIndex_, idx);
+            startIdx = std::min(startIdx, idx);
         }
     }
-
-    // Convert seqNumber to the %nd format
-    seqNumber = std::to_string(seqNumber.length());
-    if (seqNumber.length() < 2) {
-        seqNumber.insert(0, "0");
-    }
-    seqNumber = "%" + seqNumber + "d";
-
-    // Final file name
-    fileName += seqNumber + inputPath_.extension().string();
-    inputPath_ = inputPath_.parent_path() / fileName;
+    return startIdx;
 }
-
-// Analyze
 
 // Construct the transcoding command
 QStringList QueueItem::encodeArguments() const
@@ -134,7 +134,7 @@ QStringList QueueItem::encodeArguments() const
     // Settings for img sequences
     if (type_ == Type::Sequence) {
         args << "-framerate" << inputFPS_;
-        args << "-start_number" << QString::number(startingIndex_);
+        args << "-start_number" << QString::number(determine_starting_index_());
     }
 
     // The input file
