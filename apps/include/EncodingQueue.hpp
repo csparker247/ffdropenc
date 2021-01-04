@@ -16,6 +16,7 @@ class EncodingQueue : public QObject
 public:
     enum class Status { Stopped, Running };
     EncodingQueue();
+    ~EncodingQueue() override;
 
     void insert(
         std::vector<std::filesystem::path> files,

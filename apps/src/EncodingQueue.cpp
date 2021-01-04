@@ -37,6 +37,14 @@ EncodingQueue::EncodingQueue()
         &EncodingQueue::onEncodeError);
 }
 
+EncodingQueue::~EncodingQueue()
+{
+    if (encoder_ and encoder_->state() != QProcess::NotRunning) {
+        encoder_->kill();
+        encoder_->waitForFinished();
+    }
+}
+
 void EncodingQueue::startQueue()
 {
     status_ = Status::Running;
