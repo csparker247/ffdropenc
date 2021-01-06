@@ -3,8 +3,6 @@
 #include <cmath>
 #include <regex>
 
-#include <nlohmann/json.hpp>
-
 #include "ffdropenc/Filesystem.hpp"
 
 using namespace ffdropenc;
@@ -40,7 +38,7 @@ QueueItem::QueueItem(std::filesystem::path path, EncodeSettings settings)
             convert_to_seq_();
             break;
         case Type::Undefined:
-            throw std::runtime_error("Unable to determine type");
+            throw QueueItemException("Unable to determine type");
     }
 }
 
@@ -76,37 +74,56 @@ std::filesystem::path QueueItem::outputPath() const
 // Convert this Item into an Img Sequence
 void QueueItem::convert_to_seq_()
 {
-    // TODO: This only works if numerical pattern is at end of filename
+    std::regex digits(R"(\d+)");
     auto stem = inputPath_.stem().string();
-    auto last_letter_pos = stem.find_last_not_of("0123456789");
-    nameStem_ = stem.substr(0, last_letter_pos + 1);
-    seqNumStr_ = stem.substr(last_letter_pos + 1);
+    auto it = std::sregex_iterator(stem.begin(), stem.end(), digits);
+    auto end = std::sregex_iterator();
+    auto numMatches = std::distance(it, end);
+    if (numMatches == 0) {
+        throw QueueItemException("Zero numerical indices in stem");
+    } else if (numMatches > 1) {
+        std::string msg("Multiple numerical indices in stem: ");
+        size_t count{0};
+        for (; it != end; it++, count++) {
+            if (count > 0) {
+                msg += ", ";
+            }
+            msg += it->str();
+        }
+        throw QueueItemException(msg);
+    }
+
+    // Get the pieces
+    stemPrefix_ = it->prefix().str();
+    stemSeqNum_ = it->str();
+    stemSuffix_ = it->suffix().str();
 
     // Set the output filename
-    outputFileName_ = (nameStem_.empty())
-                          ? inputPath_.parent_path().stem().string()
-                          : nameStem_;
+    outputFileName_ = stemPrefix_ + stemSuffix_;
+    if (outputFileName_.empty()) {
+        outputFileName_ = inputPath_.parent_path().stem().string();
+    }
 
     // Convert seqNumber to the %nd format
-    auto seqNumber = std::to_string(seqNumStr_.length());
+    auto seqNumber = std::to_string(stemSeqNum_.length());
     if (seqNumber.length() < 2) {
         seqNumber.insert(0, "0");
     }
     seqNumber = "%" + seqNumber + "d";
 
     // Final file name
-    auto completeStem = nameStem_ + seqNumber + inputPath_.extension().string();
-    inputPath_ = inputPath_.parent_path() / completeStem;
+    auto newStem =
+        stemPrefix_ + seqNumber + stemSuffix_ + inputPath_.extension().string();
+    inputPath_ = inputPath_.parent_path() / newStem;
 }
 
 size_t QueueItem::determine_starting_index_() const
 {
-    // TODO: This only works if numerical pattern is at end of filename
-
     // Get list of all paths matching prefix in parent path
-    std::regex prefix{nameStem_ + "([0-9]+)"};
+    auto numSeqChars = std::to_string(stemSeqNum_.length());
+    std::regex prefix{stemPrefix_ + "(\\d{" + numSeqChars + "})" + stemSuffix_};
     std::smatch match;
-    size_t startIdx = std::stoull(seqNumStr_);
+    size_t startIdx = std::stoull(stemSeqNum_);
     for (const auto& it : fs::directory_iterator(inputPath_.parent_path())) {
         // Skip entries that aren't files
         if (not it.is_regular_file()) {

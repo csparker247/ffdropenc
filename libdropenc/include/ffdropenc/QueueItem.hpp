@@ -1,5 +1,6 @@
 #pragma once
 
+#include <exception>
 #include <filesystem>
 #include <iostream>
 
@@ -12,6 +13,20 @@
 
 namespace ffdropenc
 {
+
+class QueueItemException : public std::exception
+{
+public:
+    explicit QueueItemException(const char* msg) : msg_(msg) {}
+    explicit QueueItemException(std::string msg) : msg_(std::move(msg)) {}
+    [[nodiscard]] const char* what() const noexcept override
+    {
+        return msg_.c_str();
+    }
+
+protected:
+    std::string msg_;
+};
 
 class QueueItem
 {
@@ -71,8 +86,9 @@ private:
     // image sequence
     static Type determine_type_(const std::filesystem::path& p);
     void convert_to_seq_();
-    std::string nameStem_;
-    std::string seqNumStr_;
+    std::string stemPrefix_;
+    std::string stemSeqNum_;
+    std::string stemSuffix_;
     size_t determine_starting_index_() const;
 
     // encoding parameters

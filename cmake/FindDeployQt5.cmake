@@ -16,7 +16,6 @@ function(qt5_deploy_bundle TARGET)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
         set(DeployFlags -no-strip)
     endif()
-    message("Deploy flags: ${DeployFlags}")
     add_custom_command(
         TARGET ${TARGET} POST_BUILD
         COMMAND "${DeployQt5_EXECUTABLE}" "$<TARGET_BUNDLE_DIR:${TARGET}>" "${DeployFlags}"
