@@ -14,10 +14,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CXX_STANDARD_REQUIRED on)
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
-# Choose what to install
-option(INSTALL_APPS      "Install core programs"    on)
-option(INSTALL_DOC       "Install documentation"    off)
-
 # Look for external dependencies.
 include(FindDependencies)
 

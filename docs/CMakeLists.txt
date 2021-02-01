@@ -25,8 +25,10 @@ doxygen_add_docs(
 )
 
 # Install command
+if(FFDE_INSTALL_DOCS)
 install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
     DESTINATION doc
     COMPONENT Documentation
 )
+endif()

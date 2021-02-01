@@ -12,11 +12,13 @@ if(FFDE_BUILD_JSON)
         URL https://github.com/nlohmann/json/archive/v3.9.1.tar.gz
         CMAKE_CACHE_ARGS
             -DJSON_BuildTests:BOOL=OFF
+            -DJSON_Install:BOOL=OFF
     )
 
     FetchContent_GetProperties(json)
     if(NOT json_POPULATED)
         set(JSON_BuildTests OFF CACHE INTERNAL "")
+        set(JSON_Install OFF CACHE INTERNAL "")
         FetchContent_Populate(json)
         add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
     endif()
