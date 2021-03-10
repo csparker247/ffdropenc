@@ -1,3 +1,3 @@
 brew 'cmake'
 brew 'ninja'
-brew 'qt'
+brew 'qt@5'
