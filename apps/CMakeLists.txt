@@ -93,7 +93,7 @@ add_custom_command(TARGET ffdropenc POST_BUILD
 
 ### App Packaging ###
 if(APPLE OR WIN32)
-    if(QT5_FOUND)
+    if(Qt5_FOUND)
         qt5_deploy_bundle(ffdropenc)
     else()
         qt6_deploy_bundle(ffdropenc)
