@@ -70,7 +70,7 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     // Progress bar
     QPointer<QWidget> info = new QWidget();
     info->setLayout(new QHBoxLayout());
-    info->layout()->setMargin(0);
+    info->layout()->setContentsMargins(0,0,0,0);
     progressBar_ = new QProgressBar();
     progressBar_->setMinimum(0);
     progressBar_->setMaximum(0);
@@ -87,7 +87,7 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     // Details block
     collapseBox_ = new CollapsibleGroupBox();
     collapseBox_->setContentLayout(new QVBoxLayout());
-    collapseBox_->contentLayout()->setMargin(0);
+    collapseBox_->contentLayout()->setContentsMargins(0,0,0,0);
     collapseBox_->setTitle("Details");
 
     // Ensures the window gets resized on collapse

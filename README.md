@@ -27,7 +27,7 @@ That's alright by us! You'll find an option for selecting the FFmpeg binary of y
 ### Requirements
 - C++17 compiler
 - CMake
-- Qt5
+- Qt5.13+ or Qt6.0+
 
 ### Compilation
 This project is configured with a CMake build system:

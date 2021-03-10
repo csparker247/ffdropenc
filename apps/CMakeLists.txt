@@ -73,9 +73,7 @@ set_target_properties(ffdropenc
         AUTORCC on
 )
 target_link_libraries(ffdropenc
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Widgets
+    ${QT_LIBS}
     ffde::core
 )
 
@@ -95,5 +93,9 @@ add_custom_command(TARGET ffdropenc POST_BUILD
 
 ### App Packaging ###
 if(APPLE OR WIN32)
-    qt5_deploy_bundle(ffdropenc)
+    if(QT5_FOUND)
+        qt5_deploy_bundle(ffdropenc)
+    else()
+        qt6_deploy_bundle(ffdropenc)
+    endif()
 endif()
