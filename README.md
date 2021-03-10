@@ -27,7 +27,7 @@ That's alright by us! You'll find an option for selecting the FFmpeg binary of y
 ### Requirements
 - C++17 compiler
 - CMake
-- Qt5.13+ or Qt6.0+
+- Qt5.7+ or Qt6.0+ (Beta)
 
 ### Compilation
 This project is configured with a CMake build system:
@@ -38,7 +38,7 @@ git clone https://github.com/csparker247/ffdropenc.git
 cd ffdropenc/
 
 # If using Homebrew Qt5, tell CMake where to find it
-export Qt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5/
+export Qt5_DIR=/usr/local/opt/qt@5/lib/cmake/Qt5/
 
 # Make a build directory
 mkdir -p build/
