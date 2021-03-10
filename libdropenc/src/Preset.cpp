@@ -185,10 +185,11 @@ QString Preset::construct_filter_graph_(json filters)
                     auto w = std::to_string(filter["width"].get<int>());
                     auto h = std::to_string(filter["height"].get<int>());
                     command = "scale=iw*sar:ih,";
-                    command.append("scale=w=");
+                    command.append("scale=w=\'min(");
                     command.append(QString::fromStdString(w));
-                    command.append(":h=");
+                    command.append(",iw)\':h=\'min(");
                     command.append(QString::fromStdString(h));
+                    command.append(",ih)\'");
                     command.append(":force_original_aspect_ratio=decrease");
                     command.append(":force_divisible_by=2,");
                     command.append("setsar=1");
