@@ -201,3 +201,18 @@ QueueItem::Type QueueItem::determine_type_(const fs::path& p)
         return QueueItem::Type::Undefined;
     }
 }
+
+bool ffdropenc::ContainsVideos(const std::vector<std::filesystem::path>& files)
+{
+    return std::any_of(files.begin(), files.end(), [](const auto& f) {
+        return FileExtensionFilter(f, FF_VID_EXTENSIONS);
+    });
+}
+
+bool ffdropenc::ContainsImgSequences(
+    const std::vector<std::filesystem::path>& files)
+{
+    return std::any_of(files.begin(), files.end(), [](const auto& f) {
+        return FileExtensionFilter(f, FF_IMG_EXTENSIONS);
+    });
+}

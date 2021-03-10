@@ -24,6 +24,7 @@
 #include "MainApplication.hpp"
 #include "ffdropenc.hpp"
 #include "ffdropenc/EncodeSettings.hpp"
+#include "ffdropenc/Filesystem.hpp"
 #include "ffdropenc/Preset.hpp"
 
 using namespace ffdropenc;
@@ -215,6 +216,8 @@ void MainLayout::closeEvent(QCloseEvent* event)
 void MainLayout::processFiles(std::vector<fs::path> files)
 {
     // Select the preset
+    files = FilterFileList(files);
+    settings_->setEnableSeqOpts(ContainsImgSequences(files));
     auto result = settings_->exec();
     if (result == QDialog::Rejected) {
         return;
