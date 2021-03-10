@@ -45,6 +45,9 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     inputFPSPicker_ = new QComboBox();
     inputFPSPicker_->addItems(FPS_OPTS);
     inputFPSPicker_->setCurrentText("30");
+    inputFPSPicker_->setEditable(true);
+    inputFPSPicker_->setValidator(
+        new QDoubleValidator(0, 1000, 7, inputFPSPicker_));
     inputFPSLayout->layout()->addWidget(inputFPSPicker_);
     frameRateGroup->layout()->addWidget(inputFPSLayout);
 
@@ -55,6 +58,9 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     outputFPSPicker_ = new QComboBox();
     outputFPSPicker_->addItems(FPS_OPTS);
     outputFPSPicker_->setCurrentText("30");
+    outputFPSPicker_->setEditable(true);
+    outputFPSPicker_->setValidator(
+        new QDoubleValidator(0, 1000, 7, outputFPSPicker_));
     outputFPSLayout->layout()->addWidget(outputFPSPicker_);
     frameRateGroup->layout()->addWidget(outputFPSLayout);
 
@@ -92,6 +98,8 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     connect(
         buttonBox, &QDialogButtonBox::rejected, this, &SettingsDialog::reject);
     layout->addWidget(buttonBox);
+
+    buttonBox->setFocus();
 }
 
 void SettingsDialog::setPresetList(const QStringList& presetIDs)

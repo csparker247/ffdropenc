@@ -24,9 +24,7 @@
 #include "MainApplication.hpp"
 #include "ffdropenc.hpp"
 #include "ffdropenc/EncodeSettings.hpp"
-#include "ffdropenc/Filesystem.hpp"
 #include "ffdropenc/Preset.hpp"
-#include "ffdropenc/QueueItem.hpp"
 
 using namespace ffdropenc;
 namespace fs = std::filesystem;
