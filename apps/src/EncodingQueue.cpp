@@ -71,6 +71,9 @@ void EncodingQueue::insert(std::vector<fs::path> files, const EncodeSettings& s)
         try {
             tempQueue.emplace_back(QueueItem::New(f, s));
         } catch (const std::exception& e) {
+            auto msg =
+                QString("%1: %2").arg(f.filename().c_str()).arg(e.what());
+            emit newDetailError(msg);
             qDebug() << "QueueItem error ::" << f.c_str() << "::" << e.what();
         }
     }
