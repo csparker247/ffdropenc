@@ -1,11 +1,11 @@
-![ffdropenc](graphics/png/banner.png)
+[![ffdropenc](graphics/banner.svg)](https://github.com/csparker247/ffdropenc)
 
 [![CI](https://github.com/csparker247/ffdropenc/workflows/Build/badge.svg?branch=develop)](https://github.com/csparker247/ffdropenc/actions)
 
 **ffdropenc** is an easy-to-use macOS droplet application for batch encoding video files. Drag your videos (or image 
 sequences) to the app window, select a preset and an output location, and click OK. It's that easy!
 
-![Application Window](graphics/png/screenshot.png)
+![Application Window](graphics/screenshot.png)
 
 ## Installation and Usage
 The latest DMG installer can be downloaded from the [Releases page](https://github.com/csparker247/ffdropenc/releases).

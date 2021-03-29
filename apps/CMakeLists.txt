@@ -25,7 +25,7 @@ set(srcs
 set(rccs Resources.qrc Presets.qrc)
 
 # Setup Icon properties
-set(icon_file appicon.icns)
+set(icon_file logo.icns)
 set(icon_path ${CMAKE_CURRENT_SOURCE_DIR}/images/${icon_file})
 set_source_files_properties(
     ${icon_path}
