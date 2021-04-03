@@ -11,7 +11,7 @@ namespace fs = std::filesystem;
 // Extension filters for image sequences.
 static const ExtensionList FF_VID_EXTENSIONS = {
     "AVI", "GIF",  "MOV", "MP4", "M4A", "3GP", "264", "H264", "M4V",
-    "MKV", "MPEG", "MPG", "MTS", "MXF", "OGG", "VOB", "WMV"};
+    "MKV", "MPEG", "MPG", "MTS", "MXF", "OGG", "VOB", "WEBM", "WMV"};
 static const ExtensionList FF_IMG_EXTENSIONS = {"DPX", "JPG",  "JPEG", "PNG",
                                                 "TIF", "TIFF", "TGA"};
 
