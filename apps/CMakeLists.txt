@@ -87,7 +87,7 @@ add_custom_command(TARGET ffdropenc POST_BUILD
 if(APPLE OR WIN32)
     if(Qt5_FOUND)
         qt5_deploy_bundle(ffdropenc)
-    else()
+    elseif(Qt6_FOUND)
         qt6_deploy_bundle(ffdropenc)
     endif()
 endif()
