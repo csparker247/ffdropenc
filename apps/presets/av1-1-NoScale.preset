@@ -1,0 +1,26 @@
+{
+  "__comment__": "The libaom-av1 codec is extremely slow and hangs ffmpeg. This preset is not included in builds.",
+  "listname" : "AV1/AAC",
+  "consolename" : "AV1",
+
+  "outputs" : [
+    { "extension" : "mp4",
+      "suffix" : "AV1",
+      "faststart" : true,
+      "streams" : [
+          { "type" : "video",
+            "codec" : "libaom-av1",
+            "mode" : "crf",
+            "quality" : 30,
+            "bitrate" : "15M",
+            "pixfmt" : "yuv420p"
+          },
+
+          { "type" : "audio",
+            "codec" : "aac",
+            "bitrate" : "320k"
+          }
+      ]
+    }
+  ]
+}

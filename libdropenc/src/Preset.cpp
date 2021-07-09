@@ -63,11 +63,15 @@ QStringList Preset::getSettings(size_t index)
             // Encoding mode
             if (s["mode"].get<std::string>() == "crf") {
                 auto quality = s["quality"].get<int>();
-                auto bitrate = s["bitrate"].get<std::string>();
-                auto buffer = s["buffer"].get<std::string>();
                 settings << "-crf" << QString::number(quality);
-                settings << "-maxrate:v" << QString::fromStdString(bitrate);
-                settings << "-bufsize:v" << QString::fromStdString(buffer);
+                if (s.contains("bitrate")) {
+                    auto bitrate = s["bitrate"].get<std::string>();
+                    settings << "-b:v" << QString::fromStdString(bitrate);
+                }
+                if (s.contains("buffer")) {
+                    auto buffer = s["buffer"].get<std::string>();
+                    settings << "-bufsize:v" << QString::fromStdString(buffer);
+                }
             }
 
             // Some codec specific options (mostly H.264 things)
