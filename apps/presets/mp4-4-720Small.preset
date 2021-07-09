@@ -4,7 +4,7 @@
 
   "outputs" : [
     { "extension" : "mp4",
-      "suffix" : "Small",
+      "suffix" : "Small720",
       "faststart" : true,
       "streams" : [
           { "type" : "video",

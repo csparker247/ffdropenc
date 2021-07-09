@@ -10,6 +10,7 @@
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QProcess>
+#include <QRegularExpression>
 #include <QSettings>
 #include <QStandardPaths>
 
@@ -17,7 +18,7 @@
 
 namespace fs = std::filesystem;
 
-QRegExp VERSION{R"(ffmpeg\sversion\s(\d+.\d+.\d+))"};
+QRegularExpression VERSION{R"(ffmpeg\sversion\s(\d+.\d+.\d+))"};
 static const QString BUNDLED = "Bundled";
 
 static QString BundledExecPath()
@@ -55,7 +56,7 @@ SettingsWindow::SettingsWindow(QWidget* parent, Qt::WindowFlags f)
     layout->addWidget(execGroup);
 
     auto [container, containerLayout] = CreateContainerWidget<QHBoxLayout>();
-    containerLayout->setMargin(0);
+    containerLayout->setContentsMargins(0, 0, 0, 0);
     containerLayout->setSpacing(0);
     execLayout->addWidget(container);
 
@@ -149,12 +150,12 @@ std::tuple<bool, QString> SettingsWindow::exec_test_(const QString& path)
     }
 
     // Parse stderr for version
-    auto idx = VERSION.indexIn(line);
-    if (idx < 0) {
+    auto match = VERSION.match(line);
+    if (match.hasMatch()) {
+        return {true, "Version " + match.captured(1)};
+    } else {
         return {false, "Cannot parse executable version."};
     }
-
-    return {true, "Version " + VERSION.cap(1)};
 }
 
 void SettingsWindow::exec_msg_success_(const QString& msg)

@@ -26,7 +26,6 @@
 #include "ffdropenc/EncodeSettings.hpp"
 #include "ffdropenc/Filesystem.hpp"
 #include "ffdropenc/Preset.hpp"
-#include "ffdropenc/QueueItem.hpp"
 
 using namespace ffdropenc;
 namespace fs = std::filesystem;
@@ -71,7 +70,7 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     // Progress bar
     QPointer<QWidget> info = new QWidget();
     info->setLayout(new QHBoxLayout());
-    info->layout()->setMargin(0);
+    info->layout()->setContentsMargins(0,0,0,0);
     progressBar_ = new QProgressBar();
     progressBar_->setMinimum(0);
     progressBar_->setMaximum(0);
@@ -88,7 +87,7 @@ MainLayout::MainLayout(QWidget* parent) : QMainWindow(parent)
     // Details block
     collapseBox_ = new CollapsibleGroupBox();
     collapseBox_->setContentLayout(new QVBoxLayout());
-    collapseBox_->contentLayout()->setMargin(0);
+    collapseBox_->contentLayout()->setContentsMargins(0,0,0,0);
     collapseBox_->setTitle("Details");
 
     // Ensures the window gets resized on collapse
@@ -217,6 +216,8 @@ void MainLayout::closeEvent(QCloseEvent* event)
 void MainLayout::processFiles(std::vector<fs::path> files)
 {
     // Select the preset
+    files = FilterFileList(files);
+    settings_->setEnableSeqOpts(ContainsImgSequences(files));
     auto result = settings_->exec();
     if (result == QDialog::Rejected) {
         return;

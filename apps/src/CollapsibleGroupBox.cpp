@@ -14,13 +14,13 @@ QString DOWN{"▼"};
 CollapsibleGroupBox::CollapsibleGroupBox(QWidget* parent) : QWidget(parent)
 {
     setLayout(new QVBoxLayout());
-    layout()->setMargin(0);
+    layout()->setContentsMargins(0,0,0,0);
     layout()->setAlignment(Qt::AlignTop);
 
     auto header = new QWidget(this);
     auto hlayout = new QHBoxLayout();
     header->setLayout(hlayout);
-    hlayout->setMargin(0);
+    hlayout->setContentsMargins(0,0,0,0);
 
     expander_ = new ClickableLabel();
     expander_->setText(RIGHT);

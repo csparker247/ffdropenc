@@ -4,7 +4,7 @@
 
   "outputs" : [
     { "extension" : "mp4",
-      "suffix" : "Grain",
+      "suffix" : "Grain1080",
       "faststart" : true,
       "streams" : [
           { "type" : "video",

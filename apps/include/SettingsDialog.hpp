@@ -3,6 +3,7 @@
 #include <QComboBox>
 #include <QDialog>
 #include <QFileDialog>
+#include <QGroupBox>
 #include <QPointer>
 #include <QString>
 #include <QStringList>
@@ -21,11 +22,14 @@ public:
     QString getOutputFPS() const;
     QString getOutputDir() const;
 
+    void setEnableSeqOpts(bool b);
+
 public slots:
     void onDirPicked(const QString& t);
 
 private:
     QPointer<QComboBox> presetPicker_;
+    QPointer<QGroupBox> seqOpts_;
     QPointer<QComboBox> inputFPSPicker_;
     QPointer<QComboBox> outputFPSPicker_;
     QPointer<QComboBox> outputDirList_;

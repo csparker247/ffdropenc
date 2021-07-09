@@ -5,12 +5,13 @@
 
 #include <QDebug>
 #include <QStringList>
+#include <QRegularExpression>
 
 using namespace ffdropenc;
 
 float ffdropenc::DurationStringToSeconds(const QString& str)
 {
-    auto dur = str.split(QRegExp("(:|\\.)"));
+    auto dur = str.split(QRegularExpression("(:|\\.)"));
     if (dur.size() != 4) {
         qDebug() << dur;
         throw std::runtime_error("Duration string missing element");

@@ -1,7 +1,27 @@
 # QT
-find_package(Qt5 5.7 QUIET REQUIRED COMPONENTS Core Widgets Gui)
+find_package(Qt5 5.7 QUIET COMPONENTS Core Widgets Gui)
+if(NOT Qt5_FOUND)
+    find_package(Qt6 6.0 QUIET REQUIRED COMPONENTS Core Widgets Gui)
+endif()
+
+if(Qt5_FOUND)
+    set(QT_CORE Qt5::Core)
+    set(QT_LIBS Qt5::Core Qt5::Gui Qt5::Widgets)
+    message(STATUS "Building with Qt5: ${Qt5_VERSION}")
+elseif(Qt6_FOUND)
+    set(QT_CORE Qt6::Core)
+    set(QT_LIBS Qt6::Core Qt6::Gui Qt6::Widgets)
+    message(STATUS "Building with Qt6: ${Qt6_VERSION}")
+else()
+    message(FATAL_ERROR "Qt5/Qt6 required but not found.")
+endif()
+
 if(APPLE OR WIN32)
-    find_package(DeployQt5 REQUIRED)
+    if(Qt5_FOUND)
+        find_package(DeployQt5 REQUIRED)
+    else()
+        find_package(DeployQt6 REQUIRED)
+    endif()
 endif()
 
 # JSON

@@ -1,11 +1,11 @@
-![ffdropenc](graphics/png/banner.png)
+[![ffdropenc](graphics/banner.svg)](https://github.com/csparker247/ffdropenc)
 
 [![CI](https://github.com/csparker247/ffdropenc/workflows/Build/badge.svg?branch=develop)](https://github.com/csparker247/ffdropenc/actions)
 
 **ffdropenc** is an easy-to-use macOS droplet application for batch encoding video files. Drag your videos (or image 
 sequences) to the app window, select a preset and an output location, and click OK. It's that easy!
 
-![Application Window](graphics/png/screenshot.png)
+![Application Window](graphics/screenshot.png)
 
 ## Installation and Usage
 The latest DMG installer can be downloaded from the [Releases page](https://github.com/csparker247/ffdropenc/releases).
@@ -27,7 +27,7 @@ That's alright by us! You'll find an option for selecting the FFmpeg binary of y
 ### Requirements
 - C++17 compiler
 - CMake
-- Qt5
+- Qt5.7+ or Qt6.0+ (Beta)
 
 ### Compilation
 This project is configured with a CMake build system:
@@ -38,7 +38,7 @@ git clone https://github.com/csparker247/ffdropenc.git
 cd ffdropenc/
 
 # If using Homebrew Qt5, tell CMake where to find it
-export Qt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5/
+export Qt5_DIR=/usr/local/opt/qt@5/lib/cmake/Qt5/
 
 # Make a build directory
 mkdir -p build/
