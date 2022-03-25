@@ -15,7 +15,7 @@
           "level" : "4.2",
           "pixfmt" : "yuv420p",
           "filters" : [
-            { "filter" : "scale", "mode" : 0 }
+            { "filter" : "scale", "mode" : 2 }
           ],
           "flags" : [
             { "key" : "-preset", "val" : "veryslow" }

@@ -82,19 +82,13 @@ void QueueItem::convert_to_seq_()
     if (numMatches == 0) {
         throw QueueItemException("Zero numerical indices in stem");
     } else if (numMatches > 1) {
-        std::string msg("Multiple numerical indices in stem: ");
-        size_t count{0};
-        for (; it != end; it++, count++) {
-            if (count > 0) {
-                msg += ", ";
-            }
-            msg += it->str();
-        }
-        throw QueueItemException(msg);
+        std::string msg("Multiple numerical indices in stem. Using last: ");
+        std::advance(it, numMatches - 1);
+        msg += it->str();
     }
 
     // Get the pieces
-    stemPrefix_ = it->prefix().str();
+    stemPrefix_ = stem.substr(0, it->position());
     stemSeqNum_ = it->str();
     stemSuffix_ = it->suffix().str();
 

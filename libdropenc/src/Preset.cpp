@@ -93,7 +93,7 @@ QStringList Preset::getSettings(size_t index)
         else if (type == "audio") {
             // Add the codec
             auto codec = s["codec"].get<std::string>();
-            if(codec == "aac") {
+            if (codec == "aac") {
                 // TODO: Replace with user-selected library
             }
             settings << "-c:a" << QString::fromStdString(codec);
@@ -109,7 +109,7 @@ QStringList Preset::getSettings(size_t index)
                 settings << "-b:a" << QString::fromStdString(bitrate);
             }
 
-            if(s.contains("quality")) {
+            if (s.contains("quality")) {
                 auto quality = s["quality"].get<std::string>();
                 settings << "-q:a" << QString::fromStdString(quality);
             }
@@ -184,6 +184,9 @@ QString Preset::construct_filter_graph_(json filters)
             switch (mode) {
                 case ScaleMode::SquarePixel:
                     command = "scale=iw*sar:ih";
+                    break;
+                case ScaleMode::SquareHPow2:
+                    command = "scale=iw*sar:-2";
                     break;
                 case ScaleMode::SizeLimited:
                     auto w = std::to_string(filter["width"].get<int>());
