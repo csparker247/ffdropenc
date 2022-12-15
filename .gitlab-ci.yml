@@ -1,0 +1,97 @@
+stages:
+  - build
+
+### Build ###
+.build:
+  variables:
+    APP_CONF: ""
+  script:
+    - python -m pip install --upgrade pip setuptools wheel
+    - python -m pip install -r requirements.txt
+    - pyinstaller "$APP_CONF"
+
+build:macos:
+  extends: .build
+  variables:
+    APP_CONF: "macOS.spec"
+  stage: build
+  before_script:
+    - python3 -m venv venv
+    - source venv/bin/activate
+  after_script:
+    - if [ -d dist/ ]; then mv dist/*.app .; fi
+  artifacts:
+    name: "macos-app-packages"
+    paths:
+      - "*.app"
+    expire_in: 1 day
+  tags:
+    - macos
+
+
+build:windows:
+  extends: .build
+  variables:
+    APP_CONF: "Windows.spec"
+  stage: build
+  before_script:
+    - echo "Installing python..."
+    - choco install -y python3 --params "/InstallDir:C:\Python"
+    - refreshenv
+    - C:\Python\python -m venv venv
+    - .\venv\Scripts\Activate
+  after_script:
+    - if (Test-Path -Path dist\*.exe) { Move-Item -Path dist\*.exe -Destination . }
+  artifacts:
+    name: "windows-app-packages"
+    paths:
+      - "*.exe"
+    expire_in: 1 day
+  tags:
+    - shared-windows
+
+build:ubuntu:20.04:
+  image: stateoftheartio/qt6:6.4-gcc-aqt
+  extends: .build
+  variables:
+    APP_CONF: "Ubuntu.spec"
+  stage: build
+  before_script:
+    - sudo apt update
+    - sudo apt install -y software-properties-common curl unzip binutils libgl-dev libglib2.0-dev
+    - sudo add-apt-repository ppa:deadsnakes/ppa
+    - sudo apt update
+    - sudo apt install -y python3.10-dev python3.10-venv
+    - curl https://rclone.org/install.sh | sudo bash
+    - python3.10 -m venv venv
+    - source venv/bin/activate
+  after_script:
+    - if [ -d dist/ ]; then mv dist/ffdropenc .; fi
+  artifacts:
+    name: "ubuntu-focal-20.04-app-packages"
+    paths:
+      - "ffdropenc"
+    expire_in: 1 day
+  tags:
+    - docker
+
+build:ubuntu:22.04:
+  image: ubuntu:22.04
+  extends: .build
+  variables:
+    APP_CONF: "Ubuntu.spec"
+  stage: build
+  before_script:
+    - apt update
+    - apt install -y python3.10-dev python3.10-venv curl unzip binutils libgl-dev libglib2.0-dev qt6-base-dev
+    - python3 -m venv venv
+    - source venv/bin/activate
+  after_script:
+    - if [ -d dist/ ]; then mv dist/ffdropenc .; fi
+  artifacts:
+    name: "ubuntu-jammy-22.04-app-packages"
+    paths:
+      - "ffdropenc"
+    expire_in: 1 day
+  tags:
+    - docker
