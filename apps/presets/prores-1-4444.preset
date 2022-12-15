@@ -4,7 +4,7 @@
 
   "outputs" : [
     { "extension" : "mov",
-      "suffix" : "ProRes",
+      "suffix" : "ProRes4444",
       "faststart" : false,
       "streams" : [
           { "type" : "video",

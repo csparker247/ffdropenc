@@ -27,7 +27,7 @@ public:
     std::string getExtension(size_t index);
 
 private:
-    enum class ScaleMode { SquarePixel = 0, SizeLimited };
+    enum class ScaleMode { SquarePixel = 0, SizeLimited, SquareHPow2 };
 
     // JSON rep of preset data
     json cfg_;

@@ -11,9 +11,9 @@ namespace fs = std::filesystem;
 // Extension filters for image sequences.
 static const ExtensionList FF_VID_EXTENSIONS = {
     "AVI", "GIF",  "MOV", "MP4", "M4A", "3GP", "264", "H264", "M4V",
-    "MKV", "MPEG", "MPG", "MTS", "MXF", "OGG", "VOB", "WMV"};
-static const ExtensionList FF_IMG_EXTENSIONS = {"DPX", "JPG",  "JPEG", "PNG",
-                                                "TIF", "TIFF", "TGA"};
+    "MKV", "MPEG", "MPG", "MTS", "MXF", "OGG", "VOB", "WEBM", "WMV"};
+static const ExtensionList FF_IMG_EXTENSIONS = {"DPX", "JPG", "JPEG", "PNG",
+                                                "PPM", "TIF", "TIFF", "TGA"};
 
 // Constructors
 QueueItem::QueueItem(std::filesystem::path path, EncodeSettings settings)
@@ -82,19 +82,13 @@ void QueueItem::convert_to_seq_()
     if (numMatches == 0) {
         throw QueueItemException("Zero numerical indices in stem");
     } else if (numMatches > 1) {
-        std::string msg("Multiple numerical indices in stem: ");
-        size_t count{0};
-        for (; it != end; it++, count++) {
-            if (count > 0) {
-                msg += ", ";
-            }
-            msg += it->str();
-        }
-        throw QueueItemException(msg);
+        std::string msg("Multiple numerical indices in stem. Using last: ");
+        std::advance(it, numMatches - 1);
+        msg += it->str();
     }
 
     // Get the pieces
-    stemPrefix_ = it->prefix().str();
+    stemPrefix_ = stem.substr(0, it->position());
     stemSeqNum_ = it->str();
     stemSuffix_ = it->suffix().str();
 
@@ -200,4 +194,19 @@ QueueItem::Type QueueItem::determine_type_(const fs::path& p)
     } else {
         return QueueItem::Type::Undefined;
     }
+}
+
+bool ffdropenc::ContainsVideos(const std::vector<std::filesystem::path>& files)
+{
+    return std::any_of(files.begin(), files.end(), [](const auto& f) {
+        return FileExtensionFilter(f, FF_VID_EXTENSIONS);
+    });
+}
+
+bool ffdropenc::ContainsImgSequences(
+    const std::vector<std::filesystem::path>& files)
+{
+    return std::any_of(files.begin(), files.end(), [](const auto& f) {
+        return FileExtensionFilter(f, FF_IMG_EXTENSIONS);
+    });
 }

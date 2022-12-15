@@ -25,7 +25,7 @@ set(srcs
 set(rccs Resources.qrc Presets.qrc)
 
 # Setup Icon properties
-set(icon_file appicon.icns)
+set(icon_file icon.icns)
 set(icon_path ${CMAKE_CURRENT_SOURCE_DIR}/images/${icon_file})
 set_source_files_properties(
     ${icon_path}
@@ -36,17 +36,9 @@ set_source_files_properties(
 # Setup Info.plist
 set(MACOSX_BUNDLE_ICON_FILE ${icon_file})
 string(TIMESTAMP year "%Y")
-set(copyright "${year} C. Seth Parker")
-string(CONCAT info_string
-    ffdropenc${CMAKE_BUILD_TYPE}
-    " Version ${PROJECT_VERSION}"
-    ", "
-    ${copyright}
-)
-set(MACOSX_BUNDLE_INFO_STRING ${info_string})
+set(developer "C. Seth Parker")
+set(copyright "${year} ${developer}")
 set(MACOSX_BUNDLE_GUI_IDENTIFIER "ffdropenc")
-set(MACOSX_BUNDLE_LONG_VERSION_STRING
-        "ffdropenc-${CMAKE_BUILD_TYPE} Version ${PROJECT_VERSION}")
 set(MACOSX_BUNDLE_BUNDLE_NAME ffdropenc)
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
 set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
@@ -73,9 +65,7 @@ set_target_properties(ffdropenc
         AUTORCC on
 )
 target_link_libraries(ffdropenc
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Widgets
+    ${QT_LIBS}
     ffde::core
 )
 
@@ -94,6 +84,10 @@ add_custom_command(TARGET ffdropenc POST_BUILD
 )
 
 ### App Packaging ###
-if(APPLE OR WIN32)
-    qt5_deploy_bundle(ffdropenc)
-endif()
+# if(APPLE OR WIN32)
+#     if(Qt5_FOUND)
+#         qt5_deploy_bundle(ffdropenc)
+#     elseif(Qt6_FOUND)
+#         qt6_deploy_bundle(ffdropenc)
+#     endif()
+# endif()

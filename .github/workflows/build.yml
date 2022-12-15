@@ -19,7 +19,7 @@ jobs:
           os: [macos-10.15]
           include:
             - os: macos-10.15
-              Qt5_DIR: /usr/local/opt/qt/lib/cmake/Qt5/
+              Qt5_DIR: /usr/local/opt/qt@5/lib/cmake/Qt5/
               MACOSX_DEPLOYMENT_TARGET: 10.15
               SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
 #            - os: macos-11.0

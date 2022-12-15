@@ -6,6 +6,7 @@
         <file>presets/ipad.preset</file>
         <file>presets/mkv-1-SqPx-Apass.preset</file>
         <file>presets/mp3.preset</file>
+        <file>presets/mp4-0-Max.preset</file>
         <file>presets/mp4-1-NoScale.preset</file>
         <file>presets/mp4-2-SqPx.preset</file>
         <file>presets/mp4-3-SD.preset</file>
@@ -14,6 +15,7 @@
         <file>presets/mp4-6-720Deint.preset</file>
         <file>presets/mp4-7-1080Deint.preset</file>
         <file>presets/mp4-8-1080Grain.preset</file>
+        <file>presets/mp4-9-NoScaleSmall.preset</file>
         <file>presets/prores-1-422.preset</file>
         <file>presets/prores-1-4444.preset</file>
         <file>presets/vimeo.preset</file>

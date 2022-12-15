@@ -95,4 +95,8 @@ private:
     Preset::Pointer preset_;
     bool overwrite_{true};
 };
+
+bool ContainsVideos(const std::vector<std::filesystem::path>& files);
+bool ContainsImgSequences(const std::vector<std::filesystem::path>& files);
+
 }  // namespace ffdropenc

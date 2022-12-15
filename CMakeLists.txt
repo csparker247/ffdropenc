@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 project("ffdropenc" VERSION 2.0.0)
 
@@ -24,9 +24,6 @@ include(Constants)
 if (CMAKE_GENERATOR MATCHES "Ninja")
     add_compile_options(-fdiagnostics-color=always)
 endif()
-
-# Enable warnings
-include(Warnings)
 
 # Documentation
 find_package(Doxygen OPTIONAL_COMPONENTS dot)

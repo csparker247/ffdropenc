@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #include <QDebug>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include "MainApplication.hpp"
 #include "ffdropenc/Filesystem.hpp"
@@ -13,8 +13,8 @@ using namespace ffdropenc;
 
 namespace fs = std::filesystem;
 
-QRegExp ENCODER_DURATION{".*Duration:\\s(\\d+:\\d+:\\d+.\\d+).*(\n|\r|\r\f)"};
-QRegExp ENCODER_TIME{".*time=(\\d+:\\d+:\\d+.\\d+).*(\n|\r|\r\f)"};
+QRegularExpression ENCODER_DURATION{".*Duration:\\s(\\d+:\\d+:\\d+.\\d+).*(\n|\r|\r\f)"};
+QRegularExpression ENCODER_TIME{".*time=(\\d+:\\d+:\\d+.\\d+).*(\n|\r|\r\f)"};
 
 EncodingQueue::EncodingQueue()
 {
@@ -71,6 +71,9 @@ void EncodingQueue::insert(std::vector<fs::path> files, const EncodeSettings& s)
         try {
             tempQueue.emplace_back(QueueItem::New(f, s));
         } catch (const std::exception& e) {
+            auto msg =
+                QString("%1: %2").arg(f.filename().c_str()).arg(e.what());
+            emit newDetailError(msg);
             qDebug() << "QueueItem error ::" << f.c_str() << "::" << e.what();
         }
     }
@@ -118,18 +121,16 @@ void EncodingQueue::onEncodeUpdateErr()
         return;
     }
 
-    int pos = 0;
-    while ((pos = ENCODER_DURATION.indexIn(line, pos)) != -1) {
-        auto duration = DurationStringToSeconds(ENCODER_DURATION.cap(1));
+    auto match = ENCODER_DURATION.match(line);
+    if(match.hasMatch()) {
+        auto duration = DurationStringToSeconds(match.captured(1));
         encoderCurrentItem_->setDuration(duration);
-        pos += ENCODER_TIME.matchedLength();
     }
 
-    pos = 0;
-    while ((pos = ENCODER_TIME.indexIn(line, pos)) != -1) {
-        auto time = DurationStringToSeconds(ENCODER_TIME.cap(1));
+    match = ENCODER_TIME.match(line);
+    if(match.hasMatch()) {
+        auto time = DurationStringToSeconds(match.captured(1));
         emit progressUpdated(time / encoderCurrentItem_->duration() * 100);
-        pos += ENCODER_TIME.matchedLength();
     }
 }
 

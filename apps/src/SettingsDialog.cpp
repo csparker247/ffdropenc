@@ -1,7 +1,6 @@
 #include "SettingsDialog.hpp"
 
 #include <QDialogButtonBox>
-#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
@@ -32,10 +31,10 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     inputOptsGroup->layout()->addWidget(presetPicker_);
 
     // Framerate Pickers
-    auto frameRateGroup = new QGroupBox();
-    frameRateGroup->setLayout(new QHBoxLayout());
-    frameRateGroup->setTitle("Sequence Options");
-    layout->addWidget(frameRateGroup);
+    seqOpts_ = new QGroupBox();
+    seqOpts_->setLayout(new QHBoxLayout());
+    seqOpts_->setTitle("Sequence Options");
+    layout->addWidget(seqOpts_);
     layout->addSpacing(5);
 
     // Input framerate picker
@@ -45,8 +44,11 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     inputFPSPicker_ = new QComboBox();
     inputFPSPicker_->addItems(FPS_OPTS);
     inputFPSPicker_->setCurrentText("30");
+    inputFPSPicker_->setEditable(true);
+    inputFPSPicker_->setValidator(
+        new QDoubleValidator(0, 1000, 7, inputFPSPicker_));
     inputFPSLayout->layout()->addWidget(inputFPSPicker_);
-    frameRateGroup->layout()->addWidget(inputFPSLayout);
+    seqOpts_->layout()->addWidget(inputFPSLayout);
 
     // Output framerate picker
     auto outputFPSLayout = new QWidget();
@@ -55,8 +57,11 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     outputFPSPicker_ = new QComboBox();
     outputFPSPicker_->addItems(FPS_OPTS);
     outputFPSPicker_->setCurrentText("30");
+    outputFPSPicker_->setEditable(true);
+    outputFPSPicker_->setValidator(
+        new QDoubleValidator(0, 1000, 7, outputFPSPicker_));
     outputFPSLayout->layout()->addWidget(outputFPSPicker_);
-    frameRateGroup->layout()->addWidget(outputFPSLayout);
+    seqOpts_->layout()->addWidget(outputFPSLayout);
 
     // Output directory
     auto outputOptsGroup = new QGroupBox();
@@ -92,6 +97,8 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent)
     connect(
         buttonBox, &QDialogButtonBox::rejected, this, &SettingsDialog::reject);
     layout->addWidget(buttonBox);
+
+    buttonBox->setFocus();
 }
 
 void SettingsDialog::setPresetList(const QStringList& presetIDs)
@@ -149,3 +156,5 @@ QString SettingsDialog::getOutputDir() const
         return outputDirList_->currentText();
     }
 }
+
+void SettingsDialog::setEnableSeqOpts(bool b) { seqOpts_->setEnabled(b); }
