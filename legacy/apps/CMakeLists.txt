@@ -22,11 +22,12 @@ set(srcs
     src/SettingsWindow.cpp
 )
 
-set(rccs Resources.qrc Presets.qrc)
+set(py_resource_dir ${CMAKE_CURRENT_SOURCE_DIR}/../../ffdropenc/resource_files/)
+set(rccs ${py_resource_dir}/resources.qrc Presets.qrc)
 
 # Setup Icon properties
 set(icon_file icon.icns)
-set(icon_path ${CMAKE_CURRENT_SOURCE_DIR}/images/${icon_file})
+set(icon_path ${py_resource_dir}/img/${icon_file})
 set_source_files_properties(
     ${icon_path}
     PROPERTIES
