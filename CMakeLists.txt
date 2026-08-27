@@ -20,11 +20,6 @@ include(FindDependencies)
 # Some helpful constants to be used in subprojects.
 include(Constants)
 
-# Hack to get ninja output colorized for all source files.
-if (CMAKE_GENERATOR MATCHES "Ninja")
-    add_compile_options(-fdiagnostics-color=always)
-endif()
-
 # Enable warnings
 include(Warnings)
 
